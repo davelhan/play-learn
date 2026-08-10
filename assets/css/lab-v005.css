@@ -5,7 +5,19 @@
 }
 body{margin:0;background:radial-gradient(circle at 55% -15%,#1a2a35,#07090c 52%);color:var(--text);font-family:Arial,Helvetica,sans-serif;min-height:100vh}
 button,a{font:inherit}.hidden{display:none!important}
-.topbar{height:66px;border-bottom:1px solid var(--line);padding:0 22px;display:flex;align-items:center;justify-content:space-between;background:#080b0ef0;position:sticky;top:0;z-index:30}
+.topbar{
+  height:66px;
+  border-bottom:1px solid var(--line);
+  padding-left:max(22px, calc((100vw - 1560px) / 2 + 14px));
+  padding-right:max(22px, calc((100vw - 1560px) / 2 + 14px));
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:#080b0ef0;
+  position:sticky;
+  top:0;
+  z-index:30;
+}
 .brand{text-decoration:none;color:var(--text);font-weight:900;letter-spacing:.12em}.brand span{color:var(--mint)}
 .mission-id{font-size:10px;letter-spacing:.14em;color:var(--muted)}.top-actions{display:flex;gap:7px}
 button,.buttonlink{border:1px solid var(--line);border-radius:9px;padding:10px 13px;cursor:pointer;text-decoration:none}
