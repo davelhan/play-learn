@@ -1,295 +1,46 @@
 const $=id=>document.getElementById(id);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const S={phase:0,lean:0,speed:.6,payload:0,foot:22,left:false,right:false,footSeen:false,slow:false,fast:false,walk1:false,walk2:false,busy:false};
 
-const phases=[
- {name:"HOOK",goal:"Observe the walking failure and confirm which systems are already healthy."},
- {name:"DISCOVER",goal:"Move the body relative to the stance foot and watch the center-of-mass projection."},
- {name:"MANIPULATE",goal:"Drag the next foot and see how a new support location changes recovery margin."},
- {name:"CAUSE / EFFECT",goal:"Change forward speed and watch the useful recovery zone move farther ahead."},
- {name:"NAME IT",goal:"Connect the phenomenon to Center of Mass, Support and Foot Placement."},
- {name:"GUIDED WALK",goal:"Place the next foot inside the useful recovery zone and pass the 10-meter walk."},
- {name:"TRANSFER",goal:"Carry an offset payload and adapt the step instead of blaming sensing."},
- {name:"COMPLETE",goal:"Lock Dynamic Balance Basics into the persistent robot."}
+const PH=[
+ ["HOOK","Observe the walking failure.","Run the initial walk. Confirm sensing and control are healthy.","RUN INITIAL WALK"],
+ ["DISCOVER","Move the body relative to the stance foot.","Shift body lean left and right and watch the yellow CoM projection.","SHIFT BODY LEFT, THEN RIGHT"],
+ ["MANIPULATE","Create a new support location.","Move the next foot forward until it reaches the recovery zone.","MOVE NEXT FOOT INTO RECOVERY ZONE"],
+ ["CAUSE / EFFECT","See how speed changes the required step.","Compare a slow walk and a fast walk. The recovery target must move.","COMPARE SLOW AND FAST"],
+ ["NAME IT","Connect the behavior to the concepts.","You have used Center of Mass, Support and Foot Placement.","NAME THE SYSTEM"],
+ ["GUIDED WALK","Combine the variables.","Place the foot near the target and run the walk test.","ALIGN FOOT → RUN WALK TEST"],
+ ["TRANSFER","Adapt to an offset payload.","The load shifts mass distribution. Re-align the body and foot, then test.","ADAPT TO PAYLOAD → TEST"],
+ ["COMPLETE","Dynamic balance basics validated.","The same state estimate now works in a new context.","DYNAMIC BALANCE BASICS INSTALLED"]
 ];
 
-const instructions=[
- `<b>Run the initial walk.</b><br>Before changing anything, confirm that orientation, state confidence and control response are healthy.`,
- `<b>Shift the body.</b><br>Use BODY LEAN and watch the yellow CoM marker move relative to the green support area.`,
- `<b>Create a new support.</b><br>Drag the swing foot horizontally. Watch recovery margin improve when the new foot is placed where the moving body can be caught.`,
- `<b>Speed changes the problem.</b><br>Increase FORWARD SPEED. The recovery zone moves ahead because a faster body needs a more forward step in this simplified training model.`,
- `<b>You have already used the concepts.</b><br>Now the game gives names to what you observed.`,
- `<b>Walk 10 meters.</b><br>Set a realistic speed and place the swing foot inside the recovery zone, then run the test.`,
- `<b>New context: payload.</b><br>The IMU and estimator remain healthy. A load shifts the body's mass. Adapt body lean and foot placement, then retest.`,
- `<b>Mission complete.</b><br>Dynamic balance is now part of your persistent robot.`
-];
-
-const hints=[
- "Do not start with the IMU. State confidence is already 96%. First collect evidence from the failed walk.",
- "The yellow marker is the ground projection of the body's combined center of mass in this training model. Move BODY LEAN in both directions.",
- "The current stance foot can only support a limited region. A step creates a new support region. Drag the right foot toward the violet recovery zone.",
- "Keep foot position fixed, change only speed, and watch the recovery zone shift. One variable at a time makes causality easier to see.",
- "Static support and dynamic recovery are related but not identical. The next foot matters because the body is moving.",
- "You do not need a perfect number. You need a coherent relationship between speed, body state and where the foot lands.",
- "The new load changes mass distribution. Sensing still reports the state correctly; the plan must adapt to the changed state.",
- "The same state-estimation knowledge has now survived a different mission context. That's how mastery grows."
-];
-
-const S={
- phase:0,
- lean:0,
- speed:.6,
- payload:0,
- foot:22,
- initialSeen:false,
- leanLeft:false,
- leanRight:false,
- footMoved:false,
- speedLowSeen:false,
- speedHighSeen:false,
- guidedPassed:false,
- transferInjected:false,
- transferPassed:false,
- testRuns:0
-};
-
-let draggingFoot=false, startX=0, startFoot=0;
-
-function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
-function cmPos(){
- // Fictional training coordinate, centimeters relative to stance center
- return S.lean + S.payload*.55 + S.speed*8;
+function inject(){
+ const st=document.createElement("style");st.textContent=`
+ .qa-actions{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0 0}.qa-actions button{flex:1;min-width:92px;background:#172129;color:#eef4f7;border:1px solid #38505d}.qa-actions button.primary-action{background:#8ff0c9;color:#07120e;border-color:#8ff0c9;font-weight:900}
+ .qa-note{font-size:9px;color:#8e9ba6;margin-top:8px;line-height:1.4}.qa-status{margin:12px 0;padding:10px;border:1px solid #30423c;border-radius:9px;background:#0b1312}.qa-status span{font-size:8px;letter-spacing:.12em;color:#71808b;display:block}.qa-status b{font-size:11px;color:#8ff0c9}.qa-check{font-size:10px;margin-top:5px;color:#9caab4}
+ .qa-active{box-shadow:0 0 0 1px #8ff0c9,0 0 22px #8ff0c91e!important}.robot{scale:.82;transform-origin:50% 100%}
+ .com-projection{bottom:88px!important}.support-area{bottom:69px!important}.capture-area{bottom:65px!important}.step-target{bottom:65px!important}.foot{top:139px!important}.failure-stamp{right:28px!important;top:24px!important}.axis{bottom:24px!important}
+ @media(max-width:900px){.robot{scale:.74}}
+ `;document.head.appendChild(st);
+ const instr=$("instruction");const status=document.createElement("div");status.id="qaStatus";status.className="qa-status";instr.after(status);const acts=document.createElement("div");acts.id="qaActions";acts.className="qa-actions";status.after(acts);const note=document.createElement("div");note.id="qaNote";note.className="qa-note";acts.after(note);$("continueBtn").classList.add("hidden");
 }
-function targetPos(){
- // Simplified dynamic recovery target
- return 20 + S.speed*42 + Math.max(0,S.payload)*.45;
+function cm(){return S.lean+S.payload*.55+S.speed*8}function target(){return 20+S.speed*42+Math.max(0,S.payload)*.45}function err(){return Math.abs(S.foot-target())}function support(){return Math.round(clamp(88-Math.abs(cm())*2,0,100))}function recovery(){return Math.round(clamp(100-err()*3-Math.abs(S.lean)*.6,0,100))}function good(){return err()<=8&&support()>=35&&S.speed>=.35&&S.speed<=1.05}function stageX(v){return clamp(40+v*.5,14,86)}function footX(v){return clamp(40+v*.5,18,88)}
+function signals(){
+ $("leanValue").textContent=(S.lean>0?"+":"")+S.lean+" cm";$("speedValue").textContent=S.speed.toFixed(1)+" m/s";$("payloadValue").textContent=(S.payload>0?"+":"")+S.payload+" cm";
+ $("comValue").textContent=(cm()>=0?"+":"")+cm().toFixed(0)+" cm";$("placementError").textContent=err().toFixed(0)+" cm";$("supportMetric").textContent=support()+"%";$("recoveryMetric").textContent=recovery()+"%";$("targetMetric").textContent=err().toFixed(0)+" cm";
+ $("comProjection").style.left=stageX(cm())+"%";$("captureArea").style.left=footX(target())+"%";$("stepTarget").style.left=footX(target())+"%";$("comBar").style.width=clamp(50+cm(),4,96)+"%";$("placementBar").style.width=clamp(100-err()*2.3,4,100)+"%";$("placementBar").style.background=err()<=8?"var(--mint)":err()<=18?"var(--warn)":"var(--bad)";
+ const px=(S.foot-22)*1.15;$("swingLeg").style.transform=`translateX(${px}px) rotate(${clamp(px*.06,-8,12)}deg)`;$("payloadBlock").classList.toggle("hidden",S.phase<6);$("payloadBlock").style.transform=`translateX(${S.payload*.5}px)`;$("planningCard").querySelector("small").textContent=err()<=8?"ADAPTED":"NEEDS UPDATE";$("planningCard").className=`state-card ${err()<=8?"healthy":"warning"}`;
+ $("systemLog").textContent=["WALK SYSTEM","IMU ........... HEALTHY","STATE CONF .... 96%","CONTROL RESP .. 91%",`CoM PROJ ....... ${cm().toFixed(0)} cm`,`STEP TARGET .... ${target().toFixed(0)} cm`,`FOOT ACTUAL .... ${S.foot.toFixed(0)} cm`,`RECOVERY ....... ${recovery()}%`,err()>18?"FLAG .......... FOOT PLAN MISALIGNED":"FLAGS ......... NONE"].join("\n");
 }
-function placementError(){
- return Math.abs(S.foot-targetPos());
-}
-function supportMargin(){
- return Math.round(clamp(88-Math.abs(cmPos())*2.0,0,100));
-}
-function recoveryMargin(){
- const err=placementError();
- return Math.round(clamp(100-err*3.0-Math.abs(S.lean)*.6,0,100));
-}
-function pass(){
- const maxErr=S.phase===6?9:8;
- return placementError()<=maxErr && supportMargin()>=35 && S.speed>=.35 && S.speed<=1.05;
-}
-function stageX(cm){
- // Map cm to percent, stance around 40%
- return clamp(40 + cm*.5,14,86);
-}
-function footX(pos){
- return clamp(40 + pos*.5,18,88);
-}
-function render(){
- $("leanValue").textContent=`${S.lean>0?"+":""}${S.lean} cm`;
- $("speedValue").textContent=`${S.speed.toFixed(1)} m/s`;
- $("payloadValue").textContent=`${S.payload>0?"+":""}${S.payload} cm`;
-
- const cm=cmPos(), target=targetPos(), err=placementError();
- $("comValue").textContent=`${cm>=0?"+":""}${cm.toFixed(0)} cm`;
- $("placementError").textContent=`${err.toFixed(0)} cm`;
- $("supportMetric").textContent=`${supportMargin()}%`;
- $("recoveryMetric").textContent=`${recoveryMargin()}%`;
- $("targetMetric").textContent=`${err.toFixed(0)} cm`;
-
- $("comProjection").style.left=`${stageX(cm)}%`;
- $("captureArea").style.left=`${footX(target)}%`;
- $("stepTarget").style.left=`${footX(target)}%`;
-
- $("comBar").style.width=`${clamp(50+cm,4,96)}%`;
- $("placementBar").style.width=`${clamp(100-err*2.3,4,100)}%`;
- $("placementBar").style.background=err<=8?"var(--mint)":err<=18?"var(--warn)":"var(--bad)";
-
- // Move swing leg roughly with foot placement
- const px=(S.foot-22)*1.15;
- $("swingLeg").style.transform=`translateX(${px}px) rotate(${clamp(px*.06,-8,12)}deg)`;
-
- $("payloadBlock").classList.toggle("hidden",S.phase<6);
- $("payloadBlock").style.transform=`translateX(${S.payload*.5}px)`;
-
- const log=[
-   "WALK SYSTEM",
-   "IMU ........... HEALTHY",
-   "STATE CONF .... 96%",
-   "CONTROL RESP .. 91%",
-   `CoM PROJ ....... ${cm>=0?"+":""}${cm.toFixed(0)} cm`,
-   `STEP TARGET .... +${target.toFixed(0)} cm`,
-   `FOOT ACTUAL .... +${S.foot.toFixed(0)} cm`,
-   `RECOVERY ....... ${recoveryMargin()}%`
- ];
- if(err>18) log.push("FLAG .......... FOOT PLAN MISALIGNED");
- else if(supportMargin()<35) log.push("FLAG .......... SUPPORT MARGIN LOW");
- else log.push("FLAGS ......... NONE");
- $("systemLog").textContent=log.join("\n");
-
- if(S.phase>=2){
-   $("planningCard").querySelector("small").textContent=err<=8?"ADAPTED":"NEEDS UPDATE";
-   $("planningCard").className=`state-card ${err<=8?"healthy":"warning"}`;
- }
-
- updateContinue();
-}
-
-function updateContinue(){
- let ok=false;
- if(S.phase===0) ok=S.initialSeen;
- if(S.phase===1) ok=S.leanLeft&&S.leanRight;
- if(S.phase===2) ok=S.footMoved;
- if(S.phase===3) ok=S.speedLowSeen&&S.speedHighSeen;
- if(S.phase===4) ok=true;
- if(S.phase===5) ok=S.guidedPassed;
- if(S.phase===6) ok=S.transferPassed;
- if(S.phase===7) ok=true;
- $("continueBtn").disabled=!ok;
-}
-
-function phaseUI(){
- const p=phases[S.phase];
- $("phaseName").textContent=p.name;
- $("phaseGoal").textContent=p.goal;
- $("phaseCount").textContent=`${String(S.phase+1).padStart(2,"0")} / 08`;
- $("progressFill").style.width=`${(S.phase/7)*100}%`;
- $("instruction").innerHTML=instructions[S.phase];
-
- $("torsoControl").classList.toggle("locked",S.phase<1);
- $("speedControl").classList.toggle("locked",S.phase<3);
- $("payloadControl").classList.toggle("locked",S.phase<6);
-
- if(S.phase===0) $("runTestBtn").textContent="▶ RUN INITIAL WALK";
- else if(S.phase===6) $("runTestBtn").textContent="▶ RUN PAYLOAD WALK";
- else $("runTestBtn").textContent="▶ RUN WALK TEST";
-
- render();
-}
-
-function runTest(){
- S.testRuns++;
- $("fallStamp").classList.add("hidden");
-
- if(S.phase===0){
-   S.initialSeen=true;
-   $("resultBox").className="result fail";
-   $("resultBox").innerHTML=`<strong>TEST FAILED · STEP 3</strong><span>Orientation estimate remains valid. The body moves beyond the useful support before the next foot adapts.</span>`;
-   $("fallStamp").classList.remove("hidden");
-   phaseUI();
-   return;
- }
-
- const good=pass();
- if(good){
-   $("resultBox").className="result pass";
-   $("resultBox").innerHTML=`<strong>TEST PASSED · 10.0 m</strong><span>The new foot creates support where the moving body needs it.</span>`;
-   if(S.phase===5)S.guidedPassed=true;
-   if(S.phase===6)S.transferPassed=true;
- }else{
-   const err=placementError();
-   let why=err>8
-     ?`The next foot is ${err.toFixed(0)} cm away from the useful recovery target.`
-     :`Foot placement is close, but current body/support conditions still leave too little margin.`;
-   $("resultBox").className="result fail";
-   $("resultBox").innerHTML=`<strong>TEST FAILED · RECOVERY LOST</strong><span>${why}</span>`;
-   $("fallStamp").classList.remove("hidden");
- }
- phaseUI();
-}
-
-function advance(){
- if(S.phase===0)S.phase=1;
- else if(S.phase===1)S.phase=2;
- else if(S.phase===2)S.phase=3;
- else if(S.phase===3)S.phase=4;
- else if(S.phase===4){
-   showConcept();
-   return;
- }else if(S.phase===5){
-   S.phase=6;
-   injectTransfer();
- }else if(S.phase===6)S.phase=7;
- else if(S.phase===7){
-   localStorage.setItem("playlearn_rbt02_complete","true");
-   $("completeModal").classList.remove("hidden");
-   return;
- }
- phaseUI();
-}
-
-function showConcept(){
- $("conceptTitle").textContent="CENTER OF MASS + FOOT PLACEMENT";
- $("conceptText").textContent="Le Center of Mass (CoM) résume où se trouve la masse combinée du robot. Sa projection au sol doit rester compatible avec les contacts actuels — ou le robot doit créer un nouveau contact. En marche, le prochain pied est donc un outil de récupération : il crée un nouveau support là où le corps est en train d'aller.";
- $("conceptReveal").classList.remove("hidden");
-}
-$("conceptContinue").onclick=()=>{
- $("conceptReveal").classList.add("hidden");
- S.phase=5;
- phaseUI();
-};
-
-function injectTransfer(){
- S.payload=22;
- S.lean=0;
- S.speed=.65;
- // Keep prior foot position to make previous solution wrong
- $("payload").value=S.payload;
- $("bodyLean").value=S.lean;
- $("speed").value=Math.round(S.speed*100);
- $("resultBox").className="result neutral";
- $("resultBox").innerHTML=`<strong>NEW CONTEXT · OFFSET PAYLOAD</strong><span>Sensing is still healthy. The load shifts mass distribution, so your previous step is no longer optimal.</span>`;
-}
-
-// sliders
-$("bodyLean").oninput=e=>{
- if(S.phase<1)return;
- S.lean=+e.target.value;
- if(S.lean<-8)S.leanLeft=true;
- if(S.lean>8)S.leanRight=true;
- render();
-};
-$("speed").oninput=e=>{
- if(S.phase<3)return;
- S.speed=+e.target.value/100;
- if(S.speed<.45)S.speedLowSeen=true;
- if(S.speed>1.0)S.speedHighSeen=true;
- render();
-};
-$("payload").oninput=e=>{
- if(S.phase<6)return;
- S.payload=+e.target.value;
- render();
-};
-
-// drag swing foot horizontally
-const foot=$("swingFoot");
-foot.addEventListener("pointerdown",e=>{
- if(S.phase<2)return;
- draggingFoot=true;startX=e.clientX;startFoot=S.foot;foot.setPointerCapture(e.pointerId);
-});
-foot.addEventListener("pointermove",e=>{
- if(!draggingFoot)return;
- S.foot=clamp(startFoot+(e.clientX-startX)*.28,-12,92);
- if(Math.abs(S.foot-22)>8)S.footMoved=true;
- render();
-});
-foot.addEventListener("pointerup",()=>draggingFoot=false);
-
-// controls
-$("runTestBtn").onclick=runTest;
-$("continueBtn").onclick=advance;
-$("coachBtn").onclick=()=>{
- $("coachText").textContent=hints[S.phase];
- $("coachPanel").classList.remove("hidden");
-};
-$("closeCoach").onclick=()=>$("coachPanel").classList.add("hidden");
-$("resetBtn").onclick=()=>{
- const progressed=S.phase>0||S.testRuns>0;
- if(!progressed||window.confirm("Reset this mission and lose the current attempt?"))location.reload();
-};
-$("startBtn").onclick=()=>{
- $("intro").classList.add("hidden");
- $("game").classList.remove("hidden");
- phaseUI();
-};
-
-phaseUI();
+function b(label,fn,primary=false){const x=document.createElement("button");x.type="button";x.textContent=label;if(primary)x.classList.add("primary-action");x.onclick=fn;return x}
+function status(){let checks=[];if(S.phase===0)checks=[["Initial failure observed",false]];if(S.phase===1)checks=[["Lean left",S.left],["Lean right",S.right]];if(S.phase===2)checks=[["Foot moved toward recovery zone",S.footSeen]];if(S.phase===3)checks=[["Slow target observed",S.slow],["Fast target observed",S.fast]];if(S.phase===4)checks=[["Concept ready",true]];if(S.phase===5)checks=[["Foot aligned",err()<=8],["Walk passed",S.walk1]];if(S.phase===6)checks=[["Foot aligned",err()<=9],["Payload walk passed",S.walk2]];if(S.phase===7)checks=[["Dynamic Balance Basics installed",true]];$("qaStatus").innerHTML=`<span>NEXT ACTION</span><b>${PH[S.phase][3]}</b><div class="qa-check">${checks.map(([t,d])=>(d?"✓ ":"○ ")+t).join("<br>")}</div>`}
+function actions(){const a=$("qaActions");a.innerHTML="";$("qaNote").textContent="";if(S.phase===0)a.append(b("▶ RUN INITIAL WALK",run,true));if(S.phase===1){a.append(b("SHIFT LEFT -12 cm",()=>lean(-12),!S.left));a.append(b("SHIFT RIGHT +12 cm",()=>lean(12),S.left&&!S.right));$("qaNote").textContent="You can also use BODY LEAN. Both directions must be observed."}if(S.phase===2){a.append(b("MOVE FOOT TO TARGET",()=>moveFoot(target()),true));$("qaNote").textContent="The right foot remains draggable; this button is the reliable fallback."}if(S.phase===3){a.append(b("SLOW 0.4 m/s",()=>speed(.4),!S.slow));a.append(b("FAST 1.1 m/s",()=>speed(1.1),S.slow&&!S.fast))}if(S.phase===4)a.append(b("NAME THE SYSTEM",showConcept,true));if(S.phase===5){if(err()>8)a.append(b("ALIGN FOOT TO TARGET",()=>moveFoot(target()),true));else a.append(b("▶ RUN WALK TEST",run,true))}if(S.phase===6){if(err()>9)a.append(b("REALIGN FOOT",()=>moveFoot(target()),true));else a.append(b("▶ RUN PAYLOAD WALK",run,true))}}
+function render(){const [n,g,ins]=PH[S.phase];$("phaseName").textContent=n;$("phaseGoal").textContent=g;$("instruction").innerHTML="<b>"+ins+"</b>";$("phaseCount").textContent=String(S.phase+1).padStart(2,"0")+" / 08";$("progressFill").style.width=(S.phase/7*100)+"%";$("torsoControl").classList.toggle("locked",S.phase!==1&&S.phase!==6);$("speedControl").classList.toggle("locked",S.phase!==3&&S.phase!==5&&S.phase!==6);$("payloadControl").classList.toggle("locked",S.phase!==6);$("runTestBtn").disabled=![0,5,6].includes(S.phase);$("runTestBtn").textContent=S.phase===0?"▶ RUN INITIAL WALK":S.phase===6?"▶ RUN PAYLOAD WALK":"▶ RUN WALK TEST";document.querySelectorAll(".qa-active").forEach(x=>x.classList.remove("qa-active"));if(S.phase===1)$("torsoControl").classList.add("qa-active");if(S.phase===2)$("swingFoot").classList.add("qa-active");if(S.phase===3)$("speedControl").classList.add("qa-active");if(S.phase===5)$("swingFoot").classList.add("qa-active");if(S.phase===6)$("payloadControl").classList.add("qa-active");status();actions();signals()}
+function next(p,msg){if(S.busy)return;S.busy=true;if(msg){$("resultBox").className="result pass";$("resultBox").innerHTML=`<strong>${msg}</strong><span>Next step loaded automatically.</span>`}setTimeout(()=>{S.phase=p;S.busy=false;render()},350)}
+function lean(v){S.lean=+v;$("bodyLean").value=S.lean;if(v<=-8)S.left=true;if(v>=8)S.right=true;render();if(S.phase===1&&S.left&&S.right)setTimeout(()=>next(2,"CENTER OF MASS MOVEMENT OBSERVED"),220)}
+function moveFoot(v){S.foot=clamp(v,-12,92);S.footSeen=true;render();if(S.phase===2)setTimeout(()=>next(3,"NEW SUPPORT LOCATION CREATED"),250)}
+function speed(v){S.speed=+v;$("speed").value=Math.round(v*100);if(v<=.45)S.slow=true;if(v>=1.0)S.fast=true;render();if(S.phase===3&&S.slow&&S.fast)setTimeout(()=>next(4,"SPEED CHANGES RECOVERY TARGET"),250)}
+function run(){$("fallStamp").classList.add("hidden");if(S.phase===0){$("fallStamp").classList.remove("hidden");$("resultBox").className="result fail";$("resultBox").innerHTML="<strong>TEST FAILED · STEP 3</strong><span>Orientation remains valid. The next foot does not adapt to where the body is going.</span>";setTimeout(()=>next(1,"FAILURE CAPTURED"),450);return}if(![5,6].includes(S.phase))return;if(good()){$("resultBox").className="result pass";$("resultBox").innerHTML="<strong>TEST PASSED · 10.0 m</strong><span>The next foot creates support where the moving body needs it.</span>";if(S.phase===5){S.walk1=true;render();setTimeout(()=>{S.phase=6;S.payload=22;S.lean=0;S.speed=.65;$("payload").value=22;$("bodyLean").value=0;$("speed").value=65;render();$("resultBox").className="result neutral";$("resultBox").innerHTML="<strong>NEW CONTEXT · OFFSET PAYLOAD</strong><span>The sensors remain healthy; mass distribution changed.</span>"},600)}else{S.walk2=true;render();setTimeout(()=>{S.phase=7;render();localStorage.setItem("playlearn_rbt02_complete","true");$("completeModal").classList.remove("hidden")},600)}}else{$("fallStamp").classList.remove("hidden");$("resultBox").className="result fail";$("resultBox").innerHTML=`<strong>TEST FAILED</strong><span>Foot target error ${err().toFixed(0)} cm. Use the highlighted action; no guessing required.</span>`;render()}}
+function showConcept(){$("conceptTitle").textContent="CENTER OF MASS + FOOT PLACEMENT";$("conceptText").textContent="The center of mass summarizes where the robot's combined mass acts. During walking, the next foot creates a new support area. As speed or payload changes, useful foot placement changes too.";$("conceptReveal").classList.remove("hidden")}
+$("conceptContinue").onclick=()=>{$("conceptReveal").classList.add("hidden");S.phase=5;S.speed=.6;$("speed").value=60;S.foot=22;render()};
+inject();$("startBtn").onclick=()=>{$("intro").classList.add("hidden");$("game").classList.remove("hidden");render()};$("runTestBtn").onclick=run;$("bodyLean").oninput=e=>lean(+e.target.value);$("speed").oninput=e=>speed(+e.target.value/100);$("payload").oninput=e=>{S.payload=+e.target.value;render()};$("coachBtn").onclick=()=>{$("coachText").textContent=PH[S.phase][2];$("coachPanel").classList.remove("hidden")};$("closeCoach").onclick=()=>$("coachPanel").classList.add("hidden");$("resetBtn").onclick=()=>location.reload();
+let drag=false,sx=0,sf=0;const foot=$("swingFoot");foot.addEventListener("pointerdown",e=>{if(![2,5,6].includes(S.phase))return;drag=true;sx=e.clientX;sf=S.foot;foot.setPointerCapture(e.pointerId)});foot.addEventListener("pointermove",e=>{if(!drag)return;S.foot=clamp(sf+(e.clientX-sx)*.28,-12,92);S.footSeen=true;render()});foot.addEventListener("pointerup",()=>{if(drag&&S.phase===2)setTimeout(()=>next(3,"NEW SUPPORT LOCATION CREATED"),200);drag=false});render();
