@@ -44,7 +44,7 @@ Later:
 - never place a private AI API key in browser JavaScript
 
 ## Project status
-Current vertical slice is intentionally deterministic and educational. Its fictional training values do not represent real Dyno specifications or performance.
+Current vertical slice is intentionally deterministic and educational. Its fictional training values do not represent any real-world commercial robot specifications or performance.
 
 
 ## V005

@@ -85,4 +85,11 @@ The IMU should return later in:
 - a false-lead diagnosis where the IMU is healthy.
 
 ## Simulation disclaimer
-All values are fictional training values. They communicate engineering relationships and do not represent Dyno specifications or predicted performance.
+All values are fictional training values. They communicate engineering relationships and do not represent any real-world commercial robot specifications or predicted performance.
+
+## Naming / IP safety
+
+The training humanoid is identified only as **UNIT H-01** / **H-01 Training Humanoid**.
+
+This is a neutral internal model designation, not a claimed commercial robot brand.
+No third-party robotics brand or product name should appear in the public game unless explicitly licensed or used in a legally reviewed reference context.
