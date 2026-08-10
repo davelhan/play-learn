@@ -5,9 +5,23 @@ const campaignMapFix=document.createElement('style');
 campaignMapFix.textContent='.act summary{position:relative;padding-right:62px!important}.act summary:after{position:absolute!important;right:20px;top:50%;transform:translateY(-50%)}';
 document.head.appendChild(campaignMapFix);
 
+function applyProgress(data,progress){
+  if(!progress)return data;
+  (data.acts||[]).forEach(a=>{
+    const ap=progress.acts?.[String(a.id)];
+    if(ap)Object.assign(a,ap);
+    (a.missions||[]).forEach(m=>{
+      const mp=progress.missions?.[m.id];
+      if(mp)Object.assign(m,mp);
+    });
+  });
+  return data;
+}
+
 function missionRow(m){
+  const playable=m.status==='PLAYABLE'&&m.url;
   const next=m.status==='NEXT TO BUILD';
-  return `<div class="roadmap-mission ${next?'next':''}">
+  return `<div class="roadmap-mission ${playable?'playable':''} ${next?'next':''}">
     <div class="roadmap-id">${esc(m.id)}</div>
     <div class="roadmap-copy">
       <b>${esc(m.title)}</b>
@@ -15,10 +29,12 @@ function missionRow(m){
       ${m.description?`<p>${esc(m.description)}</p>`:''}
     </div>
     <div class="roadmap-status">${esc(m.status)}</div>
+    ${playable?`<a class="roadmap-play" href="${esc(m.url)}">START</a>`:''}
   </div>`;
 }
 
 function actCard(a){
+  const isActive=a.status==='ACTIVE';
   const isNext=a.status==='NEXT TO DESIGN';
   const refs=(a.prototype_refs||[]).map(r=>`<span class="prototype-ref">REFERENCE · ${esc(r)}</span>`).join('');
   return `<article class="act">
@@ -32,7 +48,7 @@ function actCard(a){
         </div>
         <div class="act-meta">
           ${refs}
-          <span class="act-status ${isNext?'next':'locked'}">${esc(a.status)}</span>
+          <span class="act-status ${isActive?'active':isNext?'next':'locked'}">${esc(a.status)}</span>
         </div>
       </summary>
       <div class="act-body">
@@ -63,10 +79,11 @@ async function loadCampaign(){
   const host=document.getElementById('acts');
   const prototypes=document.getElementById('prototypeGrid');
   try{
-    const data=await fetch('./data/campaign.json?v=map-20260810').then(r=>{
-      if(!r.ok)throw new Error('Campaign data unavailable');
-      return r.json();
-    });
+    const [data,progress]=await Promise.all([
+      fetch('./data/campaign.json?v=map-20260810').then(r=>{if(!r.ok)throw new Error('Campaign data unavailable');return r.json();}),
+      fetch('./data/campaign-progress.json?v=0101-20260810').then(r=>r.ok?r.json():null).catch(()=>null)
+    ]);
+    applyProgress(data,progress);
     host.innerHTML=data.acts.map(actCard).join('');
     if(prototypes)prototypes.innerHTML=data.validated_prototypes.map(prototypeCard).join('<div class="mission-arrow" aria-hidden="true">→</div>');
   }catch(e){
