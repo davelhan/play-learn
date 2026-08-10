@@ -5,13 +5,14 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="PLAY//LEARN Robotics Mission 01 — Know Which Way Is Up">
 <title>PLAY//LEARN — Mission 01</title>
-<link rel="stylesheet" href="../assets/css/lab-v005.css?v=qa4-20260810">
+<link rel="stylesheet" href="../assets/css/lab-v005.css?v=qa5-20260810">
+<link rel="stylesheet" href="../assets/css/mission-qa5.css?v=qa5-20260810">
 </head>
 <body>
 <header class="topbar">
   <div class="topbar-inner">
     <a href="../" class="brand">PLAY<span>//</span>LEARN</a>
-    <div class="mission-id">ROBOTICS · ACT 01 · MISSION 01 · BUILD QA4</div>
+    <div class="mission-id">ROBOTICS · ACT 01 · MISSION 01 · BUILD QA5</div>
     <div class="topbar-spacer" aria-hidden="true"></div>
   </div>
 </header>
@@ -55,17 +56,14 @@
 
     <div id="instruction" class="instruction"></div>
 
-    <div id="taskStatus" class="task-status">
-      <div class="task-status-head">
-        <span>NEXT ACTION</span>
-        <b id="nextActionTitle">RUN INITIAL TEST</b>
-      </div>
+    <div id="taskStatus" class="task-status hidden">
+      <div class="task-status-head"><span>NEXT ACTION</span><b id="nextActionTitle"></b></div>
       <div id="taskChecklist" class="task-checklist"></div>
     </div>
 
     <div class="tool-section">
       <div class="section-label">LIVE CONTROLS</div>
-      <div id="imuPowerControl" class="control-row">
+      <div id="imuPowerControl" class="control-row locked">
         <label>IMU power</label>
         <button id="imuPower" class="toggle on">ONLINE</button>
       </div>
@@ -86,7 +84,6 @@
         <div class="kicker">PHYSICAL SYSTEM</div>
         <h2>H-01 Systems Lab</h2>
       </div>
-
       <div class="stage-actions">
         <button id="coachBtn" class="secondary utility-btn">ASK COACH</button>
         <button id="resetBtn" class="secondary utility-btn">RESET</button>
@@ -95,136 +92,55 @@
     </div>
 
     <div id="stage" class="stage">
-      <div class="floor"></div>
-      <div class="balance-zone"></div>
+      <div class="floor"></div><div class="balance-zone"></div>
       <div id="robot" class="robot">
-        <div class="head"><div class="eye"></div></div>
-        <div class="neck"></div>
-        <div class="torso">
-          <div class="imu-module" id="imuModule">IMU</div>
-          <div class="compute-module">CPU</div>
-        </div>
-        <div class="arm left"></div>
-        <div class="arm right"></div>
-        <div class="leg left"><div class="foot"></div></div>
-        <div class="leg right"><div class="foot"></div></div>
+        <div class="head"><div class="eye"></div></div><div class="neck"></div>
+        <div class="torso"><div class="imu-module" id="imuModule">IMU</div><div class="compute-module">CPU</div></div>
+        <div class="arm left"></div><div class="arm right"></div>
+        <div class="leg left"><div class="foot"></div></div><div class="leg right"><div class="foot"></div></div>
         <div id="grab-label" class="grab-label">DRAG LEFT ↔ RIGHT</div>
       </div>
-      <div class="angle-guide">
-        <span>-20°</span><span>0°</span><span>+20°</span>
-      </div>
+      <div class="angle-guide"><span>-20°</span><span>0°</span><span>+20°</span></div>
       <div id="failureStamp" class="failure-stamp hidden">FALL</div>
     </div>
 
     <div class="signals">
-      <div class="signal">
-        <span>ACTUAL BODY ANGLE</span>
-        <b id="actualAngle">0.0°</b>
-        <div class="signalbar"><i id="actualBar"></i></div>
-      </div>
-      <div class="signal">
-        <span>IMU RAW</span>
-        <b id="imuAngle">0.0°</b>
-        <div class="signalbar"><i id="imuBar"></i></div>
-      </div>
-      <div class="signal">
-        <span>ESTIMATED ANGLE</span>
-        <b id="estimatedAngle">UNKNOWN</b>
-        <div class="signalbar"><i id="estimateBar"></i></div>
-      </div>
+      <div class="signal"><span>ACTUAL BODY ANGLE</span><b id="actualAngle">0.0°</b><div class="signalbar"><i id="actualBar"></i></div></div>
+      <div class="signal"><span>IMU RAW</span><b id="imuAngle">0.0°</b><div class="signalbar"><i id="imuBar"></i></div></div>
+      <div class="signal"><span>ESTIMATED ANGLE</span><b id="estimatedAngle">UNKNOWN</b><div class="signalbar"><i id="estimateBar"></i></div></div>
     </div>
-
-    <div id="resultBox" class="result neutral">
-      <strong>NO TEST RUN</strong>
-      <span>Observe the system before making assumptions.</span>
-    </div>
+    <div id="resultBox" class="result neutral"><strong>NO TEST RUN</strong><span>Observe the system before making assumptions.</span></div>
   </section>
 
   <aside class="right panel">
-    <div class="kicker">SYSTEM FLOW</div>
-    <h2>Information → Action</h2>
+    <div class="kicker">SYSTEM FLOW</div><h2>Information → Action</h2>
     <p class="micro">Les composants peuvent fonctionner séparément et pourtant le robot échoue si l'information n'arrive pas au bon endroit, au bon moment.</p>
-
     <div id="flow" class="flow">
-      <div class="node" data-node="imu">
-        <span>SENSOR</span><b>IMU</b><small id="imuNodeState">RAW DATA OK</small>
-      </div>
-
-      <div class="link broken" id="imuLink">
-        <div class="wire"></div>
-        <div id="plug" class="plug" title="Drag or click to connect"></div>
-        <div id="socket" class="socket" title="Estimator input socket"></div>
-        <div id="connectHint" class="connect-hint">DRAG OR CLICK</div>
-      </div>
-
-      <div class="node" data-node="estimator">
-        <span>ESTIMATION</span><b>STATE ESTIMATOR</b><small id="estNodeState">NO INPUT</small>
-      </div>
+      <div class="node" data-node="imu"><span>SENSOR</span><b>IMU</b><small id="imuNodeState">RAW DATA OK</small></div>
+      <div class="link broken" id="imuLink"><div class="wire"></div><div id="plug" class="plug" title="Sensor output"></div><div id="socket" class="socket" title="Estimator input"></div><div id="connectHint" class="connect-hint hidden">SELECT OUTPUT → INPUT</div></div>
+      <div class="node" data-node="estimator"><span>ESTIMATION</span><b>STATE ESTIMATOR</b><small id="estNodeState">NO INPUT</small></div>
       <div class="link fixed"><div class="wire"></div></div>
-      <div class="node" data-node="control">
-        <span>CONTROL</span><b>BALANCE CTRL</b><small id="controlNodeState">WAITING FOR STATE</small>
-      </div>
+      <div class="node" data-node="control"><span>CONTROL</span><b>BALANCE CTRL</b><small id="controlNodeState">WAITING FOR STATE</small></div>
       <div class="link fixed"><div class="wire"></div></div>
-      <div class="node" data-node="motors">
-        <span>PLANT</span><b>LEG MOTORS</b><small class="ok">ONLINE</small>
-      </div>
+      <div class="node" data-node="motors"><span>PLANT</span><b>LEG MOTORS</b><small class="ok">ONLINE</small></div>
     </div>
-
     <div class="diagnostics">
       <div class="section-label">DIAGNOSTICS</div>
       <div class="metric"><span>State confidence</span><b id="stateConfidence">0%</b></div>
       <div class="metric"><span>Control response</span><b id="controlResponse">92%</b></div>
       <div class="metric"><span>Balance margin</span><b id="balanceMargin">18%</b></div>
     </div>
-
-    <div class="log-wrap">
-      <div class="section-label">SYSTEM LOG</div>
-      <pre id="systemLog">SYSTEM BOOT
+    <div class="log-wrap"><div class="section-label">SYSTEM LOG</div><pre id="systemLog">SYSTEM BOOT
 MOTORS ........ ONLINE
 IMU ........... ONLINE
-STATE ......... UNAVAILABLE</pre>
-    </div>
+STATE ......... UNAVAILABLE</pre></div>
   </aside>
 </section>
 
-<div id="phaseToast" class="phase-toast hidden"></div>
+<div id="coachPanel" class="coach-panel hidden"><div class="coach-head"><div><span>PLAY//LEARN COACH</span><b>Contextual hint</b></div><button id="closeCoach" class="ghost">×</button></div><p id="coachText"></p></div>
+<div id="conceptReveal" class="modal hidden"><div class="modal-card"><div class="kicker">NAME WHAT YOU JUST DISCOVERED</div><h2 id="conceptTitle">STATE ESTIMATION</h2><p id="conceptText"></p><div class="concept-chain">MEASUREMENT <span>→</span> ESTIMATE <span>→</span> CONTROL <span>→</span> ACTION</div><button id="conceptContinue" class="primary">USE IT</button></div></div>
+<div id="completeModal" class="modal hidden"><div class="modal-card complete-card"><div class="kicker">MISSION COMPLETE</div><h2>ORIENTATION STACK INSTALLED.</h2><p>Tu as distingué l'état physique, la mesure, l'estimation et le contrôle à partir de leurs conséquences.</p><div class="mastery"><div><span>IMU</span><b>EXPLORED</b></div><div><span>STATE ESTIMATION</span><b>APPLIED</b></div><div><span>CONTROL</span><b>SEEN</b></div></div><div class="unlock-card"><span>PERSISTENT ROBOT UNLOCK</span><b>ORIENTATION STACK</b></div><div class="complete-actions"><a href="../#campaign" class="secondary buttonlink">CAMPAIGN</a><a href="./mission-02.html" class="primary buttonlink">NEXT MISSION →</a></div></div></div>
 
-<div id="coachPanel" class="coach-panel hidden">
-  <div class="coach-head">
-    <div><span>PLAY//LEARN COACH</span><b>Contextual hint</b></div>
-    <button id="closeCoach" class="ghost">×</button>
-  </div>
-  <p id="coachText"></p>
-</div>
-
-<div id="conceptReveal" class="modal hidden">
-  <div class="modal-card">
-    <div class="kicker">NAME WHAT YOU JUST DISCOVERED</div>
-    <h2 id="conceptTitle">STATE ESTIMATION</h2>
-    <p id="conceptText"></p>
-    <div class="concept-chain">MEASUREMENT <span>→</span> ESTIMATE <span>→</span> CONTROL <span>→</span> ACTION</div>
-    <button id="conceptContinue" class="primary">USE IT</button>
-  </div>
-</div>
-
-<div id="completeModal" class="modal hidden">
-  <div class="modal-card complete-card">
-    <div class="kicker">MISSION COMPLETE</div>
-    <h2>ORIENTATION STACK INSTALLED.</h2>
-    <p>Tu n'as pas mémorisé une définition. Tu as observé un IMU, supprimé son signal, réparé sa connexion, corrigé son timing, puis distingué une panne de contrôle d'une panne de sensing.</p>
-    <div class="mastery">
-      <div><span>IMU</span><b>EXPLORED</b></div>
-      <div><span>STATE ESTIMATION</span><b>APPLIED</b></div>
-      <div><span>CONTROL</span><b>SEEN</b></div>
-    </div>
-    <div class="unlock-card"><span>PERSISTENT ROBOT UNLOCK</span><b>ORIENTATION STACK</b></div>
-    <div class="complete-actions">
-      <a href="../#campaign" class="secondary buttonlink">CAMPAIGN</a>
-      <a href="./mission-02.html" class="primary buttonlink">NEXT MISSION →</a>
-    </div>
-  </div>
-</div>
-
-<script src="../assets/js/lab-v005.js?v=qa4-20260810"></script>
+<script src="../assets/js/lab-m01-qa5.js?v=qa5-20260810"></script>
 </body>
 </html>
