@@ -1,0 +1,13 @@
+PLAY//LEARN V005 — COMPLETE LAYOUT REWRITE
+
+Replace these 3 files in the repository:
+- lab/index.html
+- assets/css/lab-v005.css
+- assets/js/lab-v005.js
+
+Result:
+ASK COACH | RESET | RUN INITIAL TEST
+are now grouped inside the Physical System panel header.
+
+Commit suggestion:
+V005 UI — move mission controls into system panel

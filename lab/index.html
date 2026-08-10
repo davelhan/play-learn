@@ -9,11 +9,10 @@
 </head>
 <body>
 <header class="topbar">
-  <a href="../" class="brand">PLAY<span>//</span>LEARN</a>
-  <div class="mission-id">ROBOTICS · ACT 01 · MISSION 01</div>
-  <div class="top-actions">
-    <button id="coachBtn" class="ghost">ASK COACH</button>
-    <button id="resetBtn" class="ghost">RESET</button>
+  <div class="topbar-inner">
+    <a href="../" class="brand">PLAY<span>//</span>LEARN</a>
+    <div class="mission-id">ROBOTICS · ACT 01 · MISSION 01</div>
+    <div class="topbar-spacer" aria-hidden="true"></div>
   </div>
 </header>
 
@@ -77,11 +76,16 @@
 
   <section class="center panel">
     <div class="stage-head">
-      <div>
+      <div class="stage-title">
         <div class="kicker">PHYSICAL SYSTEM</div>
         <h2>Humanoid Lab</h2>
       </div>
-      <button id="runTestBtn" class="secondary">▶ RUN STAND TEST</button>
+
+      <div class="stage-actions">
+        <button id="coachBtn" class="secondary utility-btn">ASK COACH</button>
+        <button id="resetBtn" class="secondary utility-btn">RESET</button>
+        <button id="runTestBtn" class="secondary run-btn">▶ RUN INITIAL TEST</button>
+      </div>
     </div>
 
     <div id="stage" class="stage">

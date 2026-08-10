@@ -328,6 +328,11 @@ $("startBtn").onclick=()=>{
  $("game").classList.remove("hidden");
  updatePhaseUI();
 };
-$("resetBtn").onclick=()=>location.reload();
+$("resetBtn").onclick=()=>{
+  const progressed = state.phase > 0 || state.testRuns > 0;
+  if(!progressed || window.confirm("Reset this mission and lose the current attempt?")){
+    location.reload();
+  }
+};
 
 updateSignals();

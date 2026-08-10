@@ -5,9 +5,26 @@
 }
 body{margin:0;background:radial-gradient(circle at 55% -15%,#1a2a35,#07090c 52%);color:var(--text);font-family:Arial,Helvetica,sans-serif;min-height:100vh}
 button,a{font:inherit}.hidden{display:none!important}
-.topbar{height:66px;border-bottom:1px solid var(--line);padding:0 22px;display:flex;align-items:center;justify-content:space-between;background:#080b0ef0;position:sticky;top:0;z-index:30}
+.topbar{
+  height:66px;
+  border-bottom:1px solid var(--line);
+  background:#080b0ef0;
+  position:sticky;
+  top:0;
+  z-index:30;
+}
+.topbar-inner{
+  max-width:1560px;
+  height:100%;
+  margin:0 auto;
+  padding:0 14px;
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+}
+.topbar-spacer{min-width:1px}
 .brand{text-decoration:none;color:var(--text);font-weight:900;letter-spacing:.12em}.brand span{color:var(--mint)}
-.mission-id{font-size:10px;letter-spacing:.14em;color:var(--muted)}.top-actions{display:flex;gap:7px}
+.mission-id{font-size:10px;letter-spacing:.14em;color:var(--muted)}
 button,.buttonlink{border:1px solid var(--line);border-radius:9px;padding:10px 13px;cursor:pointer;text-decoration:none}
 .primary{background:var(--mint);border-color:var(--mint);color:#06120d;font-weight:900}.secondary{background:#1a242c;color:var(--text)}.ghost{background:transparent;color:var(--muted)}
 button:disabled{opacity:.28;cursor:not-allowed}.wide{width:100%;margin-top:16px}.big{padding:14px 20px}
@@ -24,7 +41,47 @@ button:disabled{opacity:.28;cursor:not-allowed}.wide{width:100%;margin-top:16px}
 .tool-section{margin-top:12px}.control-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid #222d35;font-size:12px}.toggle{background:#18241f;color:var(--mint)}.toggle.off{background:#211416;color:var(--bad);border-color:#58363a}
 .range-control{padding:12px 0;border-bottom:1px solid #222d35}.range-control label{display:flex;justify-content:space-between;font-size:11px}.range-control label b{color:var(--mint)}input[type=range]{width:100%;margin-top:8px}.range-control.locked{opacity:.25;pointer-events:none}
 
-.stage-head{display:flex;align-items:center;justify-content:space-between}.stage-head h2,.right h2{margin:4px 0 8px;font-size:25px}.stage{height:535px;border:1px solid #202a32;border-radius:12px;background:
+.stage-head{
+  min-height:52px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:18px;
+}
+.stage-title{
+  flex:1 1 auto;
+  min-width:0;
+}
+.stage-actions{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:7px;
+  padding-top:0;
+}
+.stage-actions button{
+  white-space:nowrap;
+}
+.utility-btn{
+  min-width:82px;
+  height:36px;
+  padding:0 12px;
+  color:#a9b6be;
+  background:#131c23;
+}
+.utility-btn:hover{
+  color:var(--text);
+  border-color:#465763;
+  background:#19242c;
+}
+.run-btn{
+  height:36px;
+  min-width:145px;
+  padding:0 14px;
+  color:var(--text);
+  background:#172129;
+}.stage-head h2,.right h2{margin:4px 0 8px;font-size:25px}.stage{height:535px;border:1px solid #202a32;border-radius:12px;background:
 linear-gradient(transparent 49.8%,#141c22 50%,transparent 50.2%),
 linear-gradient(90deg,transparent 49.8%,#141c22 50%,transparent 50.2%),#090e12;
 position:relative;overflow:hidden;margin-top:8px;touch-action:none}.floor{position:absolute;left:0;right:0;bottom:72px;height:2px;background:#4c5862}.balance-zone{position:absolute;bottom:66px;left:50%;transform:translateX(-50%);width:140px;height:12px;border:1px solid #395448;border-radius:50%;background:#10201a}
@@ -40,3 +97,38 @@ position:relative;overflow:hidden;margin-top:8px;touch-action:none}.floor{positi
 .modal{position:fixed;inset:0;background:#05070adc;display:grid;place-items:center;padding:20px;z-index:70}.modal-card{width:min(680px,100%);background:linear-gradient(180deg,#182129,#0e1419);border:1px solid #33414b;border-radius:15px;padding:28px}.modal-card h2{font-size:42px;letter-spacing:-.04em;margin:8px 0 12px}.modal-card p{color:#a9b6be;line-height:1.55}.concept-chain{margin:22px 0;padding:15px;border:1px solid #31423c;background:#0b1412;border-radius:9px;display:flex;justify-content:space-between;color:#9fb0b8;font-size:11px;font-weight:900}.concept-chain span{color:var(--mint)}.mastery{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:20px 0}.mastery div,.unlock-card{border:1px solid #2d3b45;border-radius:9px;padding:12px}.mastery span,.unlock-card span{display:block;font-size:8px;letter-spacing:.12em;color:#70808b}.mastery b{display:block;margin-top:5px;color:var(--mint)}.unlock-card{margin:10px 0 20px;border-color:#426456;background:#0d1713}.unlock-card b{display:block;font-size:25px;color:var(--mint);margin-top:5px}
 @media(max-width:1150px){.game{grid-template-columns:250px 1fr}.right{grid-column:1/-1}.flow{display:grid;grid-template-columns:1fr 42px 1fr 42px 1fr 42px 1fr;align-items:center}.link{height:auto;min-height:40px}.link .wire{left:0;right:0;top:50%;bottom:auto;width:auto;height:1px}.link.broken .wire{width:40%}.plug{left:30%;top:calc(50% - 8px)}.socket{right:-2px;left:auto;bottom:auto;top:calc(50% - 10px)}.link.connected .wire{width:100%;height:1px}.link.connected .plug{right:-1px;left:auto;top:calc(50% - 8px);bottom:auto}}
 @media(max-width:820px){.mission-id{display:none}.intro{grid-template-columns:1fr}.intro-visual{min-height:360px}.brief{grid-template-columns:1fr}.game{grid-template-columns:1fr}.signals{grid-template-columns:1fr}.stage{height:500px}.flow{display:block}.link{height:42px}.link .wire{left:50%;right:auto;top:0;bottom:0;width:1px;height:auto}.link.broken .wire{width:1px;height:17px}.plug{left:calc(50% - 8px);top:11px}.socket{left:calc(50% - 10px);right:auto;bottom:-2px;top:auto}.link.connected .wire{height:100%;width:1px}.link.connected .plug{left:calc(50% - 8px);bottom:-1px;top:auto}.mastery{grid-template-columns:1fr}}
+
+
+/* V005 LAYOUT REWRITE — mission controls belong to the physical-system header */
+@media(max-width:900px){
+  .topbar-inner{
+    grid-template-columns:1fr auto;
+  }
+  .topbar-spacer{
+    display:none;
+  }
+  .mission-id{
+    text-align:right;
+  }
+  .stage-head{
+    display:block;
+  }
+  .stage-actions{
+    justify-content:flex-start;
+    margin-top:10px;
+    flex-wrap:wrap;
+  }
+}
+@media(max-width:560px){
+  .stage-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+  }
+  .stage-actions .run-btn{
+    grid-column:1/-1;
+    width:100%;
+  }
+  .utility-btn{
+    width:100%;
+  }
+}
