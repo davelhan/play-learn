@@ -1,0 +1,25 @@
+.mission-launch{padding-top:90px;padding-bottom:110px}
+.mission-launch-head{max-width:940px;margin-bottom:34px}
+.mission-launch-head h2{max-width:980px}
+.mission-launch-head h2 span{color:var(--mint)}
+.mission-launch-head>p:last-child{max-width:780px;color:var(--muted);font-size:15px;line-height:1.55;margin:18px 0 0}
+
+.mission-grid{display:grid;grid-template-columns:minmax(0,1fr) 64px minmax(0,1fr);align-items:stretch;gap:12px}
+.mission-card{position:relative;min-height:340px;padding:24px;background:linear-gradient(180deg,#172129,#0d1318);border:1px solid var(--line);border-radius:14px;display:flex;flex-direction:column;overflow:hidden;transition:transform .18s ease,border-color .18s ease,background .18s ease}
+.mission-card:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 85% 5%,#8ff0c90d,transparent 34%);pointer-events:none}
+.mission-card:hover{transform:translateY(-2px);border-color:#3c4c57;background:linear-gradient(180deg,#19242c,#0e151a)}
+.mission-card-top{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}
+.mission-number{font-size:48px;line-height:1;font-weight:900;letter-spacing:-.05em;color:#485662}
+.mission-status{padding:6px 9px;border:1px solid #315548;border-radius:999px;color:var(--mint);background:#0e1a15;font-size:9px;font-weight:900;letter-spacing:.14em}
+.mission-card-copy{position:relative;z-index:1;margin:32px 0 26px}
+.mission-domain{margin:0 0 8px!important;color:var(--mint)!important;font-size:10px!important;font-weight:900;letter-spacing:.14em}
+.mission-card h3{font-size:30px;line-height:1;letter-spacing:-.035em;margin:0 0 14px}
+.mission-card-copy>p:last-child{margin:0;color:var(--muted);line-height:1.55;max-width:560px}
+.mission-start{position:relative;z-index:1;margin-top:auto;align-self:flex-start;min-width:170px;text-align:center}
+.mission-arrow{display:grid;place-items:center;color:var(--mint);font-size:44px;font-weight:300;opacity:.7}
+
+@media(max-width:900px){
+  .mission-grid{grid-template-columns:1fr}
+  .mission-arrow{height:42px;transform:rotate(90deg);font-size:34px}
+  .mission-card{min-height:300px}
+}
