@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="PLAY//LEARN Robotics — Act 01 Mission 04: Build the Architecture">
+<title>PLAY//LEARN — 01.04 Build the Architecture</title>
+<link rel="stylesheet" href="../../assets/css/a01m01-system-layers.css?v=1-20260810">
+<link rel="stylesheet" href="../../assets/css/a01m04-build-architecture.css?v=1-20260810">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="../../">PLAY<span>//</span>LEARN</a>
+  <div class="mission-id">ROBOTICS · ACT 01 · 01.04 · BUILD THE ARCHITECTURE</div>
+  <a class="map-link" href="../../#campaign">CAMPAIGN MAP</a>
+</header>
+<main>
+<section id="intro" class="intro m04-intro">
+  <div>
+    <p class="kicker">ACT 01 · THE MACHINE · BUILD</p>
+    <h1>STOP READING IT.<br><em>ASSEMBLE IT.</em></h1>
+    <p class="lead">Tu connais maintenant les six fonctions, les deux sens de circulation et la méthode de diagnostic. Cette fois, le tableau est vide. Construis une architecture capable d'exécuter une mission, de voir quand le monde change et de modifier sa décision.</p>
+    <div class="brief">
+      <div><span>REQUIREMENT</span><b>Carry inspection case → Station D</b></div>
+      <div><span>DISTURBANCE</span><b>Unexpected obstacle</b></div>
+      <div><span>FAULT</span><b>Actuator thermal derate</b></div>
+    </div>
+    <button id="startBtn" class="primary big" type="button">START 01.04</button>
+  </div>
+  <div class="build-preview" aria-hidden="true">
+    <div class="preview-parts"><span>MISSION</span><span>STATE</span><span>CONTROL</span><span>CAMERA</span><span>MOTION</span><span>BATTERY</span></div>
+    <i>→</i><div class="preview-board"><b>?</b><b>?</b><b>?</b><b>?</b><b>?</b><b>?</b></div>
+  </div>
+</section>
+
+<section id="game" class="game hidden">
+  <aside class="panel left-panel">
+    <p class="kicker">BUILD LOOP</p><h2 id="phaseName">ASSEMBLE</h2><p id="phaseGoal" class="phase-goal"></p>
+    <div class="progress"><i id="progressFill"></i></div><div id="phaseCount" class="phase-count">01 / 06</div>
+    <div class="instruction"><span>WHAT TO DO</span><b id="actionText"></b></div>
+    <div class="watch"><span>WHAT TO WATCH</span><div id="watchList"></div></div>
+    <div class="source-note"><span>COURSE CONCEPT</span><b>Function ≠ implementation</b><p>Une architecture fonctionnelle décrit ce que le système doit faire. Une caméra, une batterie ou un moteur sont des éléments physiques qui peuvent implémenter une partie de ces fonctions.</p></div>
+  </aside>
+
+  <section class="panel center-panel">
+    <div class="stage-head"><div><p class="kicker">ARCHITECTURE BENCH</p><h2>Build → Wire → Test</h2></div><div class="stage-actions"><button id="coachBtn" class="secondary" type="button">ASK COACH</button><button id="resetBtn" class="secondary" type="button">RESET</button></div></div>
+    <div class="requirements-strip"><div><span>MISSION</span><b>CASE → STATION D</b></div><div><span>MUST ADAPT TO</span><b>OBSTACLE</b></div><div><span>MUST HANDLE</span><b>THERMAL DERATE</b></div></div>
+
+    <div class="builder-layout">
+      <div class="module-tray">
+        <div class="tray-title"><span>AVAILABLE BLOCKS</span><b>Drag or select a block</b></div>
+        <div id="moduleTray" class="module-list">
+          <button class="module-card function" draggable="true" data-module="mission" type="button"><span>FUNCTION</span><b>MISSION / USE CASE</b><small>Outcome + constraints</small></button>
+          <button class="module-card function" draggable="true" data-module="behavior" type="button"><span>FUNCTION</span><b>TASK AUTONOMY / BEHAVIOR</b><small>Sequence + decisions</small></button>
+          <button class="module-card function" draggable="true" data-module="state" type="button"><span>FUNCTION</span><b>PERCEPTION / STATE ESTIMATION</b><small>Usable body + world state</small></button>
+          <button class="module-card function" draggable="true" data-module="motion" type="button"><span>FUNCTION</span><b>MOTION GENERATION / PLANNING</b><small>Feasible desired motion</small></button>
+          <button class="module-card function" draggable="true" data-module="control" type="button"><span>FUNCTION</span><b>REAL-TIME CONTROL</b><small>Fast corrections</small></button>
+          <button class="module-card function" draggable="true" data-module="plant" type="button"><span>FUNCTION</span><b>PHYSICAL PLANT / ENERGY</b><small>Forces + contacts + energy</small></button>
+          <button class="module-card implementation" draggable="true" data-module="camera" type="button"><span>IMPLEMENTATION</span><b>CAMERA</b><small>Physical sensing hardware</small></button>
+          <button class="module-card implementation" draggable="true" data-module="battery" type="button"><span>IMPLEMENTATION</span><b>BATTERY PACK</b><small>Physical energy hardware</small></button>
+          <button class="module-card implementation" draggable="true" data-module="motor" type="button"><span>IMPLEMENTATION</span><b>JOINT MOTOR</b><small>Physical actuator</small></button>
+        </div>
+      </div>
+
+      <div class="architecture-board">
+        <div class="board-head"><span>FUNCTIONAL ARCHITECTURE</span><b id="assemblyCount">0 / 6 functions placed</b></div>
+        <div id="slots" class="slot-stack">
+          <div class="build-slot" data-slot="0" data-expect="mission"><small>01</small><div><span>OUTCOME + CONSTRAINTS</span><b>DROP FUNCTION HERE</b></div></div>
+          <div class="interface-row" data-interface="0"><span class="cmd fixed">COMMAND ↓</span><button class="return-link" data-return="0" type="button">EVIDENCE ↑ OFF</button></div>
+          <div class="build-slot" data-slot="1" data-expect="behavior"><small>02</small><div><span>SEQUENCE + DECISIONS</span><b>DROP FUNCTION HERE</b></div></div>
+          <div class="interface-row" data-interface="1"><span class="cmd fixed">COMMAND ↓</span><button class="return-link" data-return="1" type="button">EVIDENCE ↑ OFF</button></div>
+          <div class="build-slot" data-slot="2" data-expect="state"><small>03</small><div><span>USABLE BODY + WORLD STATE</span><b>DROP FUNCTION HERE</b></div></div>
+          <div class="interface-row" data-interface="2"><span class="cmd fixed">COMMAND ↓</span><button class="return-link" data-return="2" type="button">EVIDENCE ↑ OFF</button></div>
+          <div class="build-slot" data-slot="3" data-expect="motion"><small>04</small><div><span>FEASIBLE DESIRED MOTION</span><b>DROP FUNCTION HERE</b></div></div>
+          <div class="interface-row" data-interface="3"><span class="cmd fixed">COMMAND ↓</span><button class="return-link" data-return="3" type="button">EVIDENCE ↑ OFF</button></div>
+          <div class="build-slot" data-slot="4" data-expect="control"><small>05</small><div><span>FAST CORRECTIONS</span><b>DROP FUNCTION HERE</b></div></div>
+          <div class="interface-row" data-interface="4"><span class="cmd fixed">COMMAND ↓</span><button class="return-link" data-return="4" type="button">EVIDENCE ↑ OFF</button></div>
+          <div class="build-slot" data-slot="5" data-expect="plant"><small>06</small><div><span>FORCES + CONTACTS + ENERGY</span><b>DROP FUNCTION HERE</b></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="center-actions"><button id="mainAction" class="primary" type="button" disabled>VALIDATE FUNCTIONAL STACK</button></div>
+    <div id="result" class="result neutral"><b>EMPTY ARCHITECTURE</b><span>Place functions according to what each slot must accomplish.</span></div>
+    <div id="reflection" class="reflection hidden"><div><span>WHAT THE TEST PROVED</span><b id="reflectionSaw"></b></div><div><span>WHAT TO CHANGE</span><b id="reflectionWhy"></b></div><button id="reflectionContinue" class="secondary" type="button">CONTINUE</button></div>
+  </section>
+
+  <aside class="panel right-panel">
+    <p class="kicker">LIVE VALIDATION</p><h2>Does your architecture work?</h2><p class="micro">The board validates behavior, not labels. A normal task only proves the command path. Disturbances test whether reality can travel back upward.</p>
+    <div class="build-status"><div><span>FUNCTION STACK</span><b id="stackStatus">INCOMPLETE</b></div><div><span>COMMAND PATH</span><b id="commandStatus">NOT READY</b></div><div><span>EVIDENCE PATH</span><b id="evidenceStatus">0 / 5 LINKS</b></div><div><span>LAST TEST</span><b id="testStatus">NOT RUN</b></div></div>
+    <div class="translation-box"><span>KEY IDEA</span><p id="keyIdea">A component can be important without being a top-level function in the architecture.</p></div>
+    <div class="log-wrap"><span>SYSTEM LOG</span><pre id="log">BENCH ........... READY\nFUNCTIONS ....... 0 / 6\nCOMMAND PATH .... NOT BUILT\nEVIDENCE PATH ... 0 / 5</pre></div>
+  </aside>
+</section>
+</main>
+
+<div id="conceptModal" class="modal hidden"><div class="modal-card"><p class="kicker">FUNCTIONAL STACK BUILT</p><h2>NOW MAKE IT CLOSED-LOOP.</h2><p>Ton architecture peut maintenant transformer une mission en action. Mais elle est encore à sens unique : les cinq retours d'évidence sont désactivés. Un système peut réussir en conditions nominales tout en étant incapable de s'adapter.</p><div class="lesson-chain">MISSION ↓ BEHAVIOR ↓ STATE ↓ MOTION ↓ CONTROL ↓ PLANT<br><br>REALITY ↑ ? ↑ ? ↑ ? ↑ ? ↑ ?</div><button id="conceptContinue" class="primary" type="button">TEST THE ONE-WAY ARCHITECTURE</button></div></div>
+
+<div id="completeModal" class="modal hidden"><div class="modal-card"><p class="kicker">01.04 COMPLETE</p><h2>FUNCTIONAL ARCHITECTURE BUILT.</h2><p>Tu as assemblé les six fonctions, distingué fonction et implémentation, puis transformé une chaîne descendante en système capable de renvoyer l'évidence nécessaire à l'adaptation.</p><div class="final-stack"><b>DEFINE FUNCTIONS</b><i>↓</i><b>BUILD COMMAND PATH</b><i>↓</i><b>ADD RETURN EVIDENCE</b><i>↓</i><b>TEST NOMINAL</b><i>↓</i><b>TEST DISTURBANCE</b></div><div class="unlock"><span>PERSISTENT BUILD</span><b>ASSEMBLED SYSTEM ARCHITECTURE</b></div><div class="complete-actions"><a class="secondary linkbtn" href="../../#campaign">CAMPAIGN MAP</a><button id="replayBtn" class="primary" type="button">REPLAY 01.04</button></div></div></div>
+<div id="coachPanel" class="coach hidden"><div><span>COACH</span><button id="closeCoach" type="button">×</button></div><p id="coachText"></p></div>
+<script src="../../assets/js/a01m04-build-architecture.js?v=1-20260810"></script>
+</body>
+</html>
