@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="PLAY//LEARN Robotics — Act 01 Mission 01: System Layers">
+<title>PLAY//LEARN — 01.01 System Layers</title>
+<link rel="stylesheet" href="../../assets/css/a01m01-system-layers.css?v=1-20260810">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="../../">PLAY<span>//</span>LEARN</a>
+  <div class="mission-id">ROBOTICS · ACT 01 · 01.01 · SYSTEM LAYERS</div>
+  <a class="map-link" href="../../#campaign">CAMPAIGN MAP</a>
+</header>
+
+<main>
+<section id="intro" class="intro">
+  <div>
+    <p class="kicker">ACT 01 · THE MACHINE · DISCOVER</p>
+    <h1>ONE TASK.<br><em>SIX LAYERS.</em></h1>
+    <p class="lead">UNIT H-01 reçoit une instruction simple : déplacer une mallette d’inspection jusqu’à la Station B. Les moteurs sont alimentés. Pourtant, une phrase humaine n’est pas une commande moteur. Cette mission te fait suivre la transformation de l’information jusqu’au mouvement réel.</p>
+    <div class="brief">
+      <div><span>MISSION</span><b>Move inspection case → Station B</b></div>
+      <div><span>KNOWN</span><b>Motors powered</b></div>
+      <div><span>DISCOVER</span><b>How intent becomes action</b></div>
+    </div>
+    <button id="startBtn" class="primary big" type="button">START 01.01</button>
+  </div>
+  <div class="intro-stack" aria-hidden="true">
+    <div>MISSION</div><i>↓</i><div>?</div><i>↓</i><div>?</div><i>↓</i><div>?</div><i>↓</i><div>?</div><i>↓</i><div>BODY</div>
+  </div>
+</section>
+
+<section id="game" class="game hidden">
+  <aside class="panel left-panel">
+    <p class="kicker">LEARNING LOOP</p>
+    <h2 id="phaseName">HOOK</h2>
+    <p id="phaseGoal" class="phase-goal"></p>
+    <div class="progress"><i id="progressFill"></i></div>
+    <div id="phaseCount" class="phase-count">01 / 05</div>
+
+    <div class="instruction">
+      <span>WHAT TO DO</span>
+      <b id="actionText"></b>
+    </div>
+
+    <div class="watch">
+      <span>WHAT TO WATCH</span>
+      <div id="watchList"></div>
+    </div>
+
+    <div class="source-note">
+      <span>COURSE CONCEPT</span>
+      <b>Functional architecture</b>
+      <p>On suit ce que le système doit faire avant de parler des composants physiques précis qui l’implémentent.</p>
+    </div>
+  </aside>
+
+  <section class="panel center-panel">
+    <div class="stage-head">
+      <div>
+        <p class="kicker">SYSTEM TRACE</p>
+        <h2>Instruction → Physical Action</h2>
+      </div>
+      <div class="stage-actions">
+        <button id="coachBtn" class="secondary" type="button">ASK COACH</button>
+        <button id="resetBtn" class="secondary" type="button">RESET</button>
+      </div>
+    </div>
+
+    <div class="task-banner">
+      <span>ACTIVE TASK</span>
+      <b id="activeTask">MOVE INSPECTION CASE → STATION B</b>
+    </div>
+
+    <div class="system-layout">
+      <div id="stack" class="stack">
+        <article class="layer mission active" data-index="0">
+          <div class="layer-num">01</div>
+          <div><span class="layer-role">HIGH-LEVEL PURPOSE</span><h3>MISSION / USE CASE</h3><p>Defines the outcome and constraints.</p></div>
+          <div class="layer-state" id="state0">TASK READY</div>
+        </article>
+        <div class="down-arrow">↓</div>
+
+        <article class="layer locked" data-index="1">
+          <div class="layer-num">02</div>
+          <div><span class="layer-role">WHAT HAPPENS NEXT?</span><h3 id="name1">UNKNOWN LAYER</h3><p id="desc1">A high-level task still needs to become an ordered behavior.</p></div>
+          <div class="layer-state" id="state1">WAITING</div>
+        </article>
+        <div class="down-arrow">↓</div>
+
+        <article class="layer locked" data-index="2">
+          <div class="layer-num">03</div>
+          <div><span class="layer-role">WHAT IS TRUE RIGHT NOW?</span><h3 id="name2">UNKNOWN LAYER</h3><p id="desc2">The robot needs a usable state of itself and its environment.</p></div>
+          <div class="layer-state" id="state2">WAITING</div>
+        </article>
+        <div class="down-arrow">↓</div>
+
+        <article class="layer locked" data-index="3">
+          <div class="layer-num">04</div>
+          <div><span class="layer-role">HOW SHOULD THE BODY MOVE?</span><h3 id="name3">UNKNOWN LAYER</h3><p id="desc3">Desired outcomes must become a feasible motion.</p></div>
+          <div class="layer-state" id="state3">WAITING</div>
+        </article>
+        <div class="down-arrow">↓</div>
+
+        <article class="layer locked" data-index="4">
+          <div class="layer-num">05</div>
+          <div><span class="layer-role">WHAT CORRECTION NOW?</span><h3 id="name4">UNKNOWN LAYER</h3><p id="desc4">Motion must become fast closed-loop corrections.</p></div>
+          <div class="layer-state" id="state4">WAITING</div>
+        </article>
+        <div class="down-arrow">↓</div>
+
+        <article class="layer plant locked" data-index="5">
+          <div class="layer-num">06</div>
+          <div><span class="layer-role">MAKE IT PHYSICAL</span><h3 id="name5">PHYSICAL PLANT / ENERGY</h3><p>Actuators, mechanics, contacts and energy produce real motion.</p></div>
+          <div class="layer-state" id="state5">MOTORS POWERED</div>
+        </article>
+      </div>
+
+      <div class="world">
+        <div id="robot" class="robot"><div class="head"></div><div class="body"></div><div class="legs"></div></div>
+        <div id="case" class="case">CASE</div>
+        <div class="station">STATION B</div>
+        <div id="motionPath" class="motion-path"></div>
+      </div>
+    </div>
+
+    <div id="messageCard" class="message-card">
+      <div><span>MESSAGE ENTERING LAYER</span><b id="inputMessage">“Move inspection case to Station B.”</b></div>
+      <div class="message-arrow">→</div>
+      <div><span>OUTPUT</span><b id="outputMessage">Not translated yet.</b></div>
+    </div>
+
+    <div class="center-actions">
+      <button id="mainAction" class="primary" type="button">SEND TASK DIRECTLY TO MOTORS</button>
+    </div>
+
+    <div id="result" class="result neutral"><b>READY</b><span>Start by trying the obvious shortcut.</span></div>
+  </section>
+
+  <aside class="panel right-panel">
+    <p class="kicker">LIVE MODEL</p>
+    <h2>What changes?</h2>
+    <p class="micro">Observe how the same mission becomes a different kind of information at each layer.</p>
+
+    <div class="trace-readout">
+      <div><span>MISSION INTENT</span><b id="rMission">AVAILABLE</b></div>
+      <div><span>BEHAVIOR</span><b id="rBehavior">—</b></div>
+      <div><span>USABLE STATE</span><b id="rState">—</b></div>
+      <div><span>DESIRED MOTION</span><b id="rMotion">—</b></div>
+      <div><span>CONTROL COMMAND</span><b id="rControl">—</b></div>
+      <div><span>PHYSICAL ACTION</span><b id="rAction">NONE</b></div>
+    </div>
+
+    <div class="translation-box">
+      <span>KEY IDEA</span>
+      <p id="keyIdea">A robot is not “AI with a body”. A useful behavior is produced by several coupled layers transforming information.</p>
+    </div>
+
+    <div class="log-wrap">
+      <span>SYSTEM LOG</span>
+      <pre id="log">TASK RECEIVED
+MOTORS ........ POWERED
+EXECUTION ..... IDLE</pre>
+    </div>
+  </aside>
+</section>
+</main>
+
+<div id="lessonModal" class="modal hidden">
+  <div class="modal-card">
+    <p class="kicker">WHAT YOU JUST SAW</p>
+    <h2 id="lessonTitle"></h2>
+    <p id="lessonObservation"></p>
+    <div id="lessonChain" class="lesson-chain"></div>
+    <button id="lessonContinue" class="primary" type="button">CONTINUE</button>
+  </div>
+</div>
+
+<div id="faultModal" class="modal hidden">
+  <div class="modal-card wide-card">
+    <p class="kicker">COMPARE THE LAYERS</p>
+    <h2>Same robot. Different missing function.</h2>
+    <p>Run two controlled failures. You are not looking for a “right answer”; you are comparing how far the task gets before the chain stops.</p>
+    <div class="fault-grid">
+      <button class="fault-card" data-fault="perception" type="button"><span>EXPERIMENT A</span><b>REMOVE USABLE STATE</b><small>Keep mission and behavior intact.</small></button>
+      <button class="fault-card" data-fault="control" type="button"><span>EXPERIMENT B</span><b>REMOVE REAL-TIME CONTROL</b><small>Keep the motion plan intact.</small></button>
+    </div>
+    <div id="faultResult" class="fault-result">Run both experiments.</div>
+    <button id="faultContinue" class="primary hidden" type="button">TRANSFER TO A NEW TASK</button>
+  </div>
+</div>
+
+<div id="completeModal" class="modal hidden">
+  <div class="modal-card">
+    <p class="kicker">01.01 COMPLETE</p>
+    <h2>SYSTEM STACK INSTALLED.</h2>
+    <p>Tu as suivi une instruction depuis la mission jusqu’au monde physique et observé que chaque couche produit une représentation différente du même objectif.</p>
+    <div class="final-stack">
+      <b>MISSION / USE CASE</b><i>↓</i><b>TASK AUTONOMY / BEHAVIOR</b><i>↓</i><b>PERCEPTION / STATE ESTIMATION</b><i>↓</i><b>MOTION GENERATION / PLANNING</b><i>↓</i><b>REAL-TIME CONTROL</b><i>↓</i><b>PHYSICAL PLANT / ENERGY</b>
+    </div>
+    <div class="unlock"><span>PERSISTENT BUILD</span><b>FUNCTIONAL ARCHITECTURE MAP</b></div>
+    <div class="complete-actions"><a class="secondary linkbtn" href="../../#campaign">CAMPAIGN MAP</a><button id="replayBtn" class="primary" type="button">REPLAY 01.01</button></div>
+  </div>
+</div>
+
+<div id="coachPanel" class="coach hidden"><div><span>COACH</span><button id="closeCoach" type="button">×</button></div><p id="coachText"></p></div>
+
+<script src="../../assets/js/a01m01-system-layers.js?v=1-20260810"></script>
+</body>
+</html>
