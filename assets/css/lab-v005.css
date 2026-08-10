@@ -134,3 +134,20 @@ position:relative;overflow:hidden;margin-top:8px;touch-action:none}.floor{positi
 }
 
 .complete-actions{display:flex;gap:8px;align-items:center}
+
+
+/* === MISSION 01 QA / GUIDANCE FIX === */
+.task-status{margin:12px 0 16px;padding:12px;border:1px solid #33443e;border-radius:10px;background:#0a1210}
+.task-status-head span{display:block;font-size:8px;letter-spacing:.14em;color:#6f8179;margin-bottom:4px}
+.task-status-head b{display:block;color:var(--mint);font-size:12px;line-height:1.3}
+.task-checklist{display:grid;gap:6px;margin-top:10px}
+.check-item{display:flex;gap:8px;align-items:center;color:#80909b;font-size:10px}
+.check-item i{font-style:normal;width:14px;color:#65747e}.check-item.done{color:#c8d5d0}.check-item.done i{color:var(--mint)}
+.control-row.locked{opacity:.25;pointer-events:none}
+.focus-target{position:relative;z-index:6;box-shadow:0 0 0 1px var(--mint),0 0 0 5px #8ff0c912,0 0 28px #8ff0c91e!important;animation:focusPulse 1.35s ease-in-out infinite}
+@keyframes focusPulse{50%{box-shadow:0 0 0 1px var(--mint),0 0 0 8px #8ff0c90b,0 0 38px #8ff0c928}}
+.robot.focus-target{border-radius:18px}.grab-label{background:#0b1713dd;border:1px solid #426557;border-radius:6px;padding:6px 8px;color:var(--mint)!important;font-weight:900;letter-spacing:.1em;left:82px!important;top:154px!important}
+.connect-hint{position:absolute;left:calc(50% + 20px);top:8px;font-size:7px;letter-spacing:.1em;color:var(--warn);white-space:nowrap}
+.plug.selected{box-shadow:0 0 0 4px #f2cf7322,0 0 16px #f2cf73;background:#ffe18b}.socket.focus-target{box-shadow:0 0 0 2px var(--mint),0 0 18px #8ff0c933!important}
+.phase-toast{position:fixed;left:50%;top:84px;transform:translateX(-50%);z-index:90;padding:10px 14px;border-radius:8px;border:1px solid #436254;background:#0b1713;color:var(--mint);font-size:10px;font-weight:900;letter-spacing:.1em;box-shadow:0 12px 35px #0008}
+.result b{color:var(--mint)}

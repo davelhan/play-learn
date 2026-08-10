@@ -1,20 +1,14 @@
-PLAY//LEARN V006 — MISSION 02
+PLAY//LEARN — MISSION 01 QA FIX
 
-Copy the contents of this patch into the repository root.
+Replace these files in the repository root:
+- lab/index.html
+- assets/css/lab-v005.css
+- assets/js/lab-v005.js
 
-Adds:
-- lab/mission-02.html
-- assets/css/lab-v006-m02.css
-- assets/js/lab-v006-m02.js
-- data/mission-02.json
-- docs/V006_MISSION_02_DESIGN.md
+QA report:
+- docs/MISSION_01_QA_REPORT.md
 
-Updates:
-- lab/index.html: Mission 01 completion now links to Mission 02
-- assets/css/lab-v005.css: completion actions support
-- assets/js/lab-v005.js: current latest Mission 01 script
-- data/campaign.json
-- index.html
+Do not remove Mission 02 files. Mission 01 completion still links to ./mission-02.html.
 
 Suggested commit:
-V006 — add Mission 02 dynamic balance
+Mission 01 QA — fix progression and next-step guidance

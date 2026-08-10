@@ -55,9 +55,17 @@
 
     <div id="instruction" class="instruction"></div>
 
+    <div id="taskStatus" class="task-status">
+      <div class="task-status-head">
+        <span>NEXT ACTION</span>
+        <b id="nextActionTitle">RUN INITIAL TEST</b>
+      </div>
+      <div id="taskChecklist" class="task-checklist"></div>
+    </div>
+
     <div class="tool-section">
       <div class="section-label">LIVE CONTROLS</div>
-      <div class="control-row">
+      <div id="imuPowerControl" class="control-row">
         <label>IMU power</label>
         <button id="imuPower" class="toggle on">ONLINE</button>
       </div>
@@ -70,15 +78,13 @@
         <input id="controlDelay" type="range" min="5" max="90" value="18">
       </div>
     </div>
-
-    <button id="continueBtn" class="primary wide" disabled>CONTINUE</button>
   </aside>
 
   <section class="center panel">
     <div class="stage-head">
       <div class="stage-title">
         <div class="kicker">PHYSICAL SYSTEM</div>
-        <h2>Humanoid Lab</h2>
+        <h2>H-01 Systems Lab</h2>
       </div>
 
       <div class="stage-actions">
@@ -102,7 +108,7 @@
         <div class="arm right"></div>
         <div class="leg left"><div class="foot"></div></div>
         <div class="leg right"><div class="foot"></div></div>
-        <div class="grab-label">DRAG TORSO</div>
+        <div id="grab-label" class="grab-label">DRAG LEFT ↔ RIGHT</div>
       </div>
       <div class="angle-guide">
         <span>-20°</span><span>0°</span><span>+20°</span>
@@ -146,8 +152,9 @@
 
       <div class="link broken" id="imuLink">
         <div class="wire"></div>
-        <div id="plug" class="plug" title="Drag to estimator socket"></div>
-        <div id="socket" class="socket"></div>
+        <div id="plug" class="plug" title="Drag or click to connect"></div>
+        <div id="socket" class="socket" title="Estimator input socket"></div>
+        <div id="connectHint" class="connect-hint">DRAG OR CLICK</div>
       </div>
 
       <div class="node" data-node="estimator">
@@ -179,6 +186,8 @@ STATE ......... UNAVAILABLE</pre>
     </div>
   </aside>
 </section>
+
+<div id="phaseToast" class="phase-toast hidden"></div>
 
 <div id="coachPanel" class="coach-panel hidden">
   <div class="coach-head">
