@@ -1,250 +1,157 @@
 const $=id=>document.getElementById(id);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 
-const phases=[
- {name:"HOOK",goal:"Observe the failure before attempting a fix."},
- {name:"DISCOVER",goal:"Tilt the body and compare the physical angle with the IMU measurement."},
- {name:"MANIPULATE",goal:"Disable and restore the IMU to isolate what the sensor contributes."},
- {name:"CONNECT",goal:"Repair the missing information path from the IMU to State Estimation."},
- {name:"CAUSE / EFFECT",goal:"Reduce stale sensor timing and watch the estimate recover."},
- {name:"GUIDED TEST",goal:"Verify the repaired sensing-to-control chain with a standing test."},
- {name:"TRANSFER",goal:"Repair a different downstream timing fault without blaming the IMU."},
- {name:"COMPLETE",goal:"Lock the orientation stack into the persistent robot."}
-];
-
-const copy=[
- {
-  instruction:`<b>Collect evidence first.</b><br>Run the initial test. Do not change any component yet.`,
-  next:"CLICK ▶ RUN INITIAL TEST"
- },
- {
-  instruction:`<b>Now inspect the measurement.</b><br>Drag the torso left past -8° and right past +8°. Compare ACTUAL BODY ANGLE with IMU RAW.`,
-  next:"DRAG THE TORSO LEFT AND RIGHT"
- },
- {
-  instruction:`<b>Break the measurement on purpose.</b><br>Switch the IMU OFF, observe what disappears, then switch it back ONLINE.`,
-  next:"SWITCH IMU OFF → THEN ONLINE"
- },
- {
-  instruction:`<b>The IMU works, but the estimator receives nothing.</b><br>Connect the yellow IMU output to the estimator socket. Drag it, or click the plug then the socket.`,
-  next:"CONNECT IMU → STATE ESTIMATOR"
- },
- {
-  instruction:`<b>The estimate exists, but it is stale.</b><br>Reduce SENSOR DATA AGE to <b>30 ms or less</b>. Watch State Confidence and Estimated Angle.`,
-  next:"SET SENSOR DATA AGE ≤ 30 ms"
- },
- {
-  instruction:`<b>Verify the repair.</b><br>The chain should now be coherent. Run STAND TEST and hold for 30 seconds.`,
-  next:"CLICK ▶ RUN STAND TEST"
- },
- {
-  instruction:`<b>New failure, different layer.</b><br>State Estimation is healthy. Reduce CONTROL LATENCY to <b>35 ms or less</b>, then run STAND TEST again.`,
-  next:"SET CONTROL LATENCY ≤ 35 ms → RUN TEST"
- },
- {
-  instruction:`<b>Mission complete.</b><br>You repaired two different faults by following evidence through the system chain.`,
-  next:"ORIENTATION STACK INSTALLED"
- }
-];
-
-const coachHints=[
- "The first test is only evidence collection. The motors are online; the missing body orientation is the useful clue.",
- "Move the torso far enough in both directions. ACTUAL BODY ANGLE exists whether a sensor works or not; IMU RAW is the measurement.",
- "With the IMU OFF, the body still has a physical angle, but the raw measurement disappears. Restore it after observing the difference.",
- "The IMU says RAW DATA OK while the estimator says NO INPUT. That means the missing link is between those two blocks.",
- "A sensor can be correct but late. Move Sensor data age toward 30 ms or below and watch State Confidence rise.",
- "A usable standing chain requires measurement → estimate → control → motors. Your diagnostics should show no sensing/timing flag.",
- "Do not touch the IMU. State Confidence is healthy. The red/late clue is now in Control Response.",
- "You have now distinguished sensing, estimation and control by their failure signatures."
-];
-
-const state={
- phase:0,angle:0,imuOn:true,connected:false,sensorDelay:85,controlDelay:18,
- draggedLeft:false,draggedRight:false,sawOff:false,sawOnAfterOff:false,
- connectorSelected:false,testRuns:0,guidedPassed:false,transferPassed:false,
- transitioning:false,conceptShown:false
+/* QA3: robust guided mission. No hidden progression conditions. */
+const Q={
+ phase:0, angle:0, imu:true, connected:false, sensor:85, control:18,
+ left:false,right:false,off:false,onAgain:false,stand1:false,stand2:false,
+ dragging:false,startX:0,startAngle:0,busy:false
 };
 
-let draggingRobot=false,draggingPlug=false,startX=0,startAngle=0;
-const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-const normalizedBar=a=>clamp(50+a*2.2,4,96);
+const PH=[
+ ["HOOK","Observe the failure before attempting a fix.","Run the initial test. Do not change anything yet.","RUN INITIAL TEST"],
+ ["DISCOVER","Compare physical orientation with the IMU measurement.","Move the body to -12° and +12°. Use the buttons or drag the torso.","TILT LEFT, THEN RIGHT"],
+ ["MANIPULATE","Isolate what the IMU contributes.","Switch the IMU OFF, observe the signal loss, then restore it ONLINE.","IMU OFF, THEN ONLINE"],
+ ["CONNECT","Repair the missing information path.","The IMU is healthy but State Estimation has NO INPUT. Connect them.","CONNECT IMU → ESTIMATOR"],
+ ["CAUSE / EFFECT","Make the estimate timely enough to use.","Reduce SENSOR DATA AGE to 30 ms or less.","SENSOR DATA AGE ≤ 30 ms"],
+ ["GUIDED TEST","Verify the repaired sensing chain.","Run STAND TEST.","RUN STAND TEST"],
+ ["TRANSFER","Repair a different downstream fault.","State Estimation is healthy. Reduce CONTROL LATENCY to 35 ms or less, then test.","CONTROL LATENCY ≤ 35 ms → TEST"],
+ ["COMPLETE","Orientation stack validated.","You diagnosed sensing, estimation and control as different layers.","ORIENTATION STACK INSTALLED"]
+];
 
-function estimatedAngle(){
- if(!state.imuOn||!state.connected)return null;
- const quality=clamp(1-state.sensorDelay/150,.15,.97);
- return state.angle*quality;
-}
-function stateConfidence(){
- if(!state.imuOn||!state.connected)return 0;
- return Math.round(clamp(105-state.sensorDelay*1.05,8,100));
-}
-function controlResponse(){return Math.round(clamp(112-state.controlDelay*1.1,10,100));}
-function balanceMargin(){return Math.round(clamp(.58*stateConfidence()+.42*controlResponse()-Math.abs(state.angle)*1.2,0,100));}
-function standPass(){return state.imuOn&&state.connected&&state.sensorDelay<=30&&state.controlDelay<=35;}
-
-function setFocus(ids=[]){
- document.querySelectorAll('.focus-target').forEach(el=>el.classList.remove('focus-target'));
- ids.forEach(id=>{const el=$(id);if(el)el.classList.add('focus-target');});
-}
-function toast(text){
- const t=$("phaseToast");t.textContent=text;t.classList.remove('hidden');
- clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.add('hidden'),1100);
-}
-function checklist(items){
- $("taskChecklist").innerHTML=items.map(([label,done])=>`<div class="check-item ${done?'done':''}"><i>${done?'✓':'○'}</i><span>${label}</span></div>`).join('');
-}
-
-function updateSignals(){
- $("actualAngle").textContent=`${state.angle.toFixed(1)}°`;
- $("actualBar").style.width=`${normalizedBar(state.angle)}%`;
- if(state.imuOn){
-  $("imuAngle").textContent=`${state.angle.toFixed(1)}°`;$("imuAngle").className="";
-  $("imuBar").style.width=`${normalizedBar(state.angle)}%`;$("imuBar").style.background="var(--mint)";
- }else{
-  $("imuAngle").textContent="NO SIGNAL";$("imuAngle").className="bad";$("imuBar").style.width="4%";$("imuBar").style.background="var(--bad)";
- }
- const est=estimatedAngle();
- if(est===null){
-  $("estimatedAngle").textContent="UNKNOWN";$("estimatedAngle").className="bad";$("estimateBar").style.width="4%";$("estimateBar").style.background="var(--bad)";
- }else{
-  $("estimatedAngle").textContent=`${est.toFixed(1)}°`;$("estimatedAngle").className="";
-  $("estimateBar").style.width=`${normalizedBar(est)}%`;$("estimateBar").style.background=state.sensorDelay<=30?"var(--mint)":"var(--warn)";
- }
- $("stateConfidence").textContent=`${stateConfidence()}%`;
- $("controlResponse").textContent=`${controlResponse()}%`;
- $("balanceMargin").textContent=`${balanceMargin()}%`;
- $("imuNodeState").textContent=state.imuOn?"RAW DATA OK":"OFFLINE";$("imuNodeState").className=state.imuOn?"ok":"bad";
- if(!state.connected){$("estNodeState").textContent="NO INPUT";$("estNodeState").className="bad";}
- else if(state.sensorDelay>30){$("estNodeState").textContent=`STALE · ${state.sensorDelay} ms`;$("estNodeState").className="";}
- else{$("estNodeState").textContent="STATE VALID";$("estNodeState").className="ok";}
- if(stateConfidence()<50){$("controlNodeState").textContent="WAITING FOR STATE";$("controlNodeState").className="";}
- else if(state.controlDelay>35){$("controlNodeState").textContent=`LATE · ${state.controlDelay} ms`;$("controlNodeState").className="bad";}
- else{$("controlNodeState").textContent="TRACKING";$("controlNodeState").className="ok";}
- $("delayValue").textContent=`${state.sensorDelay} ms`;$("controlDelayValue").textContent=`${state.controlDelay} ms`;
- const log=["SYSTEM LIVE",`IMU ........... ${state.imuOn?'ONLINE':'OFFLINE'}`,`IMU→EST ...... ${state.connected?'CONNECTED':'OPEN CIRCUIT'}`,`DATA AGE ...... ${state.connected?state.sensorDelay+' ms':'N/A'}`,`STATE CONF .... ${stateConfidence()}%`,`CONTROL RESP .. ${controlResponse()}%`];
- if(!state.imuOn)log.push("FLAG .......... SENSOR OFFLINE");
- else if(!state.connected)log.push("FLAG .......... STATE INPUT MISSING");
- else if(state.sensorDelay>30)log.push("FLAG .......... SENSOR DATA STALE");
- else if(state.controlDelay>35)log.push("FLAG .......... CONTROL RESPONSE LATE");
- else log.push("FLAGS ......... NONE");
- $("systemLog").textContent=log.join("\n");
- $("robot").style.transform=`translateX(-50%) rotate(${state.angle}deg)`;
-}
-
-function renderChecklist(){
- switch(state.phase){
-  case 0: checklist([["Run the initial failure test",state.testRuns>0]]);break;
-  case 1: checklist([["Tilt left past -8°",state.draggedLeft],["Tilt right past +8°",state.draggedRight]]);break;
-  case 2: checklist([["Switch IMU OFF",state.sawOff],["Restore IMU ONLINE",state.sawOnAfterOff]]);break;
-  case 3: checklist([["Connect IMU output to estimator input",state.connected]]);break;
-  case 4: checklist([["Sensor data age ≤ 30 ms",state.sensorDelay<=30]]);break;
-  case 5: checklist([["Pass 30-second STAND TEST",state.guidedPassed]]);break;
-  case 6: checklist([["Control latency ≤ 35 ms",state.controlDelay<=35],["Pass STAND TEST",state.transferPassed]]);break;
-  case 7: checklist([["Orientation Stack installed",true]]);break;
+function injectQAUI(){
+ const s=document.createElement("style");
+ s.textContent=`
+ .qa-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+ .qa-actions button{flex:1;min-width:92px;background:#172129;color:#eef4f7;border:1px solid #38505d}
+ .qa-actions button.primary-action{background:#8ff0c9;color:#07120e;border-color:#8ff0c9;font-weight:900}
+ .qa-actions button:disabled{opacity:.3}
+ .qa-note{font-size:9px;color:#8e9ba6;margin-top:8px;line-height:1.4}
+ .qa-active{box-shadow:0 0 0 1px #8ff0c9,0 0 22px #8ff0c91e!important}
+ .robot{scale:.88;transform-origin:50% 100%}
+ .grab-label{left:76px!important;top:150px!important;width:118px;text-align:center;color:#8ff0c9!important}
+ .failure-stamp{right:28px!important;top:24px!important}
+ @media(max-width:900px){.robot{scale:.78}}
+ `;
+ document.head.appendChild(s);
+ let box=$("taskStatus");
+ if(box&&!$("qaActions")){
+   const d=document.createElement("div"); d.id="qaActions"; d.className="qa-actions"; box.appendChild(d);
+   const n=document.createElement("div"); n.id="qaNote"; n.className="qa-note"; box.appendChild(n);
  }
 }
 
-function renderPhase(){
- const p=phases[state.phase],c=copy[state.phase];
- $("phaseName").textContent=p.name;$("phaseGoal").textContent=p.goal;
- $("phaseCount").textContent=`${String(state.phase+1).padStart(2,'0')} / 08`;
- $("progressFill").style.width=`${(state.phase/7)*100}%`;
- $("instruction").innerHTML=c.instruction;$("nextActionTitle").textContent=c.next;
- $("sensorDelayControl").classList.toggle('locked',state.phase!==4);
- $("controlDelayControl").classList.toggle('locked',state.phase!==6);
- $("imuPowerControl").classList.toggle('locked',state.phase!==2);
- $("connectHint").classList.toggle('hidden',state.phase!==3||state.connected);
- $("grab-label").classList?.toggle?.('hidden',state.phase!==1);
+function confidence(){return (!Q.imu||!Q.connected)?0:Math.round(clamp(105-Q.sensor*1.05,8,100))}
+function response(){return Math.round(clamp(112-Q.control*1.1,10,100))}
+function estimate(){if(!Q.imu||!Q.connected)return null;return Q.angle*clamp(1-Q.sensor/150,.15,.97)}
+function norm(a){return clamp(50+a*2.2,4,96)}
+function pass(){return Q.imu&&Q.connected&&Q.sensor<=30&&Q.control<=35}
 
- $("runTestBtn").disabled=![0,5,6].includes(state.phase);
- $("runTestBtn").textContent=state.phase===0?'▶ RUN INITIAL TEST':'▶ RUN STAND TEST';
-
- if(state.phase===0)setFocus(['runTestBtn']);
- else if(state.phase===1)setFocus(['robot']);
- else if(state.phase===2)setFocus(['imuPowerControl']);
- else if(state.phase===3)setFocus(state.connectorSelected?['socket']:['imuLink']);
- else if(state.phase===4)setFocus(['sensorDelayControl']);
- else if(state.phase===5)setFocus(['runTestBtn']);
- else if(state.phase===6)setFocus(state.controlDelay<=35?['runTestBtn']:['controlDelayControl']);
- else setFocus([]);
- renderChecklist();updateSignals();
+function signalUI(){
+ $("actualAngle").textContent=Q.angle.toFixed(1)+"°"; $("actualBar").style.width=norm(Q.angle)+"%";
+ if(Q.imu){$("imuAngle").textContent=Q.angle.toFixed(1)+"°";$("imuAngle").className="";$("imuBar").style.width=norm(Q.angle)+"%"}
+ else{$("imuAngle").textContent="NO SIGNAL";$("imuAngle").className="bad";$("imuBar").style.width="4%"}
+ const e=estimate();
+ if(e===null){$("estimatedAngle").textContent="UNKNOWN";$("estimatedAngle").className="bad";$("estimateBar").style.width="4%"}
+ else{$("estimatedAngle").textContent=e.toFixed(1)+"°";$("estimatedAngle").className="";$("estimateBar").style.width=norm(e)+"%"}
+ $("stateConfidence").textContent=confidence()+"%"; $("controlResponse").textContent=response()+"%";
+ $("balanceMargin").textContent=Math.round(clamp(.58*confidence()+.42*response()-Math.abs(Q.angle),0,100))+"%";
+ $("delayValue").textContent=Q.sensor+" ms"; $("controlDelayValue").textContent=Q.control+" ms";
+ $("imuPower").textContent=Q.imu?"ONLINE":"OFFLINE"; $("imuPower").className="toggle "+(Q.imu?"on":"off");
+ $("imuNodeState").textContent=Q.imu?"RAW DATA OK":"OFFLINE";
+ $("estNodeState").textContent=!Q.connected?"NO INPUT":Q.sensor>30?"STALE · "+Q.sensor+" ms":"STATE VALID";
+ $("controlNodeState").textContent=confidence()<50?"WAITING FOR STATE":Q.control>35?"LATE · "+Q.control+" ms":"TRACKING";
+ $("robot").style.transform=`translateX(-50%) rotate(${Q.angle}deg)`;
+ $("systemLog").textContent=[
+  "SYSTEM LIVE","IMU ........... "+(Q.imu?"ONLINE":"OFFLINE"),
+  "IMU→EST ...... "+(Q.connected?"CONNECTED":"OPEN CIRCUIT"),
+  "DATA AGE ...... "+(Q.connected?Q.sensor+" ms":"N/A"),
+  "STATE CONF .... "+confidence()+"%","CONTROL RESP .. "+response()+"%",
+  !Q.imu?"FLAG .......... SENSOR OFFLINE":!Q.connected?"FLAG .......... STATE INPUT MISSING":Q.sensor>30?"FLAG .......... SENSOR DATA STALE":Q.control>35?"FLAG .......... CONTROL RESPONSE LATE":"FLAGS ......... NONE"
+ ].join("\n");
 }
 
-function gotoPhase(n,msg){
- if(state.transitioning)return;
- state.transitioning=true;
- if(msg)toast(msg);
- setTimeout(()=>{state.phase=n;state.transitioning=false;renderPhase();},650);
+function checklist(){
+ let items=[];
+ if(Q.phase===0)items=[["Run initial test",false]];
+ if(Q.phase===1)items=[["Tilt to -12°",Q.left],["Tilt to +12°",Q.right]];
+ if(Q.phase===2)items=[["Switch IMU OFF",Q.off],["Restore IMU ONLINE",Q.onAgain]];
+ if(Q.phase===3)items=[["Connect IMU to estimator",Q.connected]];
+ if(Q.phase===4)items=[["Sensor data age ≤ 30 ms",Q.sensor<=30]];
+ if(Q.phase===5)items=[["Pass STAND TEST",Q.stand1]];
+ if(Q.phase===6)items=[["Control latency ≤ 35 ms",Q.control<=35],["Pass STAND TEST",Q.stand2]];
+ if(Q.phase===7)items=[["Orientation stack installed",true]];
+ $("taskChecklist").innerHTML=items.map(([t,d])=>`<div class="check-item ${d?"done":""}"><i>${d?"✓":"○"}</i><span>${t}</span></div>`).join("");
 }
 
-function showConcept(){
- if(state.conceptShown)return;
- state.conceptShown=true;
- $("conceptTitle").textContent="STATE ESTIMATION";
- $("conceptText").textContent="L'IMU fournit une mesure. Le State Estimator transforme des mesures imparfaites et datées en un état utilisable par le contrôle. Tu viens d'observer trois choses différentes : un capteur peut être coupé, une connexion peut manquer, et des données correctes peuvent être trop anciennes.";
- $("conceptReveal").classList.remove('hidden');
+function button(label,fn,primary=false,disabled=false){
+ const b=document.createElement("button"); b.type="button"; b.textContent=label;
+ if(primary)b.classList.add("primary-action"); b.disabled=disabled; b.onclick=fn; return b;
 }
-$("conceptContinue").onclick=()=>{$("conceptReveal").classList.add('hidden');state.phase=5;renderPhase();};
+function actions(){
+ const a=$("qaActions"); if(!a)return; a.innerHTML="";
+ const note=$("qaNote"); note.textContent="";
+ if(Q.phase===0)a.append(button("▶ RUN INITIAL TEST",runTest,true));
+ if(Q.phase===1){
+   a.append(button("TILT LEFT -12°",()=>setAngle(-12),!Q.left));
+   a.append(button("TILT RIGHT +12°",()=>setAngle(12),Q.left&&!Q.right));
+   note.textContent="You can also drag the torso. Both directions must be observed.";
+ }
+ if(Q.phase===2){
+   a.append(button(Q.imu?"SWITCH IMU OFF":"RESTORE IMU ONLINE",toggleIMU,true));
+   note.textContent=Q.off&&!Q.onAgain?"Now restore the same sensor and compare the signals.":"Observe which value disappears while the physical angle still exists.";
+ }
+ if(Q.phase===3){a.append(button("CONNECT IMU → ESTIMATOR",connect,true));note.textContent="This is the broken information path shown in the right panel."}
+ if(Q.phase===4){a.append(button("SET TO 30 ms",()=>setSensor(30),true,Q.sensor<=30));note.textContent="You can also use the slider."}
+ if(Q.phase===5)a.append(button("▶ RUN STAND TEST",runTest,true));
+ if(Q.phase===6){if(Q.control>35)a.append(button("SET CONTROL TO 35 ms",()=>setControl(35),true));else a.append(button("▶ RUN STAND TEST",runTest,true));}
+}
 
-function connectEstimator(){
- if(state.phase!==3||state.connected)return;
- state.connected=true;state.connectorSelected=false;
- $("imuLink").classList.add('connected');$("plug").style.top="";
- renderPhase();gotoPhase(4,"CONNECTION RESTORED");
+function render(){
+ const [n,g,ins,next]=PH[Q.phase];
+ $("phaseName").textContent=n;$("phaseGoal").textContent=g;$("instruction").innerHTML="<b>"+ins+"</b>";
+ $("nextActionTitle").textContent=next;$("phaseCount").textContent=String(Q.phase+1).padStart(2,"0")+" / 08";
+ $("progressFill").style.width=(Q.phase/7*100)+"%";
+ $("sensorDelayControl").classList.toggle("locked",Q.phase!==4);
+ $("controlDelayControl").classList.toggle("locked",Q.phase!==6);
+ $("imuPowerControl").classList.toggle("locked",Q.phase!==2);
+ $("runTestBtn").disabled=![0,5,6].includes(Q.phase);
+ $("runTestBtn").textContent=Q.phase===0?"▶ RUN INITIAL TEST":"▶ RUN STAND TEST";
+ $("grab-label").classList.toggle("hidden",Q.phase!==1);
+ document.querySelectorAll(".qa-active").forEach(x=>x.classList.remove("qa-active"));
+ if(Q.phase===1)$("robot").classList.add("qa-active");
+ if(Q.phase===2)$("imuPowerControl").classList.add("qa-active");
+ if(Q.phase===3)$("imuLink").classList.add("qa-active");
+ if(Q.phase===4)$("sensorDelayControl").classList.add("qa-active");
+ if(Q.phase===6)$("controlDelayControl").classList.add("qa-active");
+ checklist();actions();signalUI();
 }
 
-function injectTransfer(){
- state.controlDelay=68;$("controlDelay").value=68;
- $("resultBox").className="result neutral";
- $("resultBox").innerHTML="<strong>NEW FAULT INJECTED</strong><span>State confidence is healthy. The next clue is downstream in CONTROL RESPONSE.</span>";
- updateSignals();
-}
+function next(p,msg){if(Q.busy)return;Q.busy=true;if(msg){$("resultBox").className="result pass";$("resultBox").innerHTML=`<strong>${msg}</strong><span>Next step loaded automatically.</span>`}setTimeout(()=>{Q.phase=p;Q.busy=false;render()},350)}
+function setAngle(v){Q.angle=v;if(v<=-8)Q.left=true;if(v>=8)Q.right=true;render();if(Q.left&&Q.right)setTimeout(()=>next(2,"MEASUREMENT OBSERVED"),220)}
+function toggleIMU(){if(Q.phase!==2)return;Q.imu=!Q.imu;if(!Q.imu)Q.off=true;if(Q.imu&&Q.off)Q.onAgain=true;render();if(Q.off&&Q.onAgain)setTimeout(()=>next(3,"SENSOR CONTRIBUTION ISOLATED"),220)}
+function connect(){if(Q.phase!==3)return;Q.connected=true;$("imuLink").classList.add("connected");render();setTimeout(()=>next(4,"INFORMATION PATH RESTORED"),220)}
+function setSensor(v){Q.sensor=+v;$("sensorDelay").value=Q.sensor;render();if(Q.phase===4&&Q.sensor<=30)setTimeout(showConcept,300)}
+function setControl(v){Q.control=+v;$("controlDelay").value=Q.control;render()}
+
+function showConcept(){if(Q.busy)return;Q.busy=true;$("conceptTitle").textContent="STATE ESTIMATION";$("conceptText").textContent="The IMU provides a measurement. State Estimation turns measurements into a usable estimate of the robot's state. A healthy sensor can still fail to help if its data is disconnected or too old.";$("conceptReveal").classList.remove("hidden")}
+$("conceptContinue").onclick=()=>{$("conceptReveal").classList.add("hidden");Q.busy=false;Q.phase=5;render()};
 
 function runTest(){
- if(![0,5,6].includes(state.phase))return;
- state.testRuns++;$("failureStamp").classList.add('hidden');
- if(state.phase===0){
-  $("resultBox").className="result fail";
-  $("resultBox").innerHTML="<strong>TEST FAILED · 2.84 s</strong><span>Motors are online, but BASE ORIENTATION is unavailable. <b>NEXT: drag the torso left and right.</b></span>";
-  $("failureStamp").classList.remove('hidden');state.angle=15;renderChecklist();updateSignals();
-  gotoPhase(1,"FAILURE CAPTURED — INSPECT THE SENSOR");return;
- }
- const pass=standPass();
- let reason=!state.imuOn?"IMU measurement is unavailable.":!state.connected?"The estimator receives no IMU data.":state.sensorDelay>30?"Sensor data is still too stale.":state.controlDelay>35?"The estimate is healthy, but control response is late.":"Measurement, estimate, control and motor response are coherent.";
- if(pass){
-  $("resultBox").className="result pass";$("resultBox").innerHTML=`<strong>TEST PASSED · 30.0 s</strong><span>${reason}</span>`;state.angle=0;
-  if(state.phase===5){state.guidedPassed=true;renderChecklist();setTimeout(()=>{state.phase=6;injectTransfer();renderPhase();toast("NEW FAILURE — DIFFERENT LAYER");},900);}
-  else if(state.phase===6){state.transferPassed=true;renderChecklist();setTimeout(()=>{state.phase=7;renderPhase();localStorage.setItem('playlearn_rbt01_complete','true');$("completeModal").classList.remove('hidden');},900);}
- }else{
-  $("resultBox").className="result fail";$("resultBox").innerHTML=`<strong>TEST FAILED</strong><span>${reason}</span>`;$("failureStamp").classList.remove('hidden');state.angle=state.angle>=0?15:-15;renderPhase();
- }
+ if(Q.phase===0){Q.angle=15;$("failureStamp").classList.remove("hidden");$("resultBox").className="result fail";$("resultBox").innerHTML="<strong>TEST FAILED · 2.84 s</strong><span>Motors are online, but BASE ORIENTATION is unavailable.</span>";signalUI();setTimeout(()=>next(1,"FAILURE CAPTURED"),450);return}
+ if(![5,6].includes(Q.phase))return;
+ if(pass()){
+   $("failureStamp").classList.add("hidden");Q.angle=0;$("resultBox").className="result pass";$("resultBox").innerHTML="<strong>TEST PASSED · 30.0 s</strong><span>Measurement, estimate, control and motors are coherent.</span>";
+   if(Q.phase===5){Q.stand1=true;render();setTimeout(()=>{Q.phase=6;Q.control=68;$("controlDelay").value=68;render();$("resultBox").className="result neutral";$("resultBox").innerHTML="<strong>NEW FAULT INJECTED</strong><span>State Estimation remains healthy. CONTROL RESPONSE is now late.</span>"},600)}
+   else{Q.stand2=true;render();setTimeout(()=>{Q.phase=7;render();localStorage.setItem("playlearn_rbt01_complete","true");$("completeModal").classList.remove("hidden")},600)}
+ }else{$("failureStamp").classList.remove("hidden");$("resultBox").className="result fail";$("resultBox").innerHTML="<strong>TEST FAILED</strong><span>Follow the highlighted next action. No guessing required.</span>";render()}
 }
 
-// Robot tilt
-const robot=$("robot");
-robot.addEventListener('pointerdown',e=>{if(state.phase!==1)return;draggingRobot=true;startX=e.clientX;startAngle=state.angle;robot.setPointerCapture(e.pointerId);});
-robot.addEventListener('pointermove',e=>{if(!draggingRobot)return;state.angle=clamp(startAngle+(e.clientX-startX)*.13,-22,22);if(state.angle<-8)state.draggedLeft=true;if(state.angle>8)state.draggedRight=true;renderChecklist();updateSignals();if(state.draggedLeft&&state.draggedRight&&!state.transitioning)gotoPhase(2,"IMU MEASUREMENT OBSERVED");});
-robot.addEventListener('pointerup',()=>draggingRobot=false);
-
-// IMU power
-$("imuPower").onclick=()=>{if(state.phase!==2)return;state.imuOn=!state.imuOn;$("imuPower").textContent=state.imuOn?'ONLINE':'OFFLINE';$("imuPower").className=`toggle ${state.imuOn?'on':'off'}`;if(!state.imuOn)state.sawOff=true;if(state.imuOn&&state.sawOff)state.sawOnAfterOff=true;renderChecklist();updateSignals();if(state.sawOff&&state.sawOnAfterOff&&!state.transitioning)gotoPhase(3,"SENSOR ROLE ISOLATED");};
-
-// Timing controls
-$("sensorDelay").oninput=e=>{if(state.phase!==4)return;state.sensorDelay=+e.target.value;renderPhase();if(state.sensorDelay<=30&&!state.conceptShown){toast("STATE CONFIDENCE RECOVERED");setTimeout(showConcept,650);}};
-$("controlDelay").oninput=e=>{if(state.phase!==6)return;state.controlDelay=+e.target.value;renderPhase();};
-
-// Connector: drag OR click-click
-const plug=$("plug"),socket=$("socket");
-plug.addEventListener('click',e=>{if(state.phase!==3||state.connected)return;e.stopPropagation();state.connectorSelected=true;plug.classList.add('selected');renderPhase();});
-socket.addEventListener('click',()=>{if(state.phase===3&&state.connectorSelected)connectEstimator();});
-plug.addEventListener('pointerdown',e=>{if(state.phase!==3||state.connected)return;draggingPlug=true;plug.setPointerCapture(e.pointerId);plug.style.cursor='grabbing';});
-plug.addEventListener('pointermove',e=>{if(!draggingPlug)return;const link=$("imuLink").getBoundingClientRect();let y=clamp(e.clientY-link.top,8,link.height-8);plug.style.top=`${y-8}px`;});
-plug.addEventListener('pointerup',e=>{if(!draggingPlug)return;draggingPlug=false;plug.style.cursor='grab';const sr=socket.getBoundingClientRect();const dist=Math.hypot(e.clientX-(sr.left+sr.width/2),e.clientY-(sr.top+sr.height/2));if(dist<65)connectEstimator();else plug.style.top='11px';});
-
-// Coach / main buttons
-$("coachBtn").onclick=()=>{$("coachText").textContent=coachHints[state.phase];$("coachPanel").classList.remove('hidden');};
-$("closeCoach").onclick=()=>$("coachPanel").classList.add('hidden');
-$("runTestBtn").onclick=runTest;
-$("startBtn").onclick=()=>{$("intro").classList.add('hidden');$("game").classList.remove('hidden');renderPhase();};
-$("resetBtn").onclick=()=>{const progressed=state.phase>0||state.testRuns>0;if(!progressed||window.confirm('Reset this mission and lose the current attempt?'))location.reload();};
-
-updateSignals();
+function startMission(){$("intro").classList.add("hidden");$("game").classList.remove("hidden");render()}
+injectQAUI();
+$("startBtn").onclick=startMission;$("runTestBtn").onclick=runTest;$("imuPower").onclick=toggleIMU;
+$("sensorDelay").oninput=e=>setSensor(e.target.value);$("controlDelay").oninput=e=>setControl(e.target.value);
+$("coachBtn").onclick=()=>{$("coachText").textContent=PH[Q.phase][2];$("coachPanel").classList.remove("hidden")};$("closeCoach").onclick=()=>$("coachPanel").classList.add("hidden");$("resetBtn").onclick=()=>location.reload();
+const robot=$("robot");robot.addEventListener("pointerdown",e=>{if(Q.phase!==1)return;Q.dragging=true;Q.startX=e.clientX;Q.startAngle=Q.angle;robot.setPointerCapture(e.pointerId)});robot.addEventListener("pointermove",e=>{if(!Q.dragging)return;setAngle(clamp(Q.startAngle+(e.clientX-Q.startX)*.12,-22,22))});robot.addEventListener("pointerup",()=>Q.dragging=false);
+$("plug").onclick=()=>{if(Q.phase===3)connect()};$("socket").onclick=()=>{if(Q.phase===3)connect()};
+render();
