@@ -1,13 +1,20 @@
-PLAY//LEARN V005 — COMPLETE LAYOUT REWRITE
+PLAY//LEARN V006 — MISSION 02
 
-Replace these 3 files in the repository:
-- lab/index.html
-- assets/css/lab-v005.css
-- assets/js/lab-v005.js
+Copy the contents of this patch into the repository root.
 
-Result:
-ASK COACH | RESET | RUN INITIAL TEST
-are now grouped inside the Physical System panel header.
+Adds:
+- lab/mission-02.html
+- assets/css/lab-v006-m02.css
+- assets/js/lab-v006-m02.js
+- data/mission-02.json
+- docs/V006_MISSION_02_DESIGN.md
 
-Commit suggestion:
-V005 UI — move mission controls into system panel
+Updates:
+- lab/index.html: Mission 01 completion now links to Mission 02
+- assets/css/lab-v005.css: completion actions support
+- assets/js/lab-v005.js: current latest Mission 01 script
+- data/campaign.json
+- index.html
+
+Suggested commit:
+V006 — add Mission 02 dynamic balance

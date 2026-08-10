@@ -132,3 +132,5 @@ position:relative;overflow:hidden;margin-top:8px;touch-action:none}.floor{positi
     width:100%;
   }
 }
+
+.complete-actions{display:flex;gap:8px;align-items:center}

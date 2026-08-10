@@ -61,5 +61,17 @@
       "build": "Final reviewed configuration"
     }
   ],
-  "core_missions": 60
+  "core_missions": 60,
+  "current_playable_missions": [
+    {
+      "id": "RBT-01",
+      "title": "KNOW WHICH WAY IS UP",
+      "url": "./lab/"
+    },
+    {
+      "id": "RBT-02",
+      "title": "STEP WHERE YOU'RE GOING",
+      "url": "./lab/mission-02.html"
+    }
+  ]
 }

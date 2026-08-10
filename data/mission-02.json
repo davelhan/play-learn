@@ -1,0 +1,24 @@
+{
+  "id": "RBT-02",
+  "title": "STEP WHERE YOU'RE GOING",
+  "act": 1,
+  "learning_outcomes": [
+    "Recognize a healthy orientation/state-estimation stack and avoid false diagnosis",
+    "Observe center-of-mass projection relative to current support",
+    "Understand that a step creates a new support region",
+    "See that higher forward speed moves the useful recovery step farther ahead",
+    "Adapt foot placement when an offset payload changes mass distribution"
+  ],
+  "reused_concepts": [
+    "IMU",
+    "State Estimation",
+    "Control"
+  ],
+  "new_concepts": [
+    "Center of Mass",
+    "Support Area",
+    "Foot Placement",
+    "Dynamic Recovery"
+  ],
+  "disclaimer": "All numeric relationships are fictional educational models, not real robot performance predictions."
+}
