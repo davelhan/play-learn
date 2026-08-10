@@ -5,8 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="PLAY//LEARN — apprendre des systèmes complexes en les manipulant. Première campagne : Robotics.">
 <title>PLAY//LEARN — Learn by Building</title>
-<link rel="stylesheet" href="./assets/css/main.css?v=missions-20260810">
-<link rel="stylesheet" href="./assets/css/home-missions.css?v=20260810">
+<link rel="stylesheet" href="./assets/css/main.css?v=campaign-map-20260810">
+<link rel="stylesheet" href="./assets/css/home-missions.css?v=campaign-map-20260810">
+<link rel="stylesheet" href="./assets/css/campaign-map.css?v=campaign-map-20260810">
 </head>
 <body>
 <header class="nav">
@@ -14,7 +15,7 @@
   <nav>
     <a href="#concept">Concept</a>
     <a href="#campaign">Robotics</a>
-    <a href="./lab/">Lab</a>
+    <a href="#prototypes">Prototypes</a>
   </nav>
 </header>
 
@@ -25,8 +26,8 @@
     <h1>DON'T STUDY<br>THE SYSTEM.<br><em>BUILD IT.</em></h1>
     <p class="lead">PLAY//LEARN transforme les sujets complexes en systèmes interactifs. Tu découvres un composant, tu le manipules, tu observes ses conséquences, puis tu l'utilises dans de nouveaux problèmes jusqu'à le maîtriser.</p>
     <div class="cta-row">
-      <a class="button primary" href="./lab/">OPEN ROBOTICS LAB</a>
-      <a class="button secondary" href="#campaign">VIEW CAMPAIGN</a>
+      <a class="button primary" href="#prototypes">OPEN VALIDATED PROTOTYPES</a>
+      <a class="button secondary" href="#campaign">VIEW CAMPAIGN MAP</a>
     </div>
   </div>
   <div class="hero-system" aria-label="System learning loop">
@@ -60,52 +61,38 @@
     </div>
     <div class="campaign-stat"><b>10</b><span>ACTS</span><b>60</b><span>CORE MISSIONS</span></div>
   </div>
-  <div id="acts" class="acts"></div>
+
+  <div class="campaign-explainer">
+    <div>
+      <h3>COMMENT LIRE CETTE MAP</h3>
+      <p>Un <strong>ACT</strong> est un grand chapitre du cursus. Chaque Act contient <strong>6 vraies missions</strong> : découvrir, manipuler, appliquer, diagnostiquer, transférer puis passer un Gate. Clique sur un Act pour voir ses six missions. Le <strong>BUILD UNLOCK</strong> indique ce qui sera ajouté au robot persistant quand l'Act sera maîtrisé.</p>
+    </div>
+    <div class="campaign-key">
+      <div><b>NEXT TO DESIGN</b><span>Le prochain contenu final que nous devons construire.</span></div>
+      <div><b>PLANNED</b><span>Mission définie dans la roadmap, mais pas encore jouable.</span></div>
+      <div><b>LOCKED</b><span>Chapitre futur du cursus.</span></div>
+      <div><b>REFERENCE · P01/P02</b><span>Un prototype validé teste déjà une partie de ces connaissances.</span></div>
+    </div>
+  </div>
+
+  <div id="acts" class="acts" aria-live="polite"></div>
 </section>
 
-<section class="section mission-launch" aria-labelledby="playable-title">
+<section id="prototypes" class="section mission-launch prototype-launch" aria-labelledby="prototype-title">
   <div class="mission-launch-head">
-    <p class="kicker">CURRENT PLAYABLE MISSIONS</p>
-    <h2 id="playable-title">ORIENTATION <span>→</span> DYNAMIC BALANCE</h2>
-    <p>Commence par comprendre comment le robot connaît son orientation, puis réutilise cette base dans un nouveau problème d'équilibre dynamique.</p>
+    <p class="kicker">VALIDATED VERTICAL SLICES · NOT CAMPAIGN MISSIONS 01–02</p>
+    <h2 id="prototype-title">P01 ORIENTATION <span>→</span> P02 DYNAMIC BALANCE</h2>
+    <p>Ces deux expériences ont servi à valider notre boucle pédagogique et notre interface. Elles restent jouables, mais elles ne représentent pas les missions 01.01 et 01.02 de la campagne finale.</p>
+    <div class="prototype-note">PROTOTYPE = gameplay validé · CAMPAIGN MISSION = contenu final du cursus</div>
   </div>
-
-  <div class="mission-grid">
-    <article class="mission-card">
-      <div class="mission-card-top">
-        <div class="mission-number">01</div>
-        <div class="mission-status">PLAYABLE</div>
-      </div>
-      <div class="mission-card-copy">
-        <p class="mission-domain">ORIENTATION · STATE ESTIMATION</p>
-        <h3>KNOW WHICH WAY IS UP.</h3>
-        <p>Observe la chute, comprends ce que mesure l'IMU, répare la chaîne d'information et distingue sensing, estimation et contrôle.</p>
-      </div>
-      <a class="button primary mission-start" href="./lab/">START MISSION 01</a>
-    </article>
-
-    <div class="mission-arrow" aria-hidden="true">→</div>
-
-    <article class="mission-card">
-      <div class="mission-card-top">
-        <div class="mission-number">02</div>
-        <div class="mission-status">PLAYABLE</div>
-      </div>
-      <div class="mission-card-copy">
-        <p class="mission-domain">DYNAMIC BALANCE · FOOT PLACEMENT</p>
-        <h3>STEP WHERE YOU'RE GOING.</h3>
-        <p>Réutilise un State Estimation sain, observe le centre de masse et adapte le placement du pied pour créer le prochain support.</p>
-      </div>
-      <a class="button primary mission-start" href="./lab/mission-02.html">START MISSION 02</a>
-    </article>
-  </div>
+  <div id="prototypeGrid" class="mission-grid"></div>
 </section>
 </main>
 
 <footer>
   <div class="brand">PLAY<span>//</span>LEARN</div>
-  <p>Prototype product website · Robotics vertical slice</p>
+  <p>Robotics campaign architecture · Validated learning prototypes P01 / P02</p>
 </footer>
-<script src="./assets/js/main.js"></script>
+<script src="./assets/js/main.js?v=campaign-map-20260810"></script>
 </body>
 </html>
