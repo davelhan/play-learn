@@ -1,7 +1,7 @@
-/* Mission 01 QA7
+/* Prototype P01 QA7
    Loaded after QA6.
    Keeps the QA6 learning flow, but prevents the final successful action
-   from jumping straight to the mission-complete modal.
+   from jumping straight to the prototype-complete modal.
 */
 (() => {
   const testButton = document.getElementById('runTestBtn');
@@ -12,6 +12,23 @@
   const resultBox = document.getElementById('resultBox');
   const failureStamp = document.getElementById('failureStamp');
   const completeModal = document.getElementById('completeModal');
+
+  /* Visible product naming: this is a validated vertical slice, not campaign 01.01. */
+  document.title = 'PLAY//LEARN — Prototype P01';
+  const meta = document.querySelector('meta[name="description"]');
+  if(meta) meta.setAttribute('content','PLAY//LEARN Robotics Prototype P01 — Orientation Stack');
+  const missionId = document.querySelector('.mission-id');
+  if(missionId) missionId.textContent = 'ROBOTICS · VALIDATED PROTOTYPE P01 · BUILD QA7';
+  const introKicker = document.querySelector('.intro-copy .kicker');
+  if(introKicker) introKicker.textContent = 'PROTOTYPE P01 · ORIENTATION STACK';
+  const start = document.getElementById('startBtn');
+  if(start) start.textContent = 'START PROTOTYPE';
+  if(completeModal){
+    const kicker = completeModal.querySelector('.kicker');
+    if(kicker) kicker.textContent = 'PROTOTYPE COMPLETE';
+    const links = completeModal.querySelectorAll('.complete-actions a');
+    if(links[1]) links[1].textContent = 'OPEN PROTOTYPE P02 →';
+  }
 
   if(!testButton || !lessonCard || !lessonContinue) return;
 
@@ -44,10 +61,9 @@
     lessonContinue.disabled = true;
     lessonContinue.textContent = 'READ THE RESULT…';
 
-    // Prevent accidental double-click completion. The player still decides when to continue.
     window.setTimeout(() => {
       lessonContinue.disabled = false;
-      lessonContinue.textContent = 'COMPLETE MISSION';
+      lessonContinue.textContent = 'COMPLETE PROTOTYPE';
     }, 1400);
 
     lessonContinue.onclick = finishMission;
@@ -59,7 +75,6 @@
   }
 
   testButton.onclick = function(event){
-    // Only intercept the final transfer verification when the chain is actually healthy.
     if(S.phase !== 6 || S.lessonOpen || !ready()){
       return qa6RunTest.call(this,event);
     }
@@ -75,7 +90,6 @@
     renderSignals();
     renderWatch();
 
-    // Deliberate pedagogical beat: no automatic mission-complete screen.
     window.setTimeout(showFinalReflection, 450);
   };
 })();
