@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="PLAY//LEARN Robotics — Act 01 Mission 02: Commands Down, Evidence Up">
+<title>PLAY//LEARN — 01.02 Commands Down, Evidence Up</title>
+<link rel="stylesheet" href="../../assets/css/a01m01-system-layers.css?v=1-20260810">
+<link rel="stylesheet" href="../../assets/css/a01m02-command-evidence.css?v=1-20260810">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="../../">PLAY<span>//</span>LEARN</a>
+  <div class="mission-id">ROBOTICS · ACT 01 · 01.02 · COMMANDS DOWN, EVIDENCE UP</div>
+  <a class="map-link" href="../../#campaign">CAMPAIGN MAP</a>
+</header>
+
+<main>
+<section id="intro" class="intro m02-intro">
+  <div>
+    <p class="kicker">ACT 01 · THE MACHINE · LAB</p>
+    <h1>COMMANDS DOWN.<br><em>EVIDENCE BACK UP.</em></h1>
+    <p class="lead">Dans 01.01, tu as vu une instruction se transformer jusqu'au mouvement physique. Mais un robot réel ne peut pas fonctionner en sens unique. Cette fois, UNIT H-01 va rencontrer quelque chose que le plan n'avait pas prévu.</p>
+    <div class="brief">
+      <div><span>MISSION</span><b>Carry inspection case → Station C</b></div>
+      <div><span>NEW PROBLEM</span><b>Unexpected obstruction</b></div>
+      <div><span>DISCOVER</span><b>Command flow + evidence return</b></div>
+    </div>
+    <button id="startBtn" class="primary big" type="button">START 01.02</button>
+  </div>
+  <div class="intro-dual-flow" aria-hidden="true">
+    <div class="flow-title">CLOSED LOOP</div>
+    <div class="flow-column down"><b>COMMANDS</b><i>↓</i><span>Intent</span><i>↓</i><span>Motion</span><i>↓</i><span>Control</span><i>↓</i><strong>ACTION</strong></div>
+    <div class="flow-column up"><strong>WORLD</strong><i>↑</i><span>Measurements</span><i>↑</i><span>State</span><i>↑</i><span>Status / faults</span><i>↑</i><b>EVIDENCE</b></div>
+  </div>
+</section>
+
+<section id="game" class="game hidden">
+  <aside class="panel left-panel">
+    <p class="kicker">LEARNING LOOP</p>
+    <h2 id="phaseName">HOOK</h2>
+    <p id="phaseGoal" class="phase-goal"></p>
+    <div class="progress"><i id="progressFill"></i></div>
+    <div id="phaseCount" class="phase-count">01 / 06</div>
+
+    <div class="instruction">
+      <span>WHAT TO DO</span>
+      <b id="actionText"></b>
+    </div>
+
+    <div class="watch">
+      <span>WHAT TO WATCH</span>
+      <div id="watchList"></div>
+    </div>
+
+    <div class="source-note">
+      <span>COURSE CONCEPT</span>
+      <b>Bidirectional system flow</b>
+      <p>Commands generally move toward the physical plant. Measurements, status and faults must return upward so higher layers can update their decisions.</p>
+    </div>
+  </aside>
+
+  <section class="panel center-panel">
+    <div class="stage-head">
+      <div>
+        <p class="kicker">CLOSED-LOOP ARCHITECTURE</p>
+        <h2>Command ↓ / Evidence ↑</h2>
+      </div>
+      <div class="stage-actions">
+        <button id="coachBtn" class="secondary" type="button">ASK COACH</button>
+        <button id="resetBtn" class="secondary" type="button">RESET</button>
+      </div>
+    </div>
+
+    <div class="task-banner">
+      <span>ACTIVE TASK</span>
+      <b>CARRY INSPECTION CASE → STATION C</b>
+    </div>
+
+    <div class="dual-system">
+      <div class="rail-label command-label">COMMAND ↓</div>
+      <div class="rail-label evidence-label">EVIDENCE ↑</div>
+
+      <div id="stack" class="bi-stack">
+        <article class="bi-layer" data-layer="0">
+          <div class="lane command"><span id="cmd0">MISSION READY</span></div>
+          <div class="core"><small>01</small><b>MISSION / USE CASE</b><em>What outcome is required?</em></div>
+          <div class="lane evidence"><span id="ev0">—</span></div>
+        </article>
+        <article class="bi-layer" data-layer="1">
+          <div class="lane command"><span id="cmd1">—</span></div>
+          <div class="core"><small>02</small><b>TASK AUTONOMY / BEHAVIOR</b><em>What sequence should happen?</em></div>
+          <div class="lane evidence"><span id="ev1">—</span></div>
+        </article>
+        <article class="bi-layer" data-layer="2">
+          <div class="lane command"><span id="cmd2">—</span></div>
+          <div class="core"><small>03</small><b>PERCEPTION / STATE ESTIMATION</b><em>What is true right now?</em></div>
+          <div class="lane evidence"><span id="ev2">—</span></div>
+        </article>
+        <article class="bi-layer" data-layer="3">
+          <div class="lane command"><span id="cmd3">—</span></div>
+          <div class="core"><small>04</small><b>MOTION GENERATION / PLANNING</b><em>How should the body move?</em></div>
+          <div class="lane evidence"><span id="ev3">—</span></div>
+        </article>
+        <article class="bi-layer" data-layer="4">
+          <div class="lane command"><span id="cmd4">—</span></div>
+          <div class="core"><small>05</small><b>REAL-TIME CONTROL</b><em>What correction is needed now?</em></div>
+          <div class="lane evidence"><span id="ev4">—</span></div>
+        </article>
+        <article class="bi-layer plant" data-layer="5">
+          <div class="lane command"><span id="cmd5">—</span></div>
+          <div class="core"><small>06</small><b>PHYSICAL PLANT / ENERGY</b><em>Actuators, mechanics, contact, energy</em></div>
+          <div class="lane evidence"><span id="ev5">CONTACT NORMAL</span></div>
+        </article>
+      </div>
+
+      <div id="world" class="world m02-world">
+        <div class="route route-a"></div>
+        <div class="route route-b"></div>
+        <div id="robot" class="robot"><div class="head"></div><div class="body"></div><div class="legs"></div></div>
+        <div id="case" class="case">CASE</div>
+        <div id="obstacle" class="obstacle hidden">BLOCKED</div>
+        <div class="station station-c">STATION C</div>
+        <div id="worldStatus" class="world-status">WORLD: CLEAR</div>
+      </div>
+    </div>
+
+    <div class="bus-panel">
+      <div class="bus-card command-bus">
+        <span>COMMAND CHANNEL</span>
+        <b id="commandChannelState">READY</b>
+        <small>Desired behavior, motion and control travel toward the body.</small>
+      </div>
+      <div class="bus-card evidence-bus">
+        <span>EVIDENCE RETURN</span>
+        <button id="evidenceToggle" type="button" class="bus-toggle off">OFF</button>
+        <small>Measurements, status and faults travel back toward decision layers.</small>
+      </div>
+    </div>
+
+    <div class="center-actions">
+      <button id="mainAction" class="primary" type="button">SEND MISSION COMMAND</button>
+    </div>
+
+    <div id="result" class="result neutral"><b>READY</b><span>Start by sending the planned task downward.</span></div>
+
+    <div id="reflection" class="reflection hidden">
+      <div><span>WHAT YOU JUST SAW</span><b id="reflectionSaw"></b></div>
+      <div><span>WHY IT MATTERS</span><b id="reflectionWhy"></b></div>
+      <button id="reflectionContinue" class="secondary" type="button">CONTINUE</button>
+    </div>
+  </section>
+
+  <aside class="panel right-panel">
+    <p class="kicker">LIVE BELIEF vs REALITY</p>
+    <h2>Does the robot know?</h2>
+    <p class="micro">The physical world can change before upper layers know it. Watch the difference between reality and the system's current belief.</p>
+
+    <div class="belief-grid">
+      <div><span>PHYSICAL WORLD</span><b id="physicalTruth">CLEAR</b></div>
+      <div><span>ESTIMATED STATE</span><b id="estimatedTruth">CLEAR</b></div>
+      <div><span>MOTION PLAN</span><b id="planTruth">VALID</b></div>
+      <div><span>BEHAVIOR STATUS</span><b id="behaviorTruth">EXECUTING</b></div>
+    </div>
+
+    <div class="translation-box">
+      <span>KEY IDEA</span>
+      <p id="keyIdea">A command can be perfectly valid when it is sent and become wrong a moment later because the world changes.</p>
+    </div>
+
+    <div class="log-wrap">
+      <span>SYSTEM LOG</span>
+      <pre id="log">MISSION ......... READY
+COMMAND PATH .... IDLE
+EVIDENCE RETURN . OFF
+WORLD ........... CLEAR</pre>
+    </div>
+  </aside>
+</section>
+</main>
+
+<div id="conceptModal" class="modal hidden">
+  <div class="modal-card">
+    <p class="kicker">YOU HAVE NOW BUILT THE LOOP</p>
+    <h2>COMMANDS DOWN. EVIDENCE UP.</h2>
+    <p>Le robot n'est pas une chaîne à sens unique. Les couches supérieures envoient des objectifs et des commandes vers le corps. Le monde physique renvoie des mesures, états, statuts et faults vers le haut afin que les décisions puissent être mises à jour.</p>
+    <div class="loop-diagram"><b>MISSION</b><i>↓ command</i><b>CONTROL</b><i>↓ command</i><b>PHYSICAL WORLD</b><i>↑ evidence</i><b>STATE / PLANNING</b><i>↑ status</i><b>MISSION</b></div>
+    <button id="conceptContinue" class="primary" type="button">RUN A CLOSED-LOOP RECOVERY</button>
+  </div>
+</div>
+
+<div id="transferModal" class="modal hidden">
+  <div class="modal-card wide-card">
+    <p class="kicker">TRANSFER</p>
+    <h2>New event. Same architecture.</h2>
+    <p>Cette fois, le chemin est libre, mais un actionneur signale une limitation thermique. Observe encore les deux directions : le fault remonte d'abord ; ensuite une nouvelle commande descend.</p>
+    <div class="transfer-chain">
+      <div><span>PHYSICAL PLANT</span><b>MOTOR THERMAL DERATE</b></div>
+      <i>↑</i>
+      <div><span>STATUS RETURN</span><b>AVAILABLE TORQUE REDUCED</b></div>
+      <i>↑</i>
+      <div><span>PLANNING</span><b>REQUIRES SLOWER MOTION</b></div>
+      <i>↓</i>
+      <div><span>CONTROL</span><b>REDUCED-SPEED COMMAND</b></div>
+    </div>
+    <button id="transferAction" class="primary" type="button">RUN RETURN FLOW</button>
+    <div id="transferExplanation" class="transfer-explanation hidden"></div>
+  </div>
+</div>
+
+<div id="completeModal" class="modal hidden">
+  <div class="modal-card">
+    <p class="kicker">01.02 COMPLETE</p>
+    <h2>CLOSED-LOOP FLOW INSTALLED.</h2>
+    <p>Tu as observé qu'une commande descend vers le hardware, tandis que les mesures, états, statuts et faults remontent. Une décision fiable dépend donc d'un aller-retour continu entre intention et réalité.</p>
+    <div class="unlock"><span>PERSISTENT BUILD</span><b>BIDIRECTIONAL SYSTEM FLOW</b></div>
+    <div class="complete-actions">
+      <a class="secondary linkbtn" href="../../#campaign">CAMPAIGN MAP</a>
+      <button id="replayBtn" class="primary" type="button">REPLAY 01.02</button>
+    </div>
+  </div>
+</div>
+
+<div id="coachPanel" class="coach hidden"><div><span>COACH</span><button id="closeCoach" type="button">×</button></div><p id="coachText"></p></div>
+
+<script src="../../assets/js/a01m02-command-evidence.js?v=1-20260810"></script>
+</body>
+</html>
