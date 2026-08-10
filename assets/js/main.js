@@ -1,5 +1,10 @@
 const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 
+/* Keep the native details +/- control out of the grid flow on every viewport. */
+const campaignMapFix=document.createElement('style');
+campaignMapFix.textContent='.act summary{position:relative;padding-right:62px!important}.act summary:after{position:absolute!important;right:20px;top:50%;transform:translateY(-50%)}';
+document.head.appendChild(campaignMapFix);
+
 function missionRow(m){
   const next=m.status==='NEXT TO BUILD';
   return `<div class="roadmap-mission ${next?'next':''}">
