@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="PLAY//LEARN Robotics — Act 01 Mission 03: Trace the Broken Layer">
+<title>PLAY//LEARN — 01.03 Trace the Broken Layer</title>
+<link rel="stylesheet" href="../../assets/css/a01m01-system-layers.css?v=1-20260810">
+<link rel="stylesheet" href="../../assets/css/a01m03-trace-broken.css?v=1-20260810">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="../../">PLAY<span>//</span>LEARN</a>
+  <div class="mission-id">ROBOTICS · ACT 01 · 01.03 · TRACE THE BROKEN LAYER</div>
+  <a class="map-link" href="../../#campaign">CAMPAIGN MAP</a>
+</header>
+
+<main>
+<section id="intro" class="intro m03-intro">
+  <div>
+    <p class="kicker">ACT 01 · THE MACHINE · GUIDED DIAGNOSIS</p>
+    <h1>FIND WHERE<br><em>THE STORY BREAKS.</em></h1>
+    <p class="lead">UNIT H-01 doit saisir une mallette sur Rack B. Sa main s'arrête 18 cm à gauche de la poignée. Les moteurs annoncent pourtant qu'ils ont suivi leur cible correctement. Le symptôme est dans le bras — mais la cause peut être ailleurs.</p>
+    <div class="brief">
+      <div><span>SYMPTOM</span><b>Hand misses case by 18 cm</b></div>
+      <div><span>KNOWN</span><b>Motor tracking = healthy</b></div>
+      <div><span>LEARN</span><b>Trace → compare → isolate</b></div>
+    </div>
+    <button id="startBtn" class="primary big" type="button">START 01.03</button>
+  </div>
+  <div class="intro-trace">
+    <div class="symptom">VISIBLE SYMPTOM<br><b>HAND MISSES CASE</b></div>
+    <i>≠</i>
+    <div class="cause">ROOT CAUSE<br><b>UNKNOWN</b></div>
+    <p>The nearest component is not automatically the guilty component.</p>
+  </div>
+</section>
+
+<section id="game" class="game hidden">
+  <aside class="panel left-panel">
+    <p class="kicker">DIAGNOSTIC LOOP</p>
+    <h2 id="phaseName">OBSERVE</h2>
+    <p id="phaseGoal" class="phase-goal"></p>
+    <div class="progress"><i id="progressFill"></i></div>
+    <div id="phaseCount" class="phase-count">01 / 05</div>
+    <div class="instruction"><span>WHAT TO DO</span><b id="actionText"></b></div>
+    <div class="watch"><span>WHAT TO WATCH</span><div id="watchList"></div></div>
+    <div class="source-note"><span>DIAGNOSTIC RULE</span><b>Find the first mismatch</b><p>Start from evidence you trust. Compare what one function says it sent with what the next function says it received. The first mismatch narrows the fault boundary.</p></div>
+  </aside>
+
+  <section class="panel center-panel">
+    <div class="stage-head"><div><p class="kicker">INTERFACE TRACE</p><h2>Sent ≟ Received</h2></div><div class="stage-actions"><button id="coachBtn" class="secondary" type="button">ASK COACH</button><button id="resetBtn" class="secondary" type="button">RESET</button></div></div>
+    <div class="incident-banner"><div><span>INCIDENT</span><b id="incidentName">A · MISSED GRASP</b></div><div><span>VISIBLE SYMPTOM</span><b id="incidentSymptom">HAND −18 cm FROM CASE</b></div><div><span>DOWNSTREAM HEALTH</span><b id="incidentHealth">MOTOR TRACKING 98%</b></div></div>
+
+    <div class="diagnostic-layout">
+      <div class="architecture" id="architecture">
+        <article class="arch-node"><small>01</small><b>MISSION</b><span id="node0">PICK CASE · RACK B</span></article>
+        <button class="probe" data-probe="0" type="button"><span>P1</span><b>PROBE</b></button>
+        <article class="arch-node"><small>02</small><b>BEHAVIOR</b><span id="node1">APPROACH → REACH → GRASP</span></article>
+        <button class="probe" data-probe="1" type="button"><span>P2</span><b>PROBE</b></button>
+        <article class="arch-node"><small>03</small><b>STATE</b><span id="node2">CASE x = +0.42 m</span></article>
+        <button class="probe" data-probe="2" type="button"><span>P3</span><b>PROBE</b></button>
+        <article class="arch-node"><small>04</small><b>MOTION</b><span id="node3">WRIST TARGET x = +0.24 m</span></article>
+        <button class="probe" data-probe="3" type="button"><span>P4</span><b>PROBE</b></button>
+        <article class="arch-node"><small>05</small><b>CONTROL</b><span id="node4">TRACK x = +0.24 m</span></article>
+        <button class="probe" data-probe="4" type="button"><span>P5</span><b>PROBE</b></button>
+        <article class="arch-node plant"><small>06</small><b>PHYSICAL PLANT</b><span id="node5">HAND x = +0.24 m</span></article>
+      </div>
+      <div class="world m03-world" id="world">
+        <div class="rack">RACK B</div><div id="case" class="case m03-case">CASE</div><div id="targetLine" class="target-line"></div><div id="hand" class="robot-hand">HAND</div><div class="measure-label actual-label">CASE +0.42 m</div><div id="handLabel" class="measure-label hand-label">HAND +0.24 m</div><div id="missArrow" class="miss-arrow">18 cm MISS →</div>
+      </div>
+    </div>
+
+    <div id="probePanel" class="probe-panel"><div class="probe-empty"><span>INTERFACE PROBE</span><b>Open a probe point.</b><p>Compare the sender's last packet with what the receiver actually used.</p></div></div>
+    <div class="center-actions"><button id="runIncidentBtn" class="primary" type="button">RUN INCIDENT</button><button id="diagnoseBtn" class="secondary" type="button" disabled>TEST CURRENT HYPOTHESIS</button></div>
+    <div id="result" class="result neutral"><b>READY</b><span>Observe the symptom before opening probes.</span></div>
+    <div id="reflection" class="reflection hidden"><div><span>WHAT YOU JUST PROVED</span><b id="reflectionSaw"></b></div><div><span>DIAGNOSTIC METHOD</span><b id="reflectionWhy"></b></div><button id="reflectionContinue" class="secondary" type="button">CONTINUE</button></div>
+  </section>
+
+  <aside class="panel right-panel">
+    <p class="kicker">HYPOTHESIS BOARD</p><h2>Where is the first mismatch?</h2><p class="micro">Inspect evidence first. Then mark one interface as your current hypothesis. You can change it at any time.</p>
+    <div id="hypothesisList" class="hypothesis-list">
+      <button data-hyp="0" type="button"><span>P1</span><b>Mission → Behavior</b></button><button data-hyp="1" type="button"><span>P2</span><b>Behavior → State</b></button><button data-hyp="2" type="button"><span>P3</span><b>State → Motion</b></button><button data-hyp="3" type="button"><span>P4</span><b>Motion → Control</b></button><button data-hyp="4" type="button"><span>P5</span><b>Control → Plant</b></button>
+    </div>
+    <div class="evidence-summary"><span>EVIDENCE COLLECTED</span><b id="probeCount">0 / 5 probes</b><div id="evidenceList">No interfaces inspected yet.</div></div>
+    <div class="translation-box"><span>KEY IDEA</span><p id="keyIdea">A healthy downstream component can faithfully execute bad upstream information.</p></div>
+    <div class="log-wrap"><span>SYSTEM LOG</span><pre id="log">INCIDENT ......... LOADED
+MOTOR TRACKING ... 98%
+ROOT CAUSE ....... UNKNOWN
+PROBES ........... CLOSED</pre></div>
+  </aside>
+</section>
+</main>
+
+<div id="lessonModal" class="modal hidden"><div class="modal-card"><p class="kicker">AFTER THE ISOLATION TEST</p><h2 id="lessonTitle"></h2><p id="lessonText"></p><div id="lessonEvidence" class="lesson-chain"></div><button id="lessonContinue" class="primary" type="button">CONTINUE</button></div></div>
+<div id="completeModal" class="modal hidden"><div class="modal-card"><p class="kicker">01.03 COMPLETE</p><h2>FAULT BOUNDARY TRACING INSTALLED.</h2><p>Tu as diagnostiqué deux symptômes visibles sans accuser automatiquement le composant le plus proche. Dans les deux cas, tu as comparé les données aux interfaces et cherché le premier endroit où envoyé ≠ reçu.</p><div class="final-stack"><b>OBSERVE SYMPTOM</b><i>↓</i><b>COLLECT EVIDENCE</b><i>↓</i><b>FIND FIRST MISMATCH</b><i>↓</i><b>ISOLATE</b><i>↓</i><b>RETEST</b></div><div class="unlock"><span>PERSISTENT BUILD</span><b>INTERFACE DIAGNOSTIC MAP</b></div><div class="complete-actions"><a class="secondary linkbtn" href="../../#campaign">CAMPAIGN MAP</a><button id="replayBtn" class="primary" type="button">REPLAY 01.03</button></div></div></div>
+<div id="coachPanel" class="coach hidden"><div><span>COACH</span><button id="closeCoach" type="button">×</button></div><p id="coachText"></p></div>
+<script src="../../assets/js/a01m03-trace-broken.js?v=1-20260810"></script>
+</body>
+</html>
