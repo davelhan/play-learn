@@ -1,0 +1,65 @@
+{
+  "acts": [
+    {
+      "id": 1,
+      "title": "THE MACHINE",
+      "focus": "System Architecture & Humanoid Anatomy",
+      "build": "Architecture + first chassis"
+    },
+    {
+      "id": 2,
+      "title": "GIVE IT A BODY",
+      "focus": "Kinematics & Geometry",
+      "build": "Skeleton + joint axes"
+    },
+    {
+      "id": 3,
+      "title": "GIVE IT STRENGTH",
+      "focus": "Dynamics, Actuators & Transmissions",
+      "build": "Actuators + transmissions"
+    },
+    {
+      "id": 4,
+      "title": "MAKE IT STAND",
+      "focus": "Balance & Locomotion",
+      "build": "Feet + gait + recovery"
+    },
+    {
+      "id": 5,
+      "title": "MAKE IT PERCEIVE",
+      "focus": "Sensing, Perception & State Estimation",
+      "build": "Sensors + calibrated state"
+    },
+    {
+      "id": 6,
+      "title": "MAKE IT REACT",
+      "focus": "Control, Real-Time Software & Compute",
+      "build": "Control hierarchy + watchdogs"
+    },
+    {
+      "id": 7,
+      "title": "KEEP IT ALIVE",
+      "focus": "Energy, Battery, Power & Thermal",
+      "build": "Battery + cooling + docking"
+    },
+    {
+      "id": 8,
+      "title": "MAKE IT USEFUL",
+      "focus": "Manipulation, HRI & Industrial Design",
+      "build": "Hands + HRI + engineered exterior"
+    },
+    {
+      "id": 9,
+      "title": "MAKE IT TRUSTWORTHY",
+      "focus": "Safety, Reliability, Verification & Cybersecurity",
+      "build": "Safety architecture + evidence"
+    },
+    {
+      "id": 10,
+      "title": "DEFEND THE DESIGN",
+      "focus": "Engineering Design Review",
+      "build": "Final reviewed configuration"
+    }
+  ],
+  "core_missions": 60
+}

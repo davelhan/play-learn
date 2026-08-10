@@ -1,0 +1,67 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PLAY//LEARN V004</title><style>
+*{box-sizing:border-box}:root{--bg:#07090c;--p:#11171d;--p2:#182029;--line:#2a3640;--txt:#eef4f7;--mut:#90a0ac;--a:#90f1ca;--bad:#ff8585;--warn:#f4cf73}
+body{margin:0;background:radial-gradient(circle at 50% -20%,#1c2935,#07090c 55%);color:var(--txt);font-family:Arial,sans-serif}
+header{height:64px;padding:0 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);background:#080b0eee;position:sticky;top:0;z-index:4}
+.brand{font-weight:900;letter-spacing:.12em}.brand b{color:var(--a)}.small{font-size:10px;color:var(--mut);letter-spacing:.13em}
+main{max-width:1400px;margin:auto;padding:18px}.grid{display:grid;grid-template-columns:280px 1fr 310px;gap:12px}.panel{background:linear-gradient(180deg,var(--p2),var(--p));border:1px solid var(--line);border-radius:14px;padding:15px}
+.eyebrow{font-size:10px;letter-spacing:.14em;color:var(--a);font-weight:900}h2{margin:5px 0 13px;font-size:26px}button{font:inherit;border:1px solid var(--line);border-radius:9px;padding:10px 13px;cursor:pointer}.primary{background:var(--a);border-color:var(--a);color:#06120d;font-weight:900}.secondary{background:#1b252e;color:var(--txt)}.ghost{background:transparent;color:var(--mut)}
+.control{padding:11px 0;border-bottom:1px solid #222c35}.control label{display:flex;justify-content:space-between;font-size:12px}.control label b{color:var(--a)}input[type=range]{width:100%;margin-top:9px}.toggle{display:flex;align-items:center;justify-content:space-between}
+.stage{min-height:710px}.stageTop{display:flex;justify-content:space-between;gap:12px}.tests{display:flex;gap:6px;flex-wrap:wrap}.test.active{border-color:var(--a);color:var(--a)}
+.zone{height:500px;position:relative;border:1px solid #202a33;border-radius:13px;background:#0a0f13;margin-top:10px;overflow:hidden}.ground{position:absolute;left:0;right:0;bottom:70px;height:2px;background:#4b5760}
+.robot{position:absolute;left:50%;bottom:72px;width:250px;height:390px;transform:translateX(-50%);transform-origin:50% 90%;transition:.35s}.head{position:absolute;left:91px;top:5px;width:68px;height:58px;border:2px solid #82919d;border-radius:13px;background:#212c35}.eye{width:26px;height:7px;background:var(--a);margin:23px auto;border-radius:5px}.torso{position:absolute;left:62px;top:79px;width:126px;height:136px;border:2px solid #82919d;border-radius:18px;background:#26343f}.battery{position:absolute;left:85px;top:135px;width:80px;height:44px;border:2px solid var(--warn);border-radius:8px;background:#2d2a1f;cursor:ns-resize;user-select:none;text-align:center;padding-top:14px;font-size:9px;font-weight:900;color:var(--warn);z-index:3}.imu{position:absolute;left:111px;top:98px;width:28px;height:15px;background:var(--a);border-radius:4px}.arm{position:absolute;top:92px;width:26px;height:138px;background:#687681;border-radius:9px}.arm.l{left:29px;transform:rotate(8deg)}.arm.r{right:29px;transform:rotate(-8deg)}.leg{position:absolute;top:214px;width:36px;height:150px;background:#74818b;border-radius:8px}.leg.l{left:75px}.leg.r{right:75px}.foot{position:absolute;bottom:-20px;height:22px;background:#303a43;border-radius:6px}.leg.l .foot{right:0}.leg.r .foot{left:0}
+.com{position:absolute;width:14px;height:14px;border-radius:50%;background:var(--warn);left:50%;top:220px;transform:translate(-50%,-50%);box-shadow:0 0 18px #f4cf73aa}.comline{position:absolute;width:1px;background:#f4cf7388;left:50%;top:220px;bottom:70px}.label{position:absolute;left:14px;bottom:105px;padding:6px 8px;border:1px solid var(--line);background:#0a1015dd;border-radius:7px;font-size:10px;color:var(--mut)}
+.actions{display:flex;gap:8px;margin-top:10px}.result{margin-top:10px;border:1px solid var(--line);border-radius:11px;padding:13px;background:#0b1015;min-height:115px}.result.pass{border-color:#365c50}.result.fail{border-color:#693b3f}.result.pass h3{color:var(--a)}.result.fail h3{color:var(--bad)}.result h3{margin:0 0 6px}
+.metric{padding:8px 0;border-bottom:1px solid #232e37;font-size:12px}.metricTop{display:flex;justify-content:space-between}.bar{height:6px;background:#222a31;border-radius:6px;overflow:hidden;margin-top:5px}.bar div{height:100%;background:var(--a)}
+.card{border:1px solid var(--line);border-radius:10px;padding:11px;background:#0b1015;margin-top:9px}.card b{display:block}.card p{font-size:12px;line-height:1.45;color:var(--mut);margin:4px 0 0}.log{font-family:monospace;font-size:11px;line-height:1.45;background:#080c10;border:1px solid #202a33;border-radius:9px;padding:10px;min-height:130px;color:#9dacb8}
+.note{font-size:12px;color:var(--mut);line-height:1.5;margin-top:12px;padding:10px;border-left:3px solid var(--a);background:#0b1215;border-radius:7px}
+@media(max-width:1000px){.grid{grid-template-columns:1fr}.stage{min-height:auto}}
+</style></head><body>
+<header><div class="brand">PLAY<b>//</b>LEARN</div><div class="small">V004 · INTERACTIVE ROBOTICS LAB</div></header>
+<main><div class="grid">
+<aside class="panel"><div class="eyebrow">BUILD / TUNE</div><h2>Robot setup</h2>
+<div class="control"><label>Battery position <b id="batV">50%</b></label><input id="batteryPos" type="range" min="0" max="100" value="50"></div>
+<div class="control"><label>Foot width <b id="footV">60</b></label><input id="footWidth" type="range" min="35" max="95" value="60"></div>
+<div class="control"><label>Motor torque <b id="torqueV">70%</b></label><input id="motorTorque" type="range" min="35" max="100" value="70"></div>
+<div class="control"><label>Control latency <b id="latV">18 ms</b></label><input id="latency" type="range" min="5" max="80" value="18"></div>
+<div class="control"><label>Floor friction <b id="fricV">0.70</b></label><input id="friction" type="range" min="15" max="100" value="70"></div>
+<div class="control toggle"><span>IMU</span><button id="imuToggle" class="secondary">ONLINE</button></div>
+<div class="note">Change une seule variable à la fois, observe les métriques, puis teste. La notion technique vient après l’effet.</div>
+</aside>
+
+<section class="panel stage"><div class="stageTop"><div><div class="eyebrow">SYSTEM LAB</div><h2>Persistent Humanoid</h2></div><div class="tests">
+<button class="test secondary active" data-test="stand">STAND</button><button class="test secondary" data-test="walk">WALK</button><button class="test secondary" data-test="push">PUSH</button></div></div>
+<div class="zone"><div class="ground"></div><div class="comline" id="comline"></div><div class="com" id="com"></div><div class="robot" id="robot"><div class="head"><div class="eye"></div></div><div class="torso"></div><div class="battery" id="battery">BATTERY</div><div class="imu" id="imu"></div><div class="arm l"></div><div class="arm r"></div><div class="leg l"><div class="foot"></div></div><div class="leg r"><div class="foot"></div></div></div><div class="label">CENTER OF MASS</div></div>
+<div class="actions"><button class="primary" id="runBtn">▶ RUN TEST</button><button class="ghost" id="resetBtn">RESET BASELINE</button></div>
+<div id="result" class="result"><h3>READY</h3><div>Manipule le robot puis lance un test.</div></div></section>
+
+<aside class="panel"><div class="eyebrow">LIVE SYSTEM</div><h2>Diagnostics</h2><div id="metrics"></div>
+<div class="eyebrow" style="margin-top:15px">INSPECT</div>
+<div class="card"><b>Battery</b><p>Déplace-la verticalement. Observe comment une seule pièce peut influencer plusieurs métriques.</p></div>
+<div class="card"><b>IMU</b><p>Mesure rotation et accélération. Le contrôleur dépend d'une estimation d'état exploitable, pas d'un simple “capteur présent”.</p></div>
+<div class="card"><b>Feet</b><p>La géométrie de contact change la marge de support. Plus large n'est pas automatiquement optimal dans tous les contextes.</p></div>
+<div class="eyebrow" style="margin-top:15px">SYSTEM LOG</div><div class="log" id="log">SYSTEM READY
+Training model only.
+No real Dyno performance implied.</div></aside>
+</div></main>
+<script>
+const E=id=>document.getElementById(id), S={battery:50,foot:60,torque:70,latency:18,friction:.70,imu:true,test:"stand"}, base={...S};
+const robot=E("robot"), bat=E("battery"), imu=E("imu"), result=E("result"), log=E("log");
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+function calc(){let bh=(S.battery-50)/50, com=clamp(50+bh*17,25,75), support=clamp((S.foot-35)/60*100,0,100), state=S.imu?100:18, control=clamp(110-S.latency*1.25,10,100), traction=S.friction*100, heat=clamp(20+Math.pow(S.torque/100,2)*75,0,100), runtime=clamp(76-Math.max(0,S.torque-55)*.35,20,95), stability=clamp(.35*support+.27*(100-com)+.23*state+.15*control,0,100), walk=clamp(.25*stability+.25*traction+.25*S.torque+.25*control,0,100), push=clamp(.25*support+.2*traction+.2*S.torque+.2*control+.15*state,0,100);return{com,support,state,control,traction,heat,runtime,stability,walk,push}}
+function render(){E("batV").textContent=S.battery+"%";E("footV").textContent=S.foot;E("torqueV").textContent=S.torque+"%";E("latV").textContent=S.latency+" ms";E("fricV").textContent=S.friction.toFixed(2);E("imuToggle").textContent=S.imu?"ONLINE":"OFFLINE";bat.style.top=(175-S.battery*.8)+"px";imu.style.opacity=S.imu?1:.18;document.querySelectorAll(".foot").forEach(f=>f.style.width=S.foot+"px");let m=calc();E("com").style.top=(125+m.com*1.15)+"px";E("comline").style.top=(125+m.com*1.15)+"px";let arr=[["Balance margin",m.stability],["State confidence",m.state],["Control response",m.control],["Traction margin",m.traction],["Torque authority",S.torque],["Runtime estimate",m.runtime],["Thermal headroom",100-m.heat]];E("metrics").innerHTML=arr.map(x=>`<div class="metric"><div class="metricTop"><span>${x[0]}</span><b>${Math.round(x[1])}%</b></div><div class="bar"><div style="width:${x[1]}%"></div></div></div>`).join("")}
+function notes(){let n=[];if(S.battery>65)n.push("Battery moved upward → center of mass rises → balance margin falls.");if(S.battery<35)n.push("Battery moved lower → center of mass lowers → balance improves, while packaging trade-offs remain.");if(S.foot>80)n.push("Wider feet → larger static support margin. Later missions will introduce turning and stair trade-offs.");if(S.foot<45)n.push("Narrow feet → smaller support region.");if(S.torque>85)n.push("Higher torque → more recovery authority, but higher current/thermal demand.");if(S.torque<50)n.push("Low torque → saturation risk.");if(S.latency>40)n.push("High latency → correct feedback arrives too late.");if(S.friction<.4)n.push("Low friction → contact force is limited; more motor torque cannot fix slip.");if(!S.imu)n.push("IMU offline → orientation-related state confidence collapses.");return n}
+function run(){let m=calc(),score=S.test==="stand"?m.stability:S.test==="walk"?m.walk:m.push, pass=score>=(S.test==="stand"?60:S.test==="walk"?65:64), name=S.test==="stand"?"STAND":S.test==="walk"?"WALK":"PUSH RECOVERY";robot.style.transform=`translateX(-50%) rotate(${pass?0:S.test==="push"?22:13}deg)`;if(pass)setTimeout(()=>robot.style.transform="translateX(-50%) rotate(0deg)",550);let n=notes();result.className="result "+(pass?"pass":"fail");result.innerHTML=`<h3>${pass?"TEST PASSED":"TEST FAILED"} · ${name}</h3><div>System score: <b>${Math.round(score)}%</b></div><div style="margin-top:7px;color:#91a0ab;font-size:12px">${n.length?n.join("<br>"):"Baseline stays inside this simplified training envelope."}</div>`;let flags=[];if(m.state<50)flags.push("STATE_CONFIDENCE LOW");if(m.control<55)flags.push("CONTROL_RESPONSE LATE");if(m.traction<45)flags.push("CONTACT_FRICTION LOW");if(S.torque<50)flags.push("TORQUE SATURATION RISK");if(m.stability<60)flags.push("BALANCE_MARGIN LOW");if(m.heat>80)flags.push("THERMAL LOAD HIGH");log.textContent=`TEST: ${name}
+RESULT: ${pass?"PASS":"FAIL"}
+BALANCE: ${Math.round(m.stability)}%
+STATE: ${Math.round(m.state)}%
+CONTROL: ${Math.round(m.control)}%
+TRACTION: ${Math.round(m.traction)}%
+TORQUE: ${S.torque}%
+${flags.length?"FLAGS:\\n- "+flags.join("\\n- "):"FLAGS: NONE"}`}
+function bind(id,key,conv=x=>+x){E(id).oninput=e=>{S[key]=conv(e.target.value);render()}}
+bind("batteryPos","battery");bind("footWidth","foot");bind("motorTorque","torque");bind("latency","latency");bind("friction","friction",x=>+x/100);
+E("imuToggle").onclick=()=>{S.imu=!S.imu;render()};document.querySelectorAll(".test").forEach(b=>b.onclick=()=>{document.querySelectorAll(".test").forEach(x=>x.classList.remove("active"));b.classList.add("active");S.test=b.dataset.test});E("runBtn").onclick=run;
+E("resetBtn").onclick=()=>{Object.assign(S,base);E("batteryPos").value=S.battery;E("footWidth").value=S.foot;E("motorTorque").value=S.torque;E("latency").value=S.latency;E("friction").value=S.friction*100;robot.style.transform="translateX(-50%)";result.className="result";result.innerHTML="<h3>READY</h3><div>Baseline restored.</div>";log.textContent="SYSTEM READY\\nBaseline restored.";render()};
+let dragging=false;bat.onpointerdown=e=>{dragging=true;bat.setPointerCapture(e.pointerId)};bat.onpointermove=e=>{if(!dragging)return;let z=document.querySelector(".zone").getBoundingClientRect(),y=e.clientY-z.top,val=clamp(Math.round((310-y)/1.65),0,100);S.battery=val;E("batteryPos").value=val;render()};bat.onpointerup=()=>dragging=false;render();
+</script></body></html>
