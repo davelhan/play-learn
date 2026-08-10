@@ -1,0 +1,17 @@
+/* Mission 01 QA6 — guided discovery without answer buttons */
+.investigation{margin:12px 0 14px;padding:12px;border:1px solid #30423c;border-radius:10px;background:#0b1312}
+.investigation-label,.evidence-label{font-size:8px;letter-spacing:.14em;color:#70808b;font-weight:900}
+.investigation-question{margin:5px 0 11px;color:#dce7ec;font-size:11px;line-height:1.45}
+.watch-list{display:grid;gap:6px}.watch-item{display:grid;grid-template-columns:13px 1fr;gap:6px;align-items:start;color:#82919b;font-size:9px;line-height:1.35}.watch-item i{font-style:normal;color:#56636d}.watch-item.seen{color:#c2ced4}.watch-item.seen i{color:var(--mint)}
+.control-row.locked,.range-control.locked{opacity:.24;pointer-events:none}
+.control-row:not(.locked),.range-control:not(.locked){border-radius:8px;background:#10201955;padding-left:7px;padding-right:7px;box-shadow:0 0 0 1px #8ff0c91a}
+.signal{position:relative}.signal-explain{display:block;color:#5f6e78;font-size:8px;line-height:1.3;margin-top:-2px;margin-bottom:7px}.signal.attention{box-shadow:0 0 0 1px #8ff0c955,0 0 22px #8ff0c914}
+.node em{display:block;font-style:normal;color:#64737e;font-size:7px;letter-spacing:.06em;margin:3px 0 5px}
+.link.broken{height:54px;cursor:default}.link.broken .wire{height:18px}
+.break-marker{display:none;position:absolute;left:50%;top:18px;transform:translateX(-50%);width:145px;padding:7px 8px;border:1px dashed var(--bad);border-radius:7px;background:#1a0f11;color:var(--bad);font-size:8px;font-weight:900;letter-spacing:.08em;text-align:center;z-index:8}
+.link.repairable{cursor:pointer}.link.repairable .break-marker{display:block;animation:qa6pulse 1.2s ease-in-out infinite}.link.repairable:focus{outline:none}.link.repairable:focus .break-marker{box-shadow:0 0 0 2px #ff858533}.link.connected .break-marker{display:none!important}.link.broken.connected .wire{height:100%!important;background:var(--mint)!important}
+@keyframes qa6pulse{0%,100%{box-shadow:0 0 0 0 #ff858522}50%{box-shadow:0 0 0 8px #ff858508}}
+.lesson-card{margin-top:9px;padding:13px;border:1px solid #38564c;border-radius:10px;background:#0b1512;display:grid;grid-template-columns:1fr 28px 1fr auto;gap:11px;align-items:center}.lesson-column span{display:block;font-size:8px;letter-spacing:.13em;color:#70808b;font-weight:900;margin-bottom:5px}.lesson-column b{display:block;font-size:11px;line-height:1.45;color:#d7e3e7}.lesson-column:last-of-type b{color:var(--mint)}.lesson-arrow{font-size:18px;color:#61726c;text-align:center}.lesson-continue{min-width:92px}.lesson-continue:disabled{opacity:.35}
+.layer-focus{box-shadow:0 0 0 1px #8ff0c955,0 0 24px #8ff0c914!important}.phase-brief{color:#aebcc4;font-size:10px;line-height:1.45}.phase-brief strong{color:var(--mint)}.failure-stamp{right:24px!important;top:22px!important}.grab-label{left:75px!important;top:154px!important;width:120px;text-align:center;color:var(--mint)!important}
+@media(max-width:1150px){.lesson-card{grid-template-columns:1fr 20px 1fr}.lesson-continue{grid-column:1/-1;width:100%}}
+@media(max-width:820px){.lesson-card{grid-template-columns:1fr}.lesson-arrow{transform:rotate(90deg)}.node em{font-size:8px}}
