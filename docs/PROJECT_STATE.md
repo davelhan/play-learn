@@ -33,3 +33,16 @@ Turn the open laboratory into Mission 01 with:
 ## Security boundary
 Do not expose API keys in GitHub Pages.
 AI integration comes only after a protected API/backend layer is selected.
+
+
+## V005 implemented
+Mission 01 — KNOW WHICH WAY IS UP is now the active `/lab/` experience.
+
+This is the first mission to prove the full product grammar with no mandatory quiz:
+- problem first,
+- live manipulation,
+- observable consequences,
+- terminology after experience,
+- guided repair,
+- transfer to a new failure,
+- mastery update.

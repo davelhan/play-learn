@@ -5,7 +5,7 @@ Web-first prototype repository for PLAY//LEARN.
 ## Current build
 - Product landing page
 - Robotics campaign overview: 10 Acts / 60 core missions
-- Playable V004 Interactive Robotics Lab
+- Playable V005 Mission 01: KNOW WHICH WAY IS UP
 - Static JSON campaign data
 - GitHub Pages compatible; no build step required
 
@@ -45,3 +45,10 @@ Later:
 
 ## Project status
 Current vertical slice is intentionally deterministic and educational. Its fictional training values do not represent real Dyno specifications or performance.
+
+
+## V005
+Mission 01 now implements the full learning loop without required multiple-choice questions:
+Hook → Discover → Manipulate → Connect → Cause/Effect → Guided Test → Transfer → Complete.
+
+The player directly tilts the robot, toggles the IMU, repairs the sensing-to-estimation connection, tunes sensor timing, passes a stand test, then diagnoses a separate control-latency fault.

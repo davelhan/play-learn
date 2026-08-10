@@ -1,0 +1,55 @@
+{
+  "id": "RBT-01",
+  "title": "KNOW WHICH WAY IS UP",
+  "campaign": "Robotics",
+  "act": 1,
+  "goal": "Restore a usable orientation signal and make the humanoid stand for 30 seconds.",
+  "phases": [
+    {
+      "id": 0,
+      "name": "HOOK",
+      "goal": "Observe the failure before attempting a fix."
+    },
+    {
+      "id": 1,
+      "name": "DISCOVER",
+      "goal": "Tilt the robot and observe what the IMU actually measures."
+    },
+    {
+      "id": 2,
+      "name": "MANIPULATE",
+      "goal": "Disable and restore the IMU to isolate its effect."
+    },
+    {
+      "id": 3,
+      "name": "CONNECT",
+      "goal": "Repair the information path from IMU to State Estimation."
+    },
+    {
+      "id": 4,
+      "name": "CAUSE / EFFECT",
+      "goal": "Reduce stale sensor timing and watch estimate confidence recover."
+    },
+    {
+      "id": 5,
+      "name": "GUIDED TEST",
+      "goal": "Pass the standing test with a coherent sensing-to-control chain."
+    },
+    {
+      "id": 6,
+      "name": "TRANSFER",
+      "goal": "Diagnose a different failure without blaming the IMU automatically."
+    },
+    {
+      "id": 7,
+      "name": "COMPLETE",
+      "goal": "Lock the orientation stack into the persistent robot."
+    }
+  ],
+  "mastery_award": {
+    "IMU": "Explored",
+    "State Estimation": "Applied",
+    "Control": "Seen"
+  },
+  "disclaimer": "All values are fictional training values and do not represent real Dyno specifications."
+}
