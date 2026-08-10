@@ -16,8 +16,11 @@ function applyProgress(data,progress){
       });
     });
   }
-  const m0101=data.acts?.[0]?.missions?.find(m=>m.id==='01.01');
+  const act1=data.acts?.[0];
+  const m0101=act1?.missions?.find(m=>m.id==='01.01');
+  const m0102=act1?.missions?.find(m=>m.id==='01.02');
   if(m0101&&localStorage.getItem('playlearn_a01m01_complete')==='true')m0101.status='COMPLETED';
+  if(m0102&&localStorage.getItem('playlearn_a01m02_complete')==='true')m0102.status='COMPLETED';
   return data;
 }
 
@@ -85,7 +88,7 @@ async function loadCampaign(){
   try{
     const [data,progress]=await Promise.all([
       fetch('./data/campaign.json?v=map-20260810').then(r=>{if(!r.ok)throw new Error('Campaign data unavailable');return r.json();}),
-      fetch('./data/campaign-progress.json?v=0101-20260810').then(r=>r.ok?r.json():null).catch(()=>null)
+      fetch('./data/campaign-progress.json?v=0102-20260810').then(r=>r.ok?r.json():null).catch(()=>null)
     ]);
     applyProgress(data,progress);
     host.innerHTML=data.acts.map(actCard).join('');
