@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="PLAY//LEARN — apprendre des systèmes complexes en les manipulant. Première campagne : Robotics.">
 <title>PLAY//LEARN — Learn by Building</title>
-<link rel="stylesheet" href="./assets/css/main.css">
+<link rel="stylesheet" href="./assets/css/main.css?v=missions-20260810">
 </head>
 <body>
 <header class="nav">
@@ -62,13 +62,42 @@
   <div id="acts" class="acts"></div>
 </section>
 
-<section class="section lab-callout">
-  <div>
+<section class="section mission-launch" aria-labelledby="playable-title">
+  <div class="mission-launch-head">
     <p class="kicker">CURRENT PLAYABLE MISSIONS</p>
-    <h2>MISSIONS 01–02 · ORIENTATION → DYNAMIC BALANCE</h2>
-    <p>Deux missions complètes sont maintenant jouables : orientation / State Estimation, puis centre de masse / support / placement du pied avec répétition contextualisée.</p>
+    <h2 id="playable-title">ORIENTATION <span>→</span> DYNAMIC BALANCE</h2>
+    <p>Commence par comprendre comment le robot connaît son orientation, puis réutilise cette base dans un nouveau problème d'équilibre dynamique.</p>
   </div>
-  <a class="button primary" href="./lab/">PLAY CAMPAIGN</a>
+
+  <div class="mission-grid">
+    <article class="mission-card">
+      <div class="mission-card-top">
+        <div class="mission-number">01</div>
+        <div class="mission-status">PLAYABLE</div>
+      </div>
+      <div class="mission-card-copy">
+        <p class="mission-domain">ORIENTATION · STATE ESTIMATION</p>
+        <h3>KNOW WHICH WAY IS UP.</h3>
+        <p>Observe la chute, comprends ce que mesure l'IMU, répare la chaîne d'information et distingue sensing, estimation et contrôle.</p>
+      </div>
+      <a class="button primary mission-start" href="./lab/">START MISSION 01</a>
+    </article>
+
+    <div class="mission-arrow" aria-hidden="true">→</div>
+
+    <article class="mission-card">
+      <div class="mission-card-top">
+        <div class="mission-number">02</div>
+        <div class="mission-status">PLAYABLE</div>
+      </div>
+      <div class="mission-card-copy">
+        <p class="mission-domain">DYNAMIC BALANCE · FOOT PLACEMENT</p>
+        <h3>STEP WHERE YOU'RE GOING.</h3>
+        <p>Réutilise un State Estimation sain, observe le centre de masse et adapte le placement du pied pour créer le prochain support.</p>
+      </div>
+      <a class="button primary mission-start" href="./lab/mission-02.html">START MISSION 02</a>
+    </article>
+  </div>
 </section>
 </main>
 
