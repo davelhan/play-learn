@@ -1,76 +1,180 @@
 {
+  "title": "BUILD THE WHOLE HUMANOID",
+  "core_missions": 60,
+  "structure_note": "10 Acts. Each Act contains 6 core missions. The two playable prototypes are validated vertical slices and are not Missions 01.01 or 01.02 of the final campaign.",
   "acts": [
     {
       "id": 1,
       "title": "THE MACHINE",
       "focus": "System Architecture & Humanoid Anatomy",
-      "build": "Architecture + first chassis"
+      "build": "Architecture + first chassis",
+      "status": "NEXT TO DESIGN",
+      "open": true,
+      "missions": [
+        {"id":"01.01","title":"SYSTEM LAYERS","type":"DISCOVER","description":"Understand the robot as a coupled system: mission, autonomy, perception, motion, control and physical plant.","status":"NEXT TO BUILD"},
+        {"id":"01.02","title":"COMMANDS DOWN, EVIDENCE UP","type":"LAB","description":"See how commands travel toward hardware while measurements, status and faults travel back up.","status":"PLANNED"},
+        {"id":"01.03","title":"TRACE THE BROKEN LAYER","type":"GUIDED","description":"Follow evidence through the architecture instead of blaming the first visible component.","status":"PLANNED"},
+        {"id":"01.04","title":"BUILD THE ARCHITECTURE","type":"DIAGNOSE","description":"Assemble the six system layers into a coherent humanoid architecture.","status":"PLANNED"},
+        {"id":"01.05","title":"COUPLED FAILURE","type":"TRANSFER","description":"Diagnose a new failure where several healthy subsystems interact badly.","status":"PLANNED"},
+        {"id":"01.06","title":"ARCHITECTURE GATE","type":"GATE","description":"Prove that you can read, build and defend the complete system architecture.","status":"PLANNED"}
+      ]
     },
     {
       "id": 2,
       "title": "GIVE IT A BODY",
       "focus": "Kinematics & Geometry",
-      "build": "Skeleton + joint axes"
+      "build": "Skeleton + joint axes",
+      "status": "LOCKED",
+      "missions": [
+        {"id":"02.01","title":"FRAMES & POSES","type":"DISCOVER","status":"LOCKED"},
+        {"id":"02.02","title":"JOINT AXES","type":"LAB","status":"LOCKED"},
+        {"id":"02.03","title":"FORWARD & INVERSE KINEMATICS","type":"GUIDED","status":"LOCKED"},
+        {"id":"02.04","title":"WORKSPACE & REACH","type":"DIAGNOSE","status":"LOCKED"},
+        {"id":"02.05","title":"SINGULARITIES & COLLISION","type":"TRANSFER","status":"LOCKED"},
+        {"id":"02.06","title":"KINEMATICS GATE","type":"GATE","status":"LOCKED"}
+      ]
     },
     {
       "id": 3,
       "title": "GIVE IT STRENGTH",
       "focus": "Dynamics, Actuators & Transmissions",
-      "build": "Actuators + transmissions"
+      "build": "Actuators + transmissions",
+      "status": "LOCKED",
+      "missions": [
+        {"id":"03.01","title":"TORQUE & INERTIA","type":"DISCOVER","status":"LOCKED"},
+        {"id":"03.02","title":"MOTOR VS TRANSMISSION","type":"LAB","status":"LOCKED"},
+        {"id":"03.03","title":"GEAR RATIO TRADE-OFFS","type":"GUIDED","status":"LOCKED"},
+        {"id":"03.04","title":"CONTINUOUS VS PEAK","type":"DIAGNOSE","status":"LOCKED"},
+        {"id":"03.05","title":"POWER & THERMAL LIMITS","type":"TRANSFER","status":"LOCKED"},
+        {"id":"03.06","title":"ACTUATION GATE","type":"GATE","status":"LOCKED"}
+      ]
     },
     {
       "id": 4,
       "title": "MAKE IT STAND",
       "focus": "Balance & Locomotion",
-      "build": "Feet + gait + recovery"
+      "build": "Feet + gait + recovery",
+      "status": "LOCKED",
+      "prototype_refs": ["P02"],
+      "missions": [
+        {"id":"04.01","title":"CENTER OF MASS & SUPPORT","type":"DISCOVER","status":"LOCKED"},
+        {"id":"04.02","title":"CONTACT & FRICTION","type":"LAB","status":"LOCKED"},
+        {"id":"04.03","title":"FOOT PLACEMENT","type":"GUIDED","status":"LOCKED"},
+        {"id":"04.04","title":"GAIT & WHOLE-BODY CONTROL","type":"DIAGNOSE","status":"LOCKED"},
+        {"id":"04.05","title":"RECOVERY & FALL MANAGEMENT","type":"TRANSFER","status":"LOCKED"},
+        {"id":"04.06","title":"LOCOMOTION GATE","type":"GATE","status":"LOCKED"}
+      ]
     },
     {
       "id": 5,
       "title": "MAKE IT PERCEIVE",
       "focus": "Sensing, Perception & State Estimation",
-      "build": "Sensors + calibrated state"
+      "build": "Sensors + calibrated state",
+      "status": "LOCKED",
+      "prototype_refs": ["P01"],
+      "missions": [
+        {"id":"05.01","title":"SENSE THE BODY","type":"DISCOVER","status":"LOCKED"},
+        {"id":"05.02","title":"TIMING & CALIBRATION","type":"LAB","status":"LOCKED"},
+        {"id":"05.03","title":"FUSE SENSORS","type":"GUIDED","status":"LOCKED"},
+        {"id":"05.04","title":"STATE ESTIMATION","type":"DIAGNOSE","status":"LOCKED"},
+        {"id":"05.05","title":"PERCEPTION UNDER UNCERTAINTY","type":"TRANSFER","status":"LOCKED"},
+        {"id":"05.06","title":"PERCEPTION GATE","type":"GATE","status":"LOCKED"}
+      ]
     },
     {
       "id": 6,
       "title": "MAKE IT REACT",
       "focus": "Control, Real-Time Software & Compute",
-      "build": "Control hierarchy + watchdogs"
+      "build": "Control hierarchy + watchdogs",
+      "status": "LOCKED",
+      "prototype_refs": ["P01"],
+      "missions": [
+        {"id":"06.01","title":"FEEDBACK & ERROR","type":"DISCOVER","status":"LOCKED"},
+        {"id":"06.02","title":"PID & IMPEDANCE","type":"LAB","status":"LOCKED"},
+        {"id":"06.03","title":"BANDWIDTH, LATENCY & SATURATION","type":"GUIDED","status":"LOCKED"},
+        {"id":"06.04","title":"NESTED LOOPS & REAL TIME","type":"DIAGNOSE","status":"LOCKED"},
+        {"id":"06.05","title":"WATCHDOGS & AI AUTHORITY","type":"TRANSFER","status":"LOCKED"},
+        {"id":"06.06","title":"CONTROL GATE","type":"GATE","status":"LOCKED"}
+      ]
     },
     {
       "id": 7,
       "title": "KEEP IT ALIVE",
       "focus": "Energy, Battery, Power & Thermal",
-      "build": "Battery + cooling + docking"
+      "build": "Battery + cooling + docking",
+      "status": "LOCKED",
+      "missions": [
+        {"id":"07.01","title":"ENERGY VS POWER","type":"DISCOVER","status":"LOCKED"},
+        {"id":"07.02","title":"BATTERY & BMS","type":"LAB","status":"LOCKED"},
+        {"id":"07.03","title":"REGENERATION & POWER FLOW","type":"GUIDED","status":"LOCKED"},
+        {"id":"07.04","title":"HEAT & COOLING","type":"DIAGNOSE","status":"LOCKED"},
+        {"id":"07.05","title":"DOCKING, DERATING & SEALING","type":"TRANSFER","status":"LOCKED"},
+        {"id":"07.06","title":"ENERGY GATE","type":"GATE","status":"LOCKED"}
+      ]
     },
     {
       "id": 8,
       "title": "MAKE IT USEFUL",
       "focus": "Manipulation, HRI & Industrial Design",
-      "build": "Hands + HRI + engineered exterior"
+      "build": "Hands + HRI + engineered exterior",
+      "status": "LOCKED",
+      "missions": [
+        {"id":"08.01","title":"GRASP & FRICTION","type":"DISCOVER","status":"LOCKED"},
+        {"id":"08.02","title":"UNDERACTUATION & TACTILE","type":"LAB","status":"LOCKED"},
+        {"id":"08.03","title":"FORCE CONTROL","type":"GUIDED","status":"LOCKED"},
+        {"id":"08.04","title":"HANDOVER & HRI","type":"DIAGNOSE","status":"LOCKED"},
+        {"id":"08.05","title":"SERVICEABILITY & INDUSTRIAL DESIGN","type":"TRANSFER","status":"LOCKED"},
+        {"id":"08.06","title":"MANIPULATION GATE","type":"GATE","status":"LOCKED"}
+      ]
     },
     {
       "id": 9,
       "title": "MAKE IT TRUSTWORTHY",
       "focus": "Safety, Reliability, Verification & Cybersecurity",
-      "build": "Safety architecture + evidence"
+      "build": "Safety architecture + evidence",
+      "status": "LOCKED",
+      "missions": [
+        {"id":"09.01","title":"HAZARDS & RISK","type":"DISCOVER","status":"LOCKED"},
+        {"id":"09.02","title":"PROTECTIVE STOPS & STO","type":"LAB","status":"LOCKED"},
+        {"id":"09.03","title":"FMEA & FTA","type":"GUIDED","status":"LOCKED"},
+        {"id":"09.04","title":"RELIABILITY & AVAILABILITY","type":"DIAGNOSE","status":"LOCKED"},
+        {"id":"09.05","title":"V&V, FAULT INJECTION & CYBER","type":"TRANSFER","status":"LOCKED"},
+        {"id":"09.06","title":"SAFETY GATE","type":"GATE","status":"LOCKED"}
+      ]
     },
     {
       "id": 10,
       "title": "DEFEND THE DESIGN",
       "focus": "Engineering Design Review",
-      "build": "Final reviewed configuration"
+      "build": "Final reviewed configuration",
+      "status": "LOCKED",
+      "missions": [
+        {"id":"10.01","title":"EVIDENCE DISCIPLINE","type":"DISCOVER","status":"LOCKED"},
+        {"id":"10.02","title":"SYSTEM DESIGN REVIEW","type":"LAB","status":"LOCKED"},
+        {"id":"10.03","title":"ZONE REVIEW","type":"GUIDED","status":"LOCKED"},
+        {"id":"10.04","title":"REQUIREMENTS & RFIs","type":"DIAGNOSE","status":"LOCKED"},
+        {"id":"10.05","title":"CHANGE IMPACT & TRACEABILITY","type":"TRANSFER","status":"LOCKED"},
+        {"id":"10.06","title":"FINAL DESIGN DEFENSE","type":"GATE","status":"LOCKED"}
+      ]
     }
   ],
-  "core_missions": 60,
-  "current_playable_missions": [
+  "validated_prototypes": [
     {
-      "id": "RBT-01",
-      "title": "KNOW WHICH WAY IS UP",
+      "id": "P01",
+      "title": "ORIENTATION STACK",
+      "subtitle": "KNOW WHICH WAY IS UP",
+      "focus": "IMU · State Estimation · Control",
+      "maps_to": "Acts 05–06",
+      "status": "VALIDATED PROTOTYPE",
       "url": "./lab/"
     },
     {
-      "id": "RBT-02",
-      "title": "STEP WHERE YOU'RE GOING",
+      "id": "P02",
+      "title": "DYNAMIC BALANCE",
+      "subtitle": "STEP WHERE YOU'RE GOING",
+      "focus": "Center of Mass · Support · Foot Placement",
+      "maps_to": "Act 04",
+      "status": "VALIDATED PROTOTYPE",
       "url": "./lab/mission-02.html"
     }
   ]
