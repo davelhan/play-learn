@@ -5,22 +5,23 @@ const campaignMapFix=document.createElement('style');
 campaignMapFix.textContent='.act summary{position:relative;padding-right:62px!important}.act summary:after{position:absolute!important;right:20px;top:50%;transform:translateY(-50%)}';
 document.head.appendChild(campaignMapFix);
 
+function completionKey(id){
+  const parts=String(id).split('.');
+  if(parts.length!==2)return null;
+  return `playlearn_a${parts[0]}m${parts[1]}_complete`;
+}
+
 function applyProgress(data,progress){
-  if(progress){
-    (data.acts||[]).forEach(a=>{
-      const ap=progress.acts?.[String(a.id)];
-      if(ap)Object.assign(a,ap);
-      (a.missions||[]).forEach(m=>{
-        const mp=progress.missions?.[m.id];
-        if(mp)Object.assign(m,mp);
-      });
+  (data.acts||[]).forEach(a=>{
+    const ap=progress?.acts?.[String(a.id)];
+    if(ap)Object.assign(a,ap);
+    (a.missions||[]).forEach(m=>{
+      const mp=progress?.missions?.[m.id];
+      if(mp)Object.assign(m,mp);
+      const key=completionKey(m.id);
+      if(key&&localStorage.getItem(key)==='true')m.status='COMPLETED';
     });
-  }
-  const act1=data.acts?.[0];
-  const m0101=act1?.missions?.find(m=>m.id==='01.01');
-  const m0102=act1?.missions?.find(m=>m.id==='01.02');
-  if(m0101&&localStorage.getItem('playlearn_a01m01_complete')==='true')m0101.status='COMPLETED';
-  if(m0102&&localStorage.getItem('playlearn_a01m02_complete')==='true')m0102.status='COMPLETED';
+  });
   return data;
 }
 
@@ -53,10 +54,7 @@ function actCard(a){
           <h3>${esc(a.title)}</h3>
           <p>${esc(a.focus)}</p>
         </div>
-        <div class="act-meta">
-          ${refs}
-          <span class="act-status ${isActive?'active':isNext?'next':'locked'}">${esc(a.status)}</span>
-        </div>
+        <div class="act-meta">${refs}<span class="act-status ${isActive?'active':isNext?'next':'locked'}">${esc(a.status)}</span></div>
       </summary>
       <div class="act-body">
         <div class="act-purpose"><div><b>BUILD UNLOCK</b><span> · ${esc(a.build)}</span></div><span>6 CORE MISSIONS</span></div>
@@ -68,16 +66,8 @@ function actCard(a){
 
 function prototypeCard(p){
   return `<article class="mission-card prototype-card">
-    <div class="mission-card-top">
-      <div class="mission-number prototype-number">${esc(p.id)}</div>
-      <div class="mission-status validated">VALIDATED</div>
-    </div>
-    <div class="mission-card-copy">
-      <p class="mission-domain">${esc(p.focus)}</p>
-      <h3>${esc(p.title)}</h3>
-      <p>${esc(p.subtitle)}</p>
-      <p class="prototype-map">CURRICULUM REFERENCE · ${esc(p.maps_to)}</p>
-    </div>
+    <div class="mission-card-top"><div class="mission-number prototype-number">${esc(p.id)}</div><div class="mission-status validated">VALIDATED</div></div>
+    <div class="mission-card-copy"><p class="mission-domain">${esc(p.focus)}</p><h3>${esc(p.title)}</h3><p>${esc(p.subtitle)}</p><p class="prototype-map">CURRICULUM REFERENCE · ${esc(p.maps_to)}</p></div>
     <a class="button primary mission-start" href="${esc(p.url)}">OPEN ${esc(p.id)}</a>
   </article>`;
 }
@@ -88,7 +78,7 @@ async function loadCampaign(){
   try{
     const [data,progress]=await Promise.all([
       fetch('./data/campaign.json?v=map-20260810').then(r=>{if(!r.ok)throw new Error('Campaign data unavailable');return r.json();}),
-      fetch('./data/campaign-progress.json?v=0102-20260810').then(r=>r.ok?r.json():null).catch(()=>null)
+      fetch('./data/campaign-progress.json?v=0103-20260810').then(r=>r.ok?r.json():null).catch(()=>null)
     ]);
     applyProgress(data,progress);
     host.innerHTML=data.acts.map(actCard).join('');
@@ -98,5 +88,4 @@ async function loadCampaign(){
     if(prototypes)prototypes.innerHTML='<p>Prototype data unavailable.</p>';
   }
 }
-
 loadCampaign();
