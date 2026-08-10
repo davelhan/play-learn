@@ -6,22 +6,26 @@ campaignMapFix.textContent='.act summary{position:relative;padding-right:62px!im
 document.head.appendChild(campaignMapFix);
 
 function applyProgress(data,progress){
-  if(!progress)return data;
-  (data.acts||[]).forEach(a=>{
-    const ap=progress.acts?.[String(a.id)];
-    if(ap)Object.assign(a,ap);
-    (a.missions||[]).forEach(m=>{
-      const mp=progress.missions?.[m.id];
-      if(mp)Object.assign(m,mp);
+  if(progress){
+    (data.acts||[]).forEach(a=>{
+      const ap=progress.acts?.[String(a.id)];
+      if(ap)Object.assign(a,ap);
+      (a.missions||[]).forEach(m=>{
+        const mp=progress.missions?.[m.id];
+        if(mp)Object.assign(m,mp);
+      });
     });
-  });
+  }
+  const m0101=data.acts?.[0]?.missions?.find(m=>m.id==='01.01');
+  if(m0101&&localStorage.getItem('playlearn_a01m01_complete')==='true')m0101.status='COMPLETED';
   return data;
 }
 
 function missionRow(m){
-  const playable=m.status==='PLAYABLE'&&m.url;
+  const completed=m.status==='COMPLETED'&&m.url;
+  const playable=(m.status==='PLAYABLE'||completed)&&m.url;
   const next=m.status==='NEXT TO BUILD';
-  return `<div class="roadmap-mission ${playable?'playable':''} ${next?'next':''}">
+  return `<div class="roadmap-mission ${playable?'playable':''} ${completed?'completed':''} ${next?'next':''}">
     <div class="roadmap-id">${esc(m.id)}</div>
     <div class="roadmap-copy">
       <b>${esc(m.title)}</b>
@@ -29,7 +33,7 @@ function missionRow(m){
       ${m.description?`<p>${esc(m.description)}</p>`:''}
     </div>
     <div class="roadmap-status">${esc(m.status)}</div>
-    ${playable?`<a class="roadmap-play" href="${esc(m.url)}">START</a>`:''}
+    ${playable?`<a class="roadmap-play" href="${esc(m.url)}">${completed?'REPLAY':'START'}</a>`:''}
   </div>`;
 }
 
