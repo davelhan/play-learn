@@ -1,0 +1,11 @@
+{
+  "acts": {
+    "1": {"status":"ACTIVE","open":true}
+  },
+  "missions": {
+    "01.01": {
+      "status":"PLAYABLE",
+      "url":"./campaign/act-01/01-01-system-layers.html"
+    }
+  }
+}
