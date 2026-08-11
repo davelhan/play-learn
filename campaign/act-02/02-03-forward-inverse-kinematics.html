@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="PLAY//LEARN Robotics — Act 02 Mission 03: Forward & Inverse Kinematics">
+<title>PLAY//LEARN — 02.03 Forward & Inverse Kinematics</title>
+<link rel="stylesheet" href="../../assets/css/a01m01-system-layers.css?v=1-20260811">
+<link rel="stylesheet" href="../../assets/css/a02m03-forward-inverse.css?v=1-20260811">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="../../">PLAY<span>//</span>LEARN</a>
+  <div class="mission-id">ROBOTICS · ACT 02 · 02.03 · FORWARD &amp; INVERSE KINEMATICS</div>
+  <a class="map-link" href="../../#campaign">CAMPAIGN MAP</a>
+</header>
+<main>
+<section id="intro" class="intro fk-intro">
+  <div>
+    <p class="kicker">ACT 02 · GIVE IT A BODY · GUIDED</p>
+    <h1>ANGLES → HAND.<br><em>HAND → ANGLES.</em></h1>
+    <p class="lead">Avec les mêmes deux articulations, tu peux poser deux questions opposées : “si je donne ces angles, où arrive la main ?” ou “si je veux la main ici, quels angles faut-il ?”. Tu vas d'abord résoudre les deux problèmes sans vocabulaire.</p>
+    <div class="brief">
+      <div><span>ARM</span><b>2 revolute joints</b></div>
+      <div><span>LINKS</span><b>0.42 m + 0.34 m</b></div>
+      <div><span>DISCOVER</span><b>Forward Kinematics · Inverse Kinematics</b></div>
+    </div>
+    <button id="startBtn" class="primary big" type="button">START 02.03</button>
+  </div>
+  <div class="fk-preview" aria-hidden="true">
+    <div><b>q₁ + q₂</b><span>→</span><strong>HAND POSE</strong></div>
+    <div><strong>TARGET POSE</strong><span>→</span><b>q₁ + q₂ ?</b></div>
+  </div>
+</section>
+<section id="game" class="game hidden fk-game">
+  <aside class="panel left-panel">
+    <p class="kicker">LEARNING LOOP</p><h2 id="phaseName">FORWARD</h2><p id="phaseGoal" class="phase-goal"></p>
+    <div class="progress"><i id="progressFill"></i></div><div id="phaseCount" class="phase-count">01 / 06</div>
+    <div class="instruction"><span>WHAT TO DO</span><b id="actionText"></b></div>
+    <div class="watch"><span>WHAT TO WATCH</span><div id="watchList"></div></div>
+    <div class="source-note"><span>COURSE CONCEPT</span><b>Kinematics maps geometry</b><p>Les calculs de cette mission décrivent la géométrie du mouvement. Ils ne simulent ni couple, ni inertie, ni force.</p></div>
+  </aside>
+  <section class="panel center-panel">
+    <div class="stage-head"><div><p class="kicker">2-LINK ARM LAB</p><h2 id="stageTitle">Joint space → task space</h2></div><div class="stage-actions"><button id="coachBtn" class="secondary" type="button">ASK COACH</button><button id="resetBtn" class="secondary" type="button">RESET</button></div></div>
+    <div class="joint-controls">
+      <label><span>SHOULDER q₁</span><b id="q1Value">20°</b><input id="q1" type="range" min="-120" max="120" value="20"></label>
+      <label><span>ELBOW q₂</span><b id="q2Value">55°</b><input id="q2" type="range" min="-150" max="150" value="55"></label>
+      <div class="readout"><span>HAND X</span><b id="handX">0.00 m</b></div>
+      <div class="readout"><span>HAND Z</span><b id="handZ">0.00 m</b></div>
+    </div>
+    <div class="arm-layout">
+      <div id="armWorld" class="arm-world"><div class="arm-grid"></div><div class="origin-axis x"><span>+X</span></div><div class="origin-axis z"><span>+Z</span></div>
+        <svg id="armSvg" viewBox="0 0 720 520" preserveAspectRatio="xMidYMid meet" aria-label="Two link arm">
+          <circle cx="180" cy="390" r="9" class="joint shoulder"/><line id="link1" x1="180" y1="390" x2="360" y2="300" class="link"/><circle id="elbow" cx="360" cy="300" r="8" class="joint"/><line id="link2" x1="360" y1="300" x2="500" y2="190" class="link second"/><circle id="hand" cx="500" cy="190" r="12" class="hand"/><circle id="target" cx="520" cy="220" r="18" class="target hidden"/><path id="trace" d="" class="trace"/>
+        </svg><div id="targetLabel" class="target-label hidden">TARGET</div>
+      </div>
+      <div class="kin-panel">
+        <div class="kin-card"><span>JOINT SPACE</span><b id="jointSpace">q₁ 20° · q₂ 55°</b><small>The coordinates that describe the joints.</small></div><div class="kin-arrow">→</div>
+        <div class="kin-card task"><span>TASK SPACE</span><b id="taskSpace">x — · z —</b><small>The end-effector position in the shoulder frame.</small></div>
+        <div id="distanceCard" class="distance-card hidden"><span>TARGET ERROR</span><b id="targetError">—</b><small>Distance between hand and requested point.</small></div>
+        <div id="limitCard" class="limit-card hidden"><span>JOINT LIMIT CHECK</span><b id="limitState">—</b><small id="limitText">—</small></div>
+      </div>
+    </div>
+    <div id="challenge" class="challenge hidden"><div><span id="challengeKicker">TARGET</span><b id="challengeText"></b><small id="challengeHint"></small></div><div id="challengeStatus" class="challenge-status">SEARCHING</div></div>
+    <div class="center-actions"><button id="mainAction" class="primary" type="button">EXPLORE BOTH JOINTS</button></div>
+    <div id="result" class="result neutral"><b>READY</b><span>Move the joints and watch the hand position.</span></div>
+    <div id="reflection" class="reflection hidden"><div><span>WHAT YOU JUST SAW</span><b id="reflectionSaw"></b></div><div><span>WHY IT MATTERS</span><b id="reflectionWhy"></b></div><button id="reflectionContinue" class="secondary" type="button">CONTINUE</button></div>
+  </section>
+  <aside class="panel right-panel">
+    <p class="kicker">KINEMATIC MONITOR</p><h2>What is given?</h2>
+    <div class="given-grid"><div><span>INPUT</span><b id="inputMode">JOINT ANGLES</b></div><div><span>OUTPUT</span><b id="outputMode">HAND POSITION</b></div><div><span>SOLUTIONS FOUND</span><b id="solutionCount">0</b></div><div><span>MODEL</span><b>PLANAR 2R ARM</b></div></div>
+    <div class="translation-box"><span>KEY IDEA</span><p id="keyIdea">For now, do not name the method. Just notice which variables you choose and which variables the model gives back.</p></div>
+    <div class="log-wrap"><span>SYSTEM LOG</span><pre id="log">MODE ............. ANGLES → HAND
+q1 ............... 20°
+q2 ............... 55°
+TARGET ........... NONE</pre></div>
+  </aside>
+</section>
+</main>
+<div id="conceptModal" class="modal hidden"><div class="modal-card"><p class="kicker">NOW NAME THE TWO QUESTIONS</p><h2>FORWARD vs INVERSE KINEMATICS</h2><p><strong>Forward Kinematics (FK)</strong> : les coordonnées articulaires sont connues, et le modèle calcule la pose de l'end-effector. <strong>Inverse Kinematics (IK)</strong> : la pose cible de l'end-effector est connue, et on cherche les coordonnées articulaires qui peuvent l'atteindre.</p><div class="concept-pair"><div><b>FK</b><span>q → pose</span></div><div><b>IK</b><span>pose → q</span></div></div><button id="conceptContinue" class="primary" type="button">SOLVE THE INVERSE PROBLEM</button></div></div>
+<div id="completeModal" class="modal hidden"><div class="modal-card"><p class="kicker">02.03 COMPLETE</p><h2>FK / IK RELATION INSTALLED.</h2><p>Tu as utilisé les mêmes deux articulations dans les deux sens du problème : calculer la main depuis les joints, puis chercher des joints depuis une cible. Tu as aussi trouvé deux configurations pour la même cible et vérifié qu'une solution IK peut devenir inutilisable à cause des limites articulaires.</p><div class="unlock"><span>PERSISTENT BUILD</span><b>2-LINK KINEMATIC CHAIN</b></div><div class="complete-actions"><a class="secondary linkbtn" href="../../#campaign">CAMPAIGN MAP</a><button id="replayBtn" class="primary" type="button">REPLAY 02.03</button></div></div></div>
+<div id="coachPanel" class="coach hidden"><div><span>COACH</span><button id="closeCoach" type="button">×</button></div><p id="coachText"></p></div>
+<script src="../../assets/js/a02m03-forward-inverse.js?v=1-20260811"></script>
+</body></html>
