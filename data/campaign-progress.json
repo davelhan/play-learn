@@ -7,6 +7,7 @@
     "01.02": {"status":"PLAYABLE","url":"./campaign/act-01/01-02-command-evidence.html"},
     "01.03": {"status":"PLAYABLE","url":"./campaign/act-01/01-03-trace-broken.html"},
     "01.04": {"status":"PLAYABLE","url":"./campaign/act-01/01-04-build-architecture.html"},
-    "01.05": {"status":"PLAYABLE","url":"./campaign/act-01/01-05-coupled-failure.html"}
+    "01.05": {"status":"PLAYABLE","url":"./campaign/act-01/01-05-coupled-failure.html"},
+    "01.06": {"status":"PLAYABLE","url":"./campaign/act-01/01-06-architecture-gate.html"}
   }
 }
