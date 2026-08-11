@@ -8,6 +8,7 @@ on:
       - 'assets/**'
       - 'data/**'
       - 'scripts/qa3-browser.mjs'
+      - 'scripts/qa3-custom-browser.mjs'
       - '.github/workflows/qa3-browser.yml'
   pull_request:
     branches: [ main ]
@@ -16,6 +17,7 @@ on:
       - 'assets/**'
       - 'data/**'
       - 'scripts/qa3-browser.mjs'
+      - 'scripts/qa3-custom-browser.mjs'
       - '.github/workflows/qa3-browser.yml'
       - 'qa3/**'
   workflow_dispatch:
@@ -37,8 +39,10 @@ jobs:
         run: |
           python3 -m http.server 8000 --bind 127.0.0.1 > /tmp/playlearn-http.log 2>&1 &
           sleep 2
-      - name: Run 60-mission browser QA3
+      - name: Run 60-mission interaction sweep
         run: node scripts/qa3-browser.mjs
+      - name: Run 9 custom missions end-to-end
+        run: node scripts/qa3-custom-browser.mjs
       - name: Upload QA3 reports
         if: always()
         uses: actions/upload-artifact@v4
@@ -47,4 +51,6 @@ jobs:
           path: |
             qa3-browser-results.json
             qa3-browser-results.md
+            qa3-custom-results.json
+            qa3-custom-results.md
           if-no-files-found: warn
