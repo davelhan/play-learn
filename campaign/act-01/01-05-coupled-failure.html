@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="PLAY//LEARN Robotics — Act 01 Mission 05: Coupled Failure">
+<title>PLAY//LEARN — 01.05 Coupled Failure</title>
+<link rel="stylesheet" href="../../assets/css/a01m01-system-layers.css?v=1-20260810">
+<link rel="stylesheet" href="../../assets/css/a01m05-coupled-failure.css?v=1-20260811">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="../../">PLAY<span>//</span>LEARN</a>
+  <div class="mission-id">ROBOTICS · ACT 01 · 01.05 · COUPLED FAILURE</div>
+  <a class="map-link" href="../../#campaign">CAMPAIGN MAP</a>
+</header>
+<main>
+<section id="intro" class="intro m05-intro">
+  <div>
+    <p class="kicker">ACT 01 · THE MACHINE · TRANSFER</p>
+    <h1>EVERYTHING WORKS.<br><em>THE MISSION STILL FAILS.</em></h1>
+    <p class="lead">UNIT H-01 doit livrer une caisse de diagnostic. Aucun composant n'est en panne. Mais trois contraintes arrivent ensemble : détour obligatoire, charge élevée et limitation thermique. Ton travail n'est plus de chercher une pièce cassée — c'est de comprendre pourquoi le système n'a plus de marge.</p>
+    <div class="brief">
+      <div><span>DEADLINE</span><b>52 seconds</b></div>
+      <div><span>PAYLOAD</span><b>12 kg case</b></div>
+      <div><span>THERMAL STATUS</span><b>Available torque reduced</b></div>
+    </div>
+    <button id="startBtn" class="primary big" type="button">START 01.05</button>
+  </div>
+  <div class="coupling-preview" aria-hidden="true">
+    <div><span>DETOUR</span><b>OK ALONE</b></div>
+    <div><span>PAYLOAD</span><b>OK ALONE</b></div>
+    <div><span>DERATE</span><b>OK ALONE</b></div>
+    <i>↓ COMBINED ↓</i>
+    <strong>NO SYSTEM MARGIN</strong>
+  </div>
+</section>
+
+<section id="game" class="game hidden">
+  <aside class="panel left-panel">
+    <p class="kicker">SYSTEM REASONING</p>
+    <h2 id="phaseName">BASELINE</h2>
+    <p id="phaseGoal" class="phase-goal"></p>
+    <div class="progress"><i id="progressFill"></i></div>
+    <div id="phaseCount" class="phase-count">01 / 06</div>
+    <div class="instruction"><span>WHAT TO DO</span><b id="actionText"></b></div>
+    <div class="watch"><span>WHAT TO WATCH</span><div id="watchList"></div></div>
+    <div class="source-note"><span>SYSTEM RULE</span><b>Healthy parts can form an unhealthy system.</b><p>Les interfaces, les contraintes et les marges comptent autant que l'état individuel des composants.</p></div>
+  </aside>
+
+  <section class="panel center-panel">
+    <div class="stage-head"><div><p class="kicker">MISSION ENVELOPE</p><h2>Requirements × Margins</h2></div><div class="stage-actions"><button id="coachBtn" class="secondary" type="button">ASK COACH</button><button id="resetBtn" class="secondary" type="button">RESET</button></div></div>
+
+    <div class="health-strip">
+      <div><span>PERCEPTION</span><b>HEALTHY</b></div><div><span>PLANNING</span><b>HEALTHY</b></div><div><span>CONTROL</span><b>HEALTHY</b></div><div><span>ACTUATORS</span><b>HEALTHY · DERATED</b></div>
+    </div>
+
+    <div class="stress-layout">
+      <div class="stress-panel">
+        <div class="panel-label">OPERATING CONDITIONS</div>
+        <button class="stress-card" data-stress="detour" type="button"><span>CONDITION A</span><b>DETOUR +18 m</b><small>Safety route around blocked corridor</small></button>
+        <button class="stress-card" data-stress="payload" type="button"><span>CONDITION B</span><b>PAYLOAD 12 kg</b><small>Inspection case must remain intact</small></button>
+        <button class="stress-card" data-stress="thermal" type="button"><span>CONDITION C</span><b>THERMAL DERATE</b><small>Available actuator reserve reduced</small></button>
+        <button id="combineBtn" class="secondary combine-btn" type="button" disabled>COMBINE TESTED CONDITIONS</button>
+      </div>
+
+      <div class="envelope-panel">
+        <div class="panel-label">EXECUTION PACE</div>
+        <label class="pace-control"><span>Movement pace</span><b id="paceValue">0.72×</b><input id="pace" type="range" min="45" max="110" value="72"></label>
+        <div class="margin-grid">
+          <div class="margin-card"><span>TIME MARGIN</span><b id="timeMargin">+9 s</b><div class="margin-track"><i id="timeBar"></i></div><small>Positive = deadline satisfied</small></div>
+          <div class="margin-card"><span>ACTUATION MARGIN</span><b id="actMargin">+18%</b><div class="margin-track"><i id="actBar"></i></div><small>Positive = reserve remains</small></div>
+          <div class="margin-card"><span>ENERGY MARGIN</span><b id="energyMargin">+21%</b><div class="margin-track"><i id="energyBar"></i></div><small>Educational system margin</small></div>
+        </div>
+        <div id="feasibility" class="feasibility good"><b>FEASIBLE</b><span>Current conditions leave positive system margin.</span></div>
+      </div>
+    </div>
+
+    <div class="world m05-world" id="world">
+      <div class="route direct">DIRECT</div><div class="route bypass">SAFE DETOUR +18 m</div>
+      <div class="station start">A</div><div class="station goal">B</div>
+      <div id="robot" class="robot m05-robot"><div class="head"></div><div class="body"></div><div class="legs"></div></div>
+      <div id="payload" class="payload">12 kg</div>
+      <div id="deadlineTag" class="deadline-tag">DEADLINE 52 s</div>
+    </div>
+
+    <div class="center-actions"><button id="mainAction" class="primary" type="button">RUN BASELINE</button></div>
+    <div id="result" class="result neutral"><b>READY</b><span>First prove that the nominal mission works.</span></div>
+
+    <div id="reflection" class="reflection hidden"><div><span>WHAT YOU JUST SAW</span><b id="reflectionSaw"></b></div><div><span>WHY IT MATTERS</span><b id="reflectionWhy"></b></div><button id="reflectionContinue" class="secondary" type="button">CONTINUE</button></div>
+  </section>
+
+  <aside class="panel right-panel">
+    <p class="kicker">REQUIREMENT BOARD</p><h2>What is allowed to change?</h2>
+    <p class="micro">Do not change requirements until the evidence shows the current set is infeasible.</p>
+    <div class="requirement-list">
+      <button data-req="payload" type="button"><span>R1 · MISSION OUTCOME</span><b>DELIVER 12 kg CASE</b><small>Core outcome</small></button>
+      <button data-req="route" type="button"><span>R2 · SAFETY CONSTRAINT</span><b>AVOID BLOCKED CORRIDOR</b><small>Hard constraint</small></button>
+      <button data-req="deadline" type="button"><span>R3 · SERVICE TARGET</span><b id="deadlineRequirement">COMPLETE ≤ 52 s</b><small>Candidate for escalation</small></button>
+    </div>
+    <button id="requestChange" class="secondary request-change" type="button" disabled>PROPOSE REQUIREMENT CHANGE</button>
+    <div class="translation-box"><span>KEY IDEA</span><p id="keyIdea">A mission can fail because the combined requirement set leaves no feasible operating point — even when every subsystem reports healthy.</p></div>
+    <div class="log-wrap"><span>SYSTEM LOG</span><pre id="log">SUBSYSTEMS ...... HEALTHY
+MISSION .......... READY
+CONDITIONS ....... NOMINAL
+SYSTEM MARGIN .... POSITIVE</pre></div>
+  </aside>
+</section>
+</main>
+
+<div id="requirementModal" class="modal hidden"><div class="modal-card"><p class="kicker">SYSTEM DECISION</p><h2 id="reqTitle">CHANGE WHICH REQUIREMENT?</h2><p id="reqText"></p><div id="reqEvidence" class="lesson-chain"></div><button id="reqContinue" class="primary" type="button">CONTINUE</button></div></div>
+
+<div id="completeModal" class="modal hidden"><div class="modal-card"><p class="kicker">01.05 COMPLETE</p><h2>SYSTEM MARGIN THINKING INSTALLED.</h2><p>Tu as démontré que trois conditions acceptables séparément peuvent devenir incompatibles lorsqu'elles sont combinées. Le robot n'était pas cassé : l'ensemble des exigences et des contraintes ne laissait plus de point de fonctionnement réalisable.</p><div class="final-stack"><b>TEST INDIVIDUALLY</b><i>↓</i><b>COMBINE CONDITIONS</b><i>↓</i><b>EXPLORE MARGINS</b><i>↓</i><b>PROVE INFEASIBILITY</b><i>↓</i><b>ESCALATE REQUIREMENT</b></div><div class="unlock"><span>PERSISTENT BUILD</span><b>SYSTEM MARGIN MODEL</b></div><div class="complete-actions"><a class="secondary linkbtn" href="../../#campaign">CAMPAIGN MAP</a><button id="replayBtn" class="primary" type="button">REPLAY 01.05</button></div></div></div>
+
+<div id="coachPanel" class="coach hidden"><div><span>COACH</span><button id="closeCoach" type="button">×</button></div><p id="coachText"></p></div>
+<script src="../../assets/js/a01m05-coupled-failure.js?v=1-20260811"></script>
+</body>
+</html>
