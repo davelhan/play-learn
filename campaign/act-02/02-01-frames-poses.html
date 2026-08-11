@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="PLAY//LEARN Robotics — Act 02 Mission 01: Frames & Poses">
+<title>PLAY//LEARN — 02.01 Frames & Poses</title>
+<link rel="stylesheet" href="../../assets/css/a01m01-system-layers.css?v=1-20260811">
+<link rel="stylesheet" href="../../assets/css/a02m01-frames-poses.css?v=1-20260811">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="../../">PLAY<span>//</span>LEARN</a>
+  <div class="mission-id">ROBOTICS · ACT 02 · 02.01 · FRAMES & POSES</div>
+  <a class="map-link" href="../../#campaign">CAMPAIGN MAP</a>
+</header>
+<main>
+<section id="intro" class="intro frame-intro">
+  <div>
+    <p class="kicker">ACT 02 · GIVE IT A BODY · DISCOVER</p>
+    <h1>WHERE IS<br><em>THE HAND?</em></h1>
+    <p class="lead">Une réponse comme “x = 0.42 m, z = 0.18 m” est incomplète. Déplace et tourne UNIT H-01, puis observe comment le même point physique reçoit des coordonnées différentes selon le repère utilisé.</p>
+    <div class="brief">
+      <div><span>OBJECT</span><b>Right hand point</b></div>
+      <div><span>MANIPULATE</span><b>Robot position + torso angle</b></div>
+      <div><span>DISCOVER</span><b>Frame · pose · transform</b></div>
+    </div>
+    <button id="startBtn" class="primary big" type="button">START 02.01</button>
+  </div>
+  <div class="frame-preview" aria-hidden="true">
+    <div class="preview-world"><b>WORLD</b><span>x 1.24 · z 1.38</span></div>
+    <div class="preview-same">SAME<br>HAND</div>
+    <div class="preview-local"><b>TORSO</b><span>x 0.42 · z 0.18</span></div>
+  </div>
+</section>
+
+<section id="game" class="game hidden frame-game">
+  <aside class="panel left-panel">
+    <p class="kicker">LEARNING LOOP</p>
+    <h2 id="phaseName">HOOK</h2>
+    <p id="phaseGoal" class="phase-goal"></p>
+    <div class="progress"><i id="progressFill"></i></div>
+    <div id="phaseCount" class="phase-count">01 / 06</div>
+    <div class="instruction"><span>WHAT TO DO</span><b id="actionText"></b></div>
+    <div class="watch"><span>WHAT TO WATCH</span><div id="watchList"></div></div>
+    <div class="source-note"><span>COURSE CONCEPT</span><b>Kinematics before forces</b><p>Day 2 treats geometry first: coordinate frames describe where links and end effectors are before asking what forces produce the motion.</p></div>
+  </aside>
+
+  <section class="panel center-panel">
+    <div class="stage-head"><div><p class="kicker">KINEMATIC VIEW</p><h2 id="stageTitle">One point · multiple descriptions</h2></div><div class="stage-actions"><button id="coachBtn" class="secondary" type="button">ASK COACH</button><button id="resetBtn" class="secondary" type="button">RESET</button></div></div>
+
+    <div class="frame-controls">
+      <label><span>ROBOT WORLD X</span><b id="baseXValue">0.30 m</b><input id="baseX" type="range" min="0" max="100" value="30"></label>
+      <label><span>TORSO ANGLE</span><b id="torsoAngleValue">0°</b><input id="torsoAngle" type="range" min="-35" max="35" value="0"></label>
+      <label id="handXControl" class="locked-control"><span>HAND X IN TORSO</span><b id="handXValue">0.42 m</b><input id="handX" type="range" min="20" max="60" value="42" disabled></label>
+      <label id="handZControl" class="locked-control"><span>HAND Z IN TORSO</span><b id="handZValue">0.18 m</b><input id="handZ" type="range" min="5" max="40" value="18" disabled></label>
+    </div>
+
+    <div class="frame-layout">
+      <div id="world" class="frame-world">
+        <div class="grid"></div>
+        <div class="world-axis x"><span>WORLD +X</span></div><div class="world-axis z"><span>WORLD +Z</span></div>
+        <div id="fixedTarget" class="fixed-target hidden"><b>TARGET</b><span id="targetLabel"></span></div>
+        <div id="robotRig" class="robot-rig">
+          <div id="torsoRig" class="torso-rig">
+            <div class="torso-axis x"><span>TORSO +X</span></div><div class="torso-axis z"><span>TORSO +Z</span></div>
+            <div class="rig-body"></div><div class="rig-head"></div>
+            <div id="shoulderOrigin" class="shoulder-origin">S</div>
+            <div id="armLine" class="arm-line"></div><div id="handPoint" class="hand-point">H</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="coordinate-panel">
+        <div class="coordinate-card world-card"><span>HAND IN WORLD FRAME</span><b id="worldReadout">x 0.72 · z 1.08</b><small>Coordinates measured from the fixed room origin.</small></div>
+        <div class="coordinate-card torso-card"><span>HAND IN TORSO FRAME</span><b id="torsoReadout">x 0.42 · z 0.18</b><small>Coordinates measured from an origin attached to the torso.</small></div>
+        <div class="coordinate-card shoulder-card"><span>HAND IN SHOULDER FRAME</span><b id="shoulderReadout">x 0.32 · z 0.06</b><small>Coordinates measured from the shoulder origin.</small></div>
+        <div id="poseCard" class="pose-card"><span>PHYSICAL POINT</span><b>SAME HAND</b><p>Three numerical descriptions can all be correct at the same time.</p></div>
+      </div>
+    </div>
+
+    <div id="challenge" class="challenge hidden">
+      <div><span>ACTIVE TARGET</span><b id="challengeText"></b><small id="challengeHint"></small></div>
+      <div id="challengeStatus" class="challenge-status">NOT ALIGNED</div>
+    </div>
+
+    <div class="center-actions"><button id="mainAction" class="primary" type="button">MOVE ROBOT +0.40 m</button></div>
+    <div id="result" class="result neutral"><b>READY</b><span>Start with the same hand point and change only the robot's world position.</span></div>
+    <div id="reflection" class="reflection hidden"><div><span>WHAT YOU JUST SAW</span><b id="reflectionSaw"></b></div><div><span>WHY IT MATTERS</span><b id="reflectionWhy"></b></div><button id="reflectionContinue" class="secondary" type="button">CONTINUE</button></div>
+  </section>
+
+  <aside class="panel right-panel">
+    <p class="kicker">FRAME MONITOR</p><h2>What moved with what?</h2>
+    <p class="micro">A frame is an origin plus axes. Some frames are fixed to the world; others move with the robot.</p>
+    <div class="frame-monitor">
+      <div><span>WORLD FRAME</span><b id="worldFrameState">FIXED TO ROOM</b></div>
+      <div><span>TORSO FRAME</span><b id="torsoFrameState">MOVES WITH ROBOT</b></div>
+      <div><span>SHOULDER FRAME</span><b id="shoulderFrameState">MOVES WITH TORSO</b></div>
+      <div><span>HAND POINT</span><b id="handState">FIXED RELATIVE TO TORSO</b></div>
+    </div>
+    <div class="translation-box"><span>KEY IDEA</span><p id="keyIdea">Coordinates do not describe a point by themselves. They describe a point relative to a chosen frame.</p></div>
+    <div class="log-wrap"><span>GEOMETRY LOG</span><pre id="log">WORLD FRAME ..... FIXED
+TORSO FRAME ..... ATTACHED
+HAND LOCAL ...... (0.42, 0.18)
+FRAME QUESTION .. OPEN</pre></div>
+  </aside>
+</section>
+</main>
+
+<div id="conceptModal" class="modal hidden"><div class="modal-card"><p class="kicker">NAME WHAT YOU OBSERVED</p><h2>FRAME · POSE · TRANSFORM</h2><p>Un <strong>coordinate frame</strong> est un origine + des axes. Une <strong>pose</strong> décrit position + orientation par rapport à un frame. Un <strong>transform</strong> permet de convertir une description d'un frame vers un autre.</p><div class="final-stack"><b>WORLD FRAME</b><i>⇄ transform</i><b>TORSO FRAME</b><i>⇄ transform</i><b>SHOULDER FRAME</b></div><button id="conceptContinue" class="primary" type="button">USE THE MODEL</button></div></div>
+
+<div id="completeModal" class="modal hidden"><div class="modal-card"><p class="kicker">02.01 COMPLETE</p><h2>REFERENCE FRAMES INSTALLED.</h2><p>Tu as observé qu'un même point physique peut avoir plusieurs coordonnées valides. Tu as ensuite utilisé le frame demandé pour atteindre deux cibles différentes.</p><div class="unlock"><span>PERSISTENT BUILD</span><b>WORLD · TORSO · SHOULDER FRAMES</b></div><div class="complete-actions"><a class="secondary linkbtn" href="../../#campaign">CAMPAIGN MAP</a><button id="replayBtn" class="primary" type="button">REPLAY 02.01</button></div></div></div>
+<div id="coachPanel" class="coach hidden"><div><span>COACH</span><button id="closeCoach" type="button">×</button></div><p id="coachText"></p></div>
+<script src="../../assets/js/a02m01-frames-poses.js?v=1-20260811"></script>
+</body>
+</html>
