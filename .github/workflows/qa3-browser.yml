@@ -1,0 +1,41 @@
+name: QA3 Browser Interaction
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'campaign/**'
+      - 'assets/**'
+      - 'data/**'
+      - 'scripts/qa3-browser.mjs'
+      - '.github/workflows/qa3-browser.yml'
+  workflow_dispatch:
+
+jobs:
+  qa3:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Start local static server
+        run: |
+          python3 -m http.server 8000 --bind 127.0.0.1 > /tmp/playlearn-http.log 2>&1 &
+          sleep 2
+      - name: Run 60-mission browser QA3
+        run: node scripts/qa3-browser.mjs
+      - name: Upload QA3 reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa3-browser-results
+          path: |
+            qa3-browser-results.json
+            qa3-browser-results.md
+          if-no-files-found: warn
