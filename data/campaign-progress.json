@@ -10,6 +10,7 @@
     "01.04": {"status":"PLAYABLE","url":"./campaign/act-01/01-04-build-architecture.html"},
     "01.05": {"status":"PLAYABLE","url":"./campaign/act-01/01-05-coupled-failure.html"},
     "01.06": {"status":"PLAYABLE","url":"./campaign/act-01/01-06-architecture-gate.html"},
-    "02.01": {"status":"PLAYABLE","url":"./campaign/act-02/02-01-frames-poses.html"}
+    "02.01": {"status":"PLAYABLE","url":"./campaign/act-02/02-01-frames-poses.html"},
+    "02.02": {"status":"PLAYABLE","url":"./campaign/act-02/02-02-joint-axes.html"}
   }
 }
