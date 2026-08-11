@@ -98,7 +98,7 @@ async function loadCampaign(){
   try{
     const [data,progress]=await Promise.all([
       fetch('./data/campaign.json?v=map-20260810').then(r=>{if(!r.ok)throw new Error('Campaign data unavailable');return r.json();}),
-      fetch('./data/campaign-progress.json?v=0202-20260811').then(r=>r.ok?r.json():null).catch(()=>null)
+      fetch('./data/campaign-progress.json?v=0203-20260811').then(r=>r.ok?r.json():null).catch(()=>null)
     ]);
     applyProgress(data,progress);
     host.innerHTML=data.acts.map(actCard).join('');
