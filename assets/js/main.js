@@ -24,8 +24,9 @@ function applyProgress(data,progress){
   });
 
   const act1=data.acts?.find(a=>a.id===1);
-  const act1Complete=act1?.missions?.length===6&&act1.missions.every(m=>m.status==='COMPLETED');
-  if(act1Complete){
+  const gatePassed=localStorage.getItem('playlearn_act01_complete')==='true';
+  const allAct1MissionsComplete=act1?.missions?.length===6&&act1.missions.every(m=>m.status==='COMPLETED');
+  if(gatePassed||allAct1MissionsComplete){
     act1.status='COMPLETED';
     act1.open=true;
     const act2=data.acts?.find(a=>a.id===2);
