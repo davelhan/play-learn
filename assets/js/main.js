@@ -22,6 +22,20 @@ function applyProgress(data,progress){
       if(key&&localStorage.getItem(key)==='true')m.status='COMPLETED';
     });
   });
+
+  const act1=data.acts?.find(a=>a.id===1);
+  const act1Complete=act1?.missions?.length===6&&act1.missions.every(m=>m.status==='COMPLETED');
+  if(act1Complete){
+    act1.status='COMPLETED';
+    act1.open=true;
+    const act2=data.acts?.find(a=>a.id===2);
+    if(act2){
+      act2.status='NEXT TO DESIGN';
+      act2.open=true;
+      const first=act2.missions?.find(m=>m.id==='02.01');
+      if(first&&!first.url)first.status='NEXT TO BUILD';
+    }
+  }
   return data;
 }
 
@@ -42,10 +56,12 @@ function missionRow(m){
 }
 
 function actCard(a){
+  const isComplete=a.status==='COMPLETED';
   const isActive=a.status==='ACTIVE';
   const isNext=a.status==='NEXT TO DESIGN';
   const refs=(a.prototype_refs||[]).map(r=>`<span class="prototype-ref">REFERENCE · ${esc(r)}</span>`).join('');
-  return `<article class="act">
+  const statusClass=isComplete?'complete':isActive?'active':isNext?'next':'locked';
+  return `<article class="act ${isComplete?'act-complete':''}">
     <details ${a.open?'open':''}>
       <summary>
         <div class="act-num">${String(a.id).padStart(2,'0')}</div>
@@ -54,7 +70,7 @@ function actCard(a){
           <h3>${esc(a.title)}</h3>
           <p>${esc(a.focus)}</p>
         </div>
-        <div class="act-meta">${refs}<span class="act-status ${isActive?'active':isNext?'next':'locked'}">${esc(a.status)}</span></div>
+        <div class="act-meta">${refs}<span class="act-status ${statusClass}">${esc(a.status)}</span></div>
       </summary>
       <div class="act-body">
         <div class="act-purpose"><div><b>BUILD UNLOCK</b><span> · ${esc(a.build)}</span></div><span>6 CORE MISSIONS</span></div>
@@ -78,7 +94,7 @@ async function loadCampaign(){
   try{
     const [data,progress]=await Promise.all([
       fetch('./data/campaign.json?v=map-20260810').then(r=>{if(!r.ok)throw new Error('Campaign data unavailable');return r.json();}),
-      fetch('./data/campaign-progress.json?v=0105-20260811').then(r=>r.ok?r.json():null).catch(()=>null)
+      fetch('./data/campaign-progress.json?v=0106-20260811').then(r=>r.ok?r.json():null).catch(()=>null)
     ]);
     applyProgress(data,progress);
     host.innerHTML=data.acts.map(actCard).join('');
