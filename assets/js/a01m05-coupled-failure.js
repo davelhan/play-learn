@@ -16,10 +16,9 @@ function renderPhase(){
 function watchSeen(i){
  if(S.phase===0)return false;
  if(S.phase===1)return S.tested.size>i;
- if(S.phase===2)return i<2?true:false;
+ if(S.phase===2)return i<2;
  if(S.phase===3)return [S.exploredLow,S.exploredHigh,S.exploredLow&&S.exploredHigh][i];
  if(S.phase===4)return S.selectedReq!==null&&i===2;
- if(S.phase===5)return false;
  return false;
 }
 function model(){
@@ -33,11 +32,14 @@ function model(){
 function pct(v){return Math.max(4,Math.min(100,50+v*2));}
 function updateMargins(){
  const m=model();
- const vals=[['timeMargin','timeBar','time',m.time,' s'],['actMargin','actBar','act',m.act,'%'],['energyMargin','energyBar','energy',m.energy,'%']];
- vals.forEach(([id,bar,cls,v,suffix])=>{const el=$(id),card=el.closest('.margin-card');el.textContent=`${v>=0?'+':''}${Math.round(v)}${suffix}`;$(bar).style.width=`${pct(v)}%`;card.classList.toggle('negative',v<0);});
+ const vals=[['timeMargin','timeBar',m.time,' s'],['actMargin','actBar',m.act,'%'],['energyMargin','energyBar',m.energy,'%']];
+ vals.forEach(([id,bar,v,suffix])=>{const el=$(id),card=el.closest('.margin-card');el.textContent=`${v>=0?'+':''}${Math.round(v)}${suffix}`;$(bar).style.width=`${pct(v)}%`;card.classList.toggle('negative',v<0);});
  $('feasibility').className=`feasibility ${m.feasible?'good':'bad'}`;$('feasibility').innerHTML=m.feasible?'<b>FEASIBLE</b><span>Current conditions leave positive system margin.</span>':'<b>INFEASIBLE</b><span>At least one system margin is negative.</span>';
  $('paceValue').textContent=S.pace.toFixed(2)+'×';
- if(S.phase===3){S.exploredLow ||= S.pace<=.58;S.exploredHigh ||= S.pace>=.94;if(S.exploredLow&&S.exploredHigh){$('requestChange').disabled=false;S.phase=4;renderPhase();}}
+ if(S.phase===3){
+   S.exploredLow ||= S.pace<=.58;S.exploredHigh ||= S.pace>=.94;
+   if(S.exploredLow&&S.exploredHigh){S.phase=4;configure();}
+ }
  if(S.phase===5)$('mainAction').disabled=!m.feasible;
  return m;
 }
@@ -45,29 +47,32 @@ function result(kind,title,text){$('result').className=`result ${kind}`;$('resul
 function log(lines){$('log').textContent=lines.join('\n');}
 function showReflection(saw,why,next){$('reflectionSaw').textContent=saw;$('reflectionWhy').textContent=why;$('reflection').classList.remove('hidden');$('reflectionContinue').onclick=()=>{$('reflection').classList.add('hidden');S.phase=next;configure();};}
 function configure(){
- renderPhase();document.querySelectorAll('.stress-card').forEach(b=>b.disabled=S.phase!==1);$('combineBtn').disabled=!(S.phase===1&&S.tested.size===3);$('requestChange').disabled=!(S.phase===4);
+ renderPhase();
+ document.querySelectorAll('.stress-card').forEach(b=>b.disabled=S.phase!==1);
+ document.querySelectorAll('.requirement-list button').forEach(b=>b.disabled=S.phase!==4);
+ $('pace').disabled=!(S.phase===3||S.phase===5);
+ $('combineBtn').disabled=!(S.phase===1&&S.tested.size===3);
+ $('requestChange').disabled=!(S.phase===4&&S.selectedReq!==null);
  if(S.phase===0){$('mainAction').disabled=false;$('mainAction').textContent='RUN BASELINE';$('mainAction').onclick=runBaseline;}
  if(S.phase===1){$('mainAction').disabled=true;$('mainAction').textContent='TEST CONDITIONS ABOVE';S.active.clear();updateStressVisual();updateMargins();}
  if(S.phase===2){$('mainAction').disabled=true;$('mainAction').textContent='COMBINED TEST FAILED';}
- if(S.phase===3){$('mainAction').disabled=true;$('mainAction').textContent='EXPLORE THE PACE RANGE';$('requestChange').disabled=true;}
- if(S.phase===4){$('mainAction').disabled=true;$('mainAction').textContent='ESCALATE A REQUIREMENT';$('requestChange').disabled=S.selectedReq===null;}
+ if(S.phase===3){$('mainAction').disabled=true;$('mainAction').textContent='EXPLORE THE PACE RANGE';}
+ if(S.phase===4){$('mainAction').disabled=true;$('mainAction').textContent='ESCALATE A REQUIREMENT';}
  if(S.phase===5){$('mainAction').textContent='RUN REVISED MISSION';$('mainAction').onclick=verifyMission;updateMargins();}
 }
 function runBaseline(){
- S.active.clear();updateStressVisual();const m=updateMargins();result('pass','BASELINE PASSED',`Mission completes in ${Math.round(m.timeUsed)} s with positive time and actuation margins.`);log(['SUBSYSTEMS ...... HEALTHY','CONDITIONS ....... NOMINAL','MISSION .......... PASS','SYSTEM MARGIN .... POSITIVE']);
- showReflection('The nominal mission succeeds and every subsystem is healthy.','This gives you a trusted baseline before introducing new conditions.',1);
+ S.active.clear();updateStressVisual();const m=updateMargins();result('pass','BASELINE PASSED',`Mission completes in ${Math.round(m.timeUsed)} s with positive time and actuation margins.`);log(['SUBSYSTEMS ...... HEALTHY','CONDITIONS ....... NOMINAL','MISSION .......... PASS','SYSTEM MARGIN .... POSITIVE']);showReflection('The nominal mission succeeds and every subsystem is healthy.','This gives you a trusted baseline before introducing new conditions.',1);
 }
 function updateStressVisual(){document.querySelectorAll('.stress-card').forEach(b=>{b.classList.toggle('tested',S.tested.has(b.dataset.stress));b.classList.toggle('active',S.active.has(b.dataset.stress));});}
 function testStress(kind){
- S.active=new Set([kind]);S.tested.add(kind);updateStressVisual();const m=updateMargins();const names={detour:'DETOUR ALONE',payload:'PAYLOAD ALONE',thermal:'DERATE ALONE'};result('pass',names[kind],`Still feasible: time ${m.time>=0?'+':''}${Math.round(m.time)} s · actuation ${m.act>=0?'+':''}${Math.round(m.act)}%.`);log(['SUBSYSTEMS ...... HEALTHY',`ACTIVE CONDITION . ${kind.toUpperCase()}`,'MISSION .......... PASS','SYSTEM MARGIN .... POSITIVE']);$('combineBtn').disabled=S.tested.size!==3;renderPhase();
+ if(S.phase!==1)return;S.active=new Set([kind]);S.tested.add(kind);updateStressVisual();const m=updateMargins();const names={detour:'DETOUR ALONE',payload:'PAYLOAD ALONE',thermal:'DERATE ALONE'};result('pass',names[kind],`Still feasible: time ${m.time>=0?'+':''}${Math.round(m.time)} s · actuation ${m.act>=0?'+':''}${Math.round(m.act)}%.`);log(['SUBSYSTEMS ...... HEALTHY',`ACTIVE CONDITION . ${kind.toUpperCase()}`,'MISSION .......... PASS','SYSTEM MARGIN .... POSITIVE']);$('combineBtn').disabled=S.tested.size!==3;renderPhase();
 }
 function combine(){
- S.active=new Set(['detour','payload','thermal']);updateStressVisual();const m=updateMargins();S.phase=2;renderPhase();result('fail','COUPLED FAILURE',`All subsystems remain healthy, but combined margins are time ${Math.round(m.time)} s and actuation ${Math.round(m.act)}%.`);log(['SUBSYSTEMS ...... HEALTHY','CONDITIONS ....... A + B + C','MISSION .......... FAIL','ROOT CAUSE ....... NO SINGLE FAULT']);
- setTimeout(()=>showReflection('Each condition passed alone. Together, the mission has no comfortable operating margin.','The failure belongs to the coupled system, not to one broken component.',3),350);
+ if(S.phase!==1||S.tested.size!==3)return;S.active=new Set(['detour','payload','thermal']);updateStressVisual();const m=updateMargins();S.phase=2;renderPhase();result('fail','COUPLED FAILURE',`All subsystems remain healthy, but combined margins are time ${Math.round(m.time)} s and actuation ${Math.round(m.act)}%.`);log(['SUBSYSTEMS ...... HEALTHY','CONDITIONS ....... A + B + C','MISSION .......... FAIL','ROOT CAUSE ....... NO SINGLE FAULT']);setTimeout(()=>showReflection('Each condition passed alone. Together, the mission has no comfortable operating margin.','The failure belongs to the coupled system, not to one broken component.',3),350);
 }
-function selectRequirement(req){S.selectedReq=req;document.querySelectorAll('.requirement-list button').forEach(b=>b.classList.toggle('selected',b.dataset.req===req));if(S.phase===4)$('requestChange').disabled=false;}
+function selectRequirement(req){if(S.phase!==4)return;S.selectedReq=req;document.querySelectorAll('.requirement-list button').forEach(b=>b.classList.toggle('selected',b.dataset.req===req));$('requestChange').disabled=false;}
 function proposeChange(){
- const req=S.selectedReq;if(!req)return;
+ if(S.phase!==4)return;const req=S.selectedReq;if(!req)return;
  if(req==='payload')showReq('WRONG LEVEL TO CHANGE','The 12 kg case is the mission outcome. Reducing it would change what the mission is supposed to accomplish.','Keep the mission outcome; look for a constraint that can be renegotiated.');
  else if(req==='route')showReq('SAFETY CONSTRAINT STAYS HARD','The direct corridor is physically blocked. Removing obstacle avoidance would make the requirement set easier by accepting an unsafe path.','Safety constraints are not margin to spend.');
  else showReq('ESCALATION APPROVED','The 52 s target is a service-level requirement, not the core delivery outcome or the safety constraint. Engineering evidence shows the current set is infeasible.','Deadline revised: 52 s → 70 s. The architecture and hardware remain unchanged.',true);
@@ -77,9 +82,8 @@ function verifyMission(){
  const m=updateMargins();if(!m.feasible)return;result('pass','MISSION PASSED',`Revised mission completes in ${Math.round(m.timeUsed)} s with +${Math.round(m.time)} s time and +${Math.round(m.act)}% actuation reserve.`);$('world').classList.add('complete');log(['SUBSYSTEMS ...... HEALTHY','REQUIREMENTS ..... FEASIBLE','MISSION .......... PASS','SYSTEM MARGIN .... POSITIVE']);localStorage.setItem('playlearn_a01m05_complete','true');setTimeout(()=>$('completeModal').classList.remove('hidden'),650);
 }
 
-document.querySelectorAll('.stress-card').forEach(b=>b.onclick=()=>testStress(b.dataset.stress));$('combineBtn').onclick=combine;
-document.querySelectorAll('.requirement-list button').forEach(b=>b.onclick=()=>selectRequirement(b.dataset.req));$('requestChange').onclick=proposeChange;
-$('pace').oninput=e=>{S.pace=Number(e.target.value)/100;updateMargins();renderPhase();};
+document.querySelectorAll('.stress-card').forEach(b=>b.onclick=()=>testStress(b.dataset.stress));$('combineBtn').onclick=combine;document.querySelectorAll('.requirement-list button').forEach(b=>b.onclick=()=>selectRequirement(b.dataset.req));$('requestChange').onclick=proposeChange;
+$('pace').oninput=e=>{if(!(S.phase===3||S.phase===5))return;S.pace=Number(e.target.value)/100;updateMargins();renderPhase();};
 $('startBtn').onclick=()=>{$('intro').classList.add('hidden');$('game').classList.remove('hidden');configure();updateMargins();};$('resetBtn').onclick=()=>location.reload();$('replayBtn').onclick=()=>location.reload();
 $('coachBtn').onclick=()=>{const h=['First establish a clean baseline.','Test A, B and C separately. A coupled failure only means something if the isolated cases are understood.','Notice the word HEALTHY at the top. Stop hunting for a red component.','Try a very slow pace, then a very fast one. Watch which margin each extreme helps.','Separate mission outcome, safety constraint and service target. They do not have equal authority.','After the deadline changes, you still need to choose a feasible operating point.'];$('coachText').textContent=h[S.phase];$('coachPanel').classList.remove('hidden');};$('closeCoach').onclick=()=>$('coachPanel').classList.add('hidden');
 configure();updateMargins();
