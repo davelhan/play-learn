@@ -1,6 +1,7 @@
 {
   "acts": {
-    "1": {"status":"ACTIVE","open":true}
+    "1": {"status":"ACTIVE","open":true},
+    "2": {"status":"ACTIVE","open":true}
   },
   "missions": {
     "01.01": {"status":"PLAYABLE","url":"./campaign/act-01/01-01-system-layers.html"},
@@ -8,6 +9,7 @@
     "01.03": {"status":"PLAYABLE","url":"./campaign/act-01/01-03-trace-broken.html"},
     "01.04": {"status":"PLAYABLE","url":"./campaign/act-01/01-04-build-architecture.html"},
     "01.05": {"status":"PLAYABLE","url":"./campaign/act-01/01-05-coupled-failure.html"},
-    "01.06": {"status":"PLAYABLE","url":"./campaign/act-01/01-06-architecture-gate.html"}
+    "01.06": {"status":"PLAYABLE","url":"./campaign/act-01/01-06-architecture-gate.html"},
+    "02.01": {"status":"PLAYABLE","url":"./campaign/act-02/02-01-frames-poses.html"}
   }
 }
