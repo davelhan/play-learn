@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="PLAY//LEARN Robotics — Act 02 Mission 02: Joint Axes">
+<title>PLAY//LEARN — 02.02 Joint Axes</title>
+<link rel="stylesheet" href="../../assets/css/a01m01-system-layers.css?v=1-20260811">
+<link rel="stylesheet" href="../../assets/css/a02m02-joint-axes.css?v=1-20260811">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="../../">PLAY<span>//</span>LEARN</a>
+  <div class="mission-id">ROBOTICS · ACT 02 · 02.02 · JOINT AXES</div>
+  <a class="map-link" href="../../#campaign">CAMPAIGN MAP</a>
+</header>
+<main>
+<section id="intro" class="intro axis-intro">
+  <div>
+    <p class="kicker">ACT 02 · GIVE IT A BODY · LAB</p>
+    <h1>SAME ANGLE.<br><em>DIFFERENT MOTION.</em></h1>
+    <p class="lead">Le coude reçoit une commande de rotation correcte, mais la main part dans la mauvaise direction. L'angle n'est qu'une partie du mouvement : il faut aussi savoir autour de quel axe l'articulation tourne.</p>
+    <div class="brief">
+      <div><span>COMMAND</span><b>Joint angle = 55°</b></div>
+      <div><span>SYMPTOM</span><b>Hand follows wrong path</b></div>
+      <div><span>DISCOVER</span><b>Axis · frame · degree of freedom</b></div>
+    </div>
+    <button id="startBtn" class="primary big" type="button">START 02.02</button>
+  </div>
+  <div class="axis-preview" aria-hidden="true">
+    <div><b>+X</b><span>↻</span></div><div><b>+Y</b><span>↻</span></div><div><b>+Z</b><span>↻</span></div>
+    <p>55° is not a complete joint command without an axis.</p>
+  </div>
+</section>
+<section id="game" class="game hidden axis-game">
+  <aside class="panel left-panel">
+    <p class="kicker">LEARNING LOOP</p>
+    <h2 id="phaseName">HOOK</h2>
+    <p id="phaseGoal" class="phase-goal"></p>
+    <div class="progress"><i id="progressFill"></i></div>
+    <div id="phaseCount" class="phase-count">01 / 06</div>
+    <div class="instruction"><span>WHAT TO DO</span><b id="actionText"></b></div>
+    <div class="watch"><span>WHAT TO WATCH</span><div id="watchList"></div></div>
+    <div class="source-note"><span>COURSE CONCEPT</span><b>Kinematic tree + joint coordinates</b><p>Un joint relie deux links et contraint leur mouvement relatif. Une coordonnée articulaire n'a de sens qu'avec le type de joint et l'axe auquel elle s'applique.</p></div>
+  </aside>
+  <section class="panel center-panel">
+    <div class="stage-head"><div><p class="kicker">JOINT BENCH</p><h2 id="stageTitle">Angle alone is ambiguous</h2></div><div class="stage-actions"><button id="coachBtn" class="secondary" type="button">ASK COACH</button><button id="resetBtn" class="secondary" type="button">RESET</button></div></div>
+    <div class="axis-controls">
+      <div class="axis-select"><span>JOINT AXIS · PARENT FRAME</span><div><button data-axis="x" type="button">LOCAL X</button><button data-axis="y" type="button">LOCAL Y</button><button data-axis="z" type="button">LOCAL Z</button></div></div>
+      <label><span>JOINT ANGLE</span><b id="jointAngleValue">0°</b><input id="jointAngle" type="range" min="-75" max="75" value="0"></label>
+      <label><span>PARENT FRAME YAW</span><b id="parentYawValue">0°</b><input id="parentYaw" type="range" min="-55" max="55" value="0" disabled></label>
+    </div>
+    <div class="axis-layout">
+      <div id="axisWorld" class="axis-world">
+        <svg id="axisSvg" viewBox="0 0 760 520" role="img" aria-label="Pseudo-3D articulated arm joint visualization">
+          <g class="world-grid" opacity=".35">
+            <path d="M40 430 H720 M80 390 H680 M120 350 H640 M160 310 H600 M200 270 H560 M240 230 H520"/>
+            <path d="M120 470 L360 230 M220 470 L410 280 M320 470 L460 330 M420 470 L510 380 M520 470 L560 430"/>
+          </g>
+          <g id="worldAxes" class="world-axes">
+            <line x1="95" y1="445" x2="205" y2="445" class="wx"/><text x="210" y="450">WORLD +X</text>
+            <line x1="95" y1="445" x2="55" y2="405" class="wy"/><text x="18" y="402">+Y</text>
+            <line x1="95" y1="445" x2="95" y2="335" class="wz"/><text x="103" y="337">+Z</text>
+          </g>
+          <g id="rigGroup">
+            <line id="upperArm" x1="0" y1="0" x2="0" y2="0" class="upper-arm"/>
+            <circle id="jointPoint" cx="0" cy="0" r="14" class="joint-point"/>
+            <line id="axisLine" x1="0" y1="0" x2="0" y2="0" class="joint-axis"/>
+            <text id="axisLabel" x="0" y="0" class="axis-label">LOCAL Z</text>
+            <line id="forearm" x1="0" y1="0" x2="0" y2="0" class="forearm"/>
+            <circle id="handPoint" cx="0" cy="0" r="12" class="hand-point-svg"/>
+            <text id="handLabel" x="0" y="0" class="hand-label-svg">HAND</text>
+            <path id="motionArc" d="" class="motion-arc"/>
+          </g>
+          <g id="targetGroup" class="target-group hidden">
+            <circle id="targetPoint" cx="0" cy="0" r="18"/>
+            <text id="targetText" x="0" y="0">TARGET</text>
+          </g>
+        </svg>
+        <div class="view-note">Pseudo-3D educational projection · geometry only · not a force simulation</div>
+      </div>
+      <div class="axis-readouts">
+        <div class="readout-card"><span>SELECTED AXIS · LOCAL</span><b id="localAxisReadout">Z = (0, 0, 1)</b><small>Axis expressed in the parent link frame.</small></div>
+        <div class="readout-card"><span>SAME AXIS · WORLD</span><b id="worldAxisReadout">(0.00, 0.00, 1.00)</b><small>Changes when the parent frame rotates.</small></div>
+        <div class="readout-card"><span>JOINT COORDINATE q</span><b id="qReadout">0°</b><small>One independent coordinate for this 1-DoF revolute joint.</small></div>
+        <div class="readout-card hand-card"><span>HAND POSITION · WORLD</span><b id="handWorldReadout">—</b><small>Result of parent pose + joint axis + joint angle + link length.</small></div>
+        <div id="targetStatus" class="target-status hidden"><span>TARGET ERROR</span><b id="targetError">—</b></div>
+      </div>
+    </div>
+    <div class="center-actions"><button id="mainAction" class="primary" type="button">RUN +55° WITH CURRENT AXIS</button></div>
+    <div id="result" class="result neutral"><b>READY</b><span>First run the angle command with the current axis.</span></div>
+    <div id="reflection" class="reflection hidden"><div><span>WHAT YOU JUST SAW</span><b id="reflectionSaw"></b></div><div><span>WHY IT MATTERS</span><b id="reflectionWhy"></b></div><button id="reflectionContinue" class="secondary" type="button">CONTINUE</button></div>
+  </section>
+  <aside class="panel right-panel">
+    <p class="kicker">JOINT MODEL</p><h2>What defines the motion?</h2>
+    <div class="joint-model"><div><span>PARENT LINK</span><b>UPPER ARM</b></div><div><span>JOINT TYPE</span><b>REVOLUTE</b></div><div><span>DOF</span><b>1</b></div><div><span>CHILD LINK</span><b>FOREARM</b></div></div>
+    <div class="translation-box"><span>KEY IDEA</span><p id="keyIdea">The same numerical angle can produce a completely different hand trajectory when the joint axis changes.</p></div>
+    <div class="evidence-board"><span>AXES EXPLORED</span><div id="axisEvidence"><b>X</b><b>Y</b><b>Z</b></div></div>
+    <div class="log-wrap"><span>SYSTEM LOG</span><pre id="log">JOINT ............ REVOLUTE
+DOF .............. 1
+ANGLE ............ 0°
+AXIS ............. LOCAL Z</pre></div>
+  </aside>
+</section>
+</main>
+<div id="conceptModal" class="modal hidden"><div class="modal-card"><p class="kicker">NAME WHAT YOU OBSERVED</p><h2>AXIS + ANGLE = JOINT MOTION.</h2><p>A revolute joint constrains the child link to rotate around a defined axis. For a <strong>1-DoF</strong> joint, the independent joint coordinate <strong>q</strong> is the rotation angle around that axis.</p><div class="lesson-chain"><b>JOINT AXIS</b> = direction of allowed rotation in a named frame<br><b>q</b> = amount of rotation around that axis<br><b>1 DoF</b> = one independent coordinate</div><button id="conceptContinue" class="primary" type="button">USE THE MODEL</button></div></div>
+<div id="completeModal" class="modal hidden"><div class="modal-card"><p class="kicker">02.02 COMPLETE</p><h2>JOINT AXES INSTALLED.</h2><p>Tu as vérifié qu'un angle ne définit pas un mouvement à lui seul. Le type de joint, son axe, le repère dans lequel cet axe est défini et la coordonnée articulaire déterminent ensemble le mouvement relatif des links.</p><div class="final-stack"><b>PARENT FRAME</b><i>↓</i><b>JOINT AXIS</b><i>+</i><b>JOINT COORDINATE q</b><i>↓</i><b>CHILD LINK POSE</b><i>↓</i><b>END-EFFECTOR MOTION</b></div><div class="unlock"><span>PERSISTENT BUILD</span><b>JOINT AXIS MAP</b></div><div class="complete-actions"><a class="secondary linkbtn" href="../../#campaign">CAMPAIGN MAP</a><button id="replayBtn" class="primary" type="button">REPLAY 02.02</button></div></div></div>
+<div id="coachPanel" class="coach hidden"><div><span>COACH</span><button id="closeCoach" type="button">×</button></div><p id="coachText"></p></div>
+<script src="../../assets/js/a02m02-joint-axes.js?v=1-20260811"></script>
+</body>
+</html>
