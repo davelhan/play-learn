@@ -31,10 +31,13 @@ function applyProgress(data,progress){
     act1.open=true;
     const act2=data.acts?.find(a=>a.id===2);
     if(act2){
-      act2.status='NEXT TO DESIGN';
+      const act2HasPlayable=act2.missions?.some(m=>(m.status==='PLAYABLE'||m.status==='COMPLETED')&&m.url);
+      act2.status=act2HasPlayable?'ACTIVE':'NEXT TO DESIGN';
       act2.open=true;
-      const first=act2.missions?.find(m=>m.id==='02.01');
-      if(first&&!first.url)first.status='NEXT TO BUILD';
+      if(!act2HasPlayable){
+        const first=act2.missions?.find(m=>m.id==='02.01');
+        if(first&&!first.url)first.status='NEXT TO BUILD';
+      }
     }
   }
   return data;
@@ -95,7 +98,7 @@ async function loadCampaign(){
   try{
     const [data,progress]=await Promise.all([
       fetch('./data/campaign.json?v=map-20260810').then(r=>{if(!r.ok)throw new Error('Campaign data unavailable');return r.json();}),
-      fetch('./data/campaign-progress.json?v=0106-20260811').then(r=>r.ok?r.json():null).catch(()=>null)
+      fetch('./data/campaign-progress.json?v=0201-20260811').then(r=>r.ok?r.json():null).catch(()=>null)
     ]);
     applyProgress(data,progress);
     host.innerHTML=data.acts.map(actCard).join('');
