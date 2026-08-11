@@ -9,6 +9,15 @@ on:
       - 'data/**'
       - 'scripts/qa3-browser.mjs'
       - '.github/workflows/qa3-browser.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'campaign/**'
+      - 'assets/**'
+      - 'data/**'
+      - 'scripts/qa3-browser.mjs'
+      - '.github/workflows/qa3-browser.yml'
+      - 'qa3/**'
   workflow_dispatch:
 
 jobs:
