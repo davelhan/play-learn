@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="PLAY//LEARN Robotics — Act 01 Mission 06: Architecture Gate">
+<title>PLAY//LEARN — 01.06 Architecture Gate</title>
+<link rel="stylesheet" href="../../assets/css/a01m01-system-layers.css?v=1-20260811">
+<link rel="stylesheet" href="../../assets/css/a01m06-architecture-gate.css?v=1-20260811">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="../../">PLAY<span>//</span>LEARN</a>
+  <div class="mission-id">ROBOTICS · ACT 01 · 01.06 · ARCHITECTURE GATE</div>
+  <a class="map-link" href="../../#campaign">CAMPAIGN MAP</a>
+</header>
+<main>
+<section id="intro" class="intro gate-intro">
+  <div>
+    <p class="kicker">ACT 01 · THE MACHINE · GATE</p>
+    <h1>NO NEW LESSON.<br><em>PROVE THE MODEL.</em></h1>
+    <p class="lead">UNIT H-01 doit récupérer un module de calibration de 9 kg dans Bay E et l'amener à Station F. Aucun tutoriel ne va reconstruire l'architecture à ta place. Utilise ce que tu as appris dans 01.01–01.05.</p>
+    <div class="brief">
+      <div><span>MISSION</span><b>9 kg module → Station F</b></div>
+      <div><span>ENVIRONMENT</span><b>Dynamic service bay</b></div>
+      <div><span>GATE RULE</span><b>Evidence before conclusion</b></div>
+    </div>
+    <button id="startBtn" class="primary big" type="button">START ARCHITECTURE GATE</button>
+  </div>
+  <div class="gate-preview" aria-hidden="true">
+    <div><span>01</span><b>BUILD</b></div><i>→</i><div><span>02</span><b>LOOP</b></div><i>→</i><div><span>03</span><b>DIAGNOSE</b></div><i>→</i><div><span>04</span><b>TRADE-OFF</b></div>
+  </div>
+</section>
+
+<section id="game" class="game hidden gate-game">
+  <aside class="panel left-panel">
+    <p class="kicker">GATE PROGRESS</p>
+    <h2 id="phaseName">BUILD</h2>
+    <p id="phaseGoal" class="phase-goal"></p>
+    <div class="progress"><i id="progressFill"></i></div>
+    <div id="phaseCount" class="phase-count">01 / 04</div>
+    <div class="instruction"><span>OBJECTIVE</span><b id="actionText"></b></div>
+    <div class="gate-criteria">
+      <div id="critBuild"><span>01</span><b>Functional architecture</b><em>NOT PROVED</em></div>
+      <div id="critLoop"><span>02</span><b>Closed-loop adaptation</b><em>NOT PROVED</em></div>
+      <div id="critDiag"><span>03</span><b>Interface diagnosis</b><em>NOT PROVED</em></div>
+      <div id="critTrade"><span>04</span><b>System trade-off</b><em>NOT PROVED</em></div>
+    </div>
+    <div class="source-note"><span>GATE RULE</span><b>No score for guessing</b><p>Une erreur n'enlève pas de points. Elle doit produire de l'information. Le Gate passe quand chaque compétence a été démontrée par une action vérifiable.</p></div>
+  </aside>
+
+  <section class="panel center-panel">
+    <div class="stage-head"><div><p class="kicker">ACT 01 FINAL EXERCISE</p><h2 id="stageTitle">Build the functional stack</h2></div><div class="stage-actions"><button id="coachBtn" class="secondary" type="button">ASK COACH</button><button id="resetBtn" class="secondary" type="button">RESET GATE</button></div></div>
+
+    <div id="stageBuild" class="gate-stage">
+      <div class="gate-brief"><span>SCENARIO</span><b>Recover calibration module → Station F</b><small>Build only the top-level functional architecture. Hardware cards are mixed into the tray.</small></div>
+      <div class="build-gate-layout">
+        <div class="gate-tray" id="gateTray">
+          <button data-module="control" data-type="function" type="button">REAL-TIME CONTROL</button>
+          <button data-module="camera" data-type="implementation" type="button">CAMERA</button>
+          <button data-module="mission" data-type="function" type="button">MISSION / USE CASE</button>
+          <button data-module="plant" data-type="function" type="button">PHYSICAL PLANT / ENERGY</button>
+          <button data-module="battery" data-type="implementation" type="button">BATTERY PACK</button>
+          <button data-module="state" data-type="function" type="button">PERCEPTION / STATE ESTIMATION</button>
+          <button data-module="behavior" data-type="function" type="button">TASK AUTONOMY / BEHAVIOR</button>
+          <button data-module="motor" data-type="implementation" type="button">JOINT MOTOR</button>
+          <button data-module="motion" data-type="function" type="button">MOTION GENERATION / PLANNING</button>
+        </div>
+        <div class="gate-stack" id="gateStack">
+          <button class="gate-slot" data-slot="0" type="button"><span>01 · OUTCOME + CONSTRAINTS</span><b>EMPTY</b></button>
+          <button class="gate-slot" data-slot="1" type="button"><span>02 · SEQUENCE + DECISIONS</span><b>EMPTY</b></button>
+          <button class="gate-slot" data-slot="2" type="button"><span>03 · USABLE BODY + WORLD STATE</span><b>EMPTY</b></button>
+          <button class="gate-slot" data-slot="3" type="button"><span>04 · FEASIBLE DESIRED MOTION</span><b>EMPTY</b></button>
+          <button class="gate-slot" data-slot="4" type="button"><span>05 · FAST CORRECTIONS</span><b>EMPTY</b></button>
+          <button class="gate-slot" data-slot="5" type="button"><span>06 · FORCE + CONTACT + ENERGY</span><b>EMPTY</b></button>
+        </div>
+      </div>
+      <div class="center-actions"><button id="checkBuild" class="primary" type="button" disabled>RUN ARCHITECTURE TRACE</button></div>
+    </div>
+
+    <div id="stageLoop" class="gate-stage hidden">
+      <div class="gate-brief"><span>EVENT</span><b>Worker cart enters Route A after command dispatch</b><small>The physical plant sees the obstruction first. Make the architecture adapt without deleting the safety constraint.</small></div>
+      <div class="loop-gate">
+        <div class="loop-world"><div id="loopRobot" class="gate-robot">H-01</div><div id="loopCart" class="gate-cart hidden">CART</div><div class="gate-destination">STATION F</div><div id="loopTruth" class="gate-truth">WORLD: CLEAR</div></div>
+        <div class="loop-board">
+          <div><span>MISSION</span><b id="loopMission">DELIVER MODULE</b></div>
+          <button class="return-gate" data-return="0" type="button">EVIDENCE LINK 1 · OFF</button>
+          <div><span>BEHAVIOR</span><b id="loopBehavior">ROUTE A</b></div>
+          <button class="return-gate" data-return="1" type="button">EVIDENCE LINK 2 · OFF</button>
+          <div><span>STATE</span><b id="loopState">ROUTE A CLEAR</b></div>
+          <button class="return-gate" data-return="2" type="button">EVIDENCE LINK 3 · OFF</button>
+          <div><span>MOTION</span><b id="loopMotion">FOLLOW ROUTE A</b></div>
+          <button class="return-gate" data-return="3" type="button">EVIDENCE LINK 4 · OFF</button>
+          <div><span>CONTROL</span><b id="loopControl">TRACKING</b></div>
+          <button class="return-gate" data-return="4" type="button">EVIDENCE LINK 5 · OFF</button>
+          <div><span>PLANT</span><b id="loopPlant">MOVING</b></div>
+        </div>
+      </div>
+      <div class="center-actions"><button id="runLoop" class="primary" type="button">RUN WITH CURRENT LINKS</button></div>
+    </div>
+
+    <div id="stageDiag" class="gate-stage hidden">
+      <div class="gate-brief"><span>NEW INCIDENT</span><b>Hand stops 12 cm short · motor tracking 99%</b><small>Open probes and identify the first interface where SENT ≠ RECEIVED. Test your hypothesis; wrong hypotheses remain testable.</small></div>
+      <div class="diag-gate">
+        <div class="diag-chain">
+          <div><span>MISSION</span><b>GRASP MODULE</b></div>
+          <button class="gate-probe" data-probe="0" type="button">P1</button>
+          <div><span>BEHAVIOR</span><b>REACH + GRASP</b></div>
+          <button class="gate-probe" data-probe="1" type="button">P2</button>
+          <div><span>STATE</span><b>HANDLE x = +0.36 m</b></div>
+          <button class="gate-probe" data-probe="2" type="button">P3</button>
+          <div><span>MOTION</span><b>WRIST x = +0.36 m</b></div>
+          <button class="gate-probe" data-probe="3" type="button">P4</button>
+          <div><span>CONTROL</span><b>TRACK x = +0.24 m</b></div>
+          <button class="gate-probe" data-probe="4" type="button">P5</button>
+          <div><span>PLANT</span><b>HAND x = +0.24 m</b></div>
+        </div>
+        <div class="diag-readout" id="diagReadout"><span>PROBE READOUT</span><b>No probe opened.</b><p>Compare sender packet with receiver packet.</p></div>
+      </div>
+      <div class="hyp-row" id="hypRow"><button data-hyp="0" type="button">P1</button><button data-hyp="1" type="button">P2</button><button data-hyp="2" type="button">P3</button><button data-hyp="3" type="button">P4</button><button data-hyp="4" type="button">P5</button></div>
+      <div class="center-actions"><button id="testHyp" class="primary" type="button" disabled>ISOLATE CURRENT HYPOTHESIS</button></div>
+    </div>
+
+    <div id="stageTrade" class="gate-stage hidden">
+      <div class="gate-brief"><span>FINAL CONDITION</span><b>Detour + 9 kg payload + thermal derate</b><small>All subsystems remain healthy. Find whether the current 58 s deadline has any feasible operating point.</small></div>
+      <div class="trade-gate">
+        <div class="margin-board">
+          <div><span>TIME MARGIN</span><b id="gateTime">—</b><i><em id="gateTimeBar"></em></i></div>
+          <div><span>ACTUATION MARGIN</span><b id="gateAct">—</b><i><em id="gateActBar"></em></i></div>
+          <div><span>ENERGY MARGIN</span><b id="gateEnergy">—</b><i><em id="gateEnergyBar"></em></i></div>
+          <div class="gate-feasible" id="gateFeasible">UNKNOWN</div>
+        </div>
+        <div class="pace-gate"><label><span>EXECUTION PACE</span><b id="gatePaceValue">0.72×</b></label><input id="gatePace" type="range" min="45" max="110" value="72"><small>Explore both ends before making a requirement decision.</small></div>
+        <div class="req-gate" id="reqGate">
+          <button data-req="payload" type="button"><span>MISSION OUTCOME</span><b>DELIVER 9 kg MODULE</b></button>
+          <button data-req="safety" type="button"><span>SAFETY</span><b>AVOID BLOCKED ROUTE</b></button>
+          <button data-req="deadline" type="button"><span>SERVICE TARGET</span><b id="gateDeadline">COMPLETE ≤ 58 s</b></button>
+        </div>
+      </div>
+      <div class="center-actions"><button id="proposeGateChange" class="primary" type="button" disabled>PROPOSE REQUIREMENT CHANGE</button><button id="verifyGate" class="secondary" type="button" disabled>RUN FINAL VERIFICATION</button></div>
+    </div>
+
+    <div id="gateResult" class="result neutral"><b>GATE READY</b><span>Complete each demonstration. Wrong actions should give you evidence, not points lost.</span></div>
+  </section>
+
+  <aside class="panel right-panel">
+    <p class="kicker">EVIDENCE RECORD</p>
+    <h2>What have you proved?</h2>
+    <div id="evidenceRecord" class="evidence-record">
+      <div><span>BUILD</span><b>Waiting</b><p>—</p></div>
+      <div><span>LOOP</span><b>Waiting</b><p>—</p></div>
+      <div><span>DIAGNOSIS</span><b>Waiting</b><p>—</p></div>
+      <div><span>TRADE-OFF</span><b>Waiting</b><p>—</p></div>
+    </div>
+    <div class="translation-box"><span>ACT 01 THESIS</span><p id="keyIdea">A humanoid is a cyber-physical system. Read the functions, interfaces, evidence and requirements together.</p></div>
+    <div class="log-wrap"><span>GATE LOG</span><pre id="log">ARCHITECTURE GATE
+STATUS ........... READY
+NEW CONCEPTS ..... NONE
+EVIDENCE ......... REQUIRED</pre></div>
+  </aside>
+</section>
+</main>
+
+<div id="gateModal" class="modal hidden"><div class="modal-card"><p class="kicker" id="gateModalKicker">GATE EVIDENCE</p><h2 id="gateModalTitle"></h2><p id="gateModalText"></p><div id="gateModalEvidence" class="lesson-chain"></div><button id="gateModalContinue" class="primary" type="button">CONTINUE</button></div></div>
+<div id="completeModal" class="modal hidden"><div class="modal-card gate-complete"><p class="kicker">ACT 01 COMPLETE</p><h2>THE MACHINE — PASSED.</h2><p>Tu as reconstruit l'architecture fonctionnelle, fermé la boucle avec le monde réel, localisé une rupture d'interface et défendu une décision de système à partir des marges et des exigences.</p><div class="gate-masteries"><div><span>ARCHITECTURE</span><b>INTEGRATED</b></div><div><span>INTERFACES</span><b>DIAGNOSED</b></div><div><span>REQUIREMENTS</span><b>APPLIED</b></div><div><span>ACT 01</span><b>MASTERED</b></div></div><div class="unlock"><span>PERSISTENT BUILD</span><b>ARCHITECTURE + FIRST CHASSIS</b></div><div class="complete-actions"><a class="secondary linkbtn" href="../../#campaign">CAMPAIGN MAP</a><button id="replayBtn" class="primary" type="button">REPLAY GATE</button></div></div></div>
+<div id="coachPanel" class="coach hidden"><div><span>COACH · METHOD ONLY</span><button id="closeCoach" type="button">×</button></div><p id="coachText"></p></div>
+<script src="../../assets/js/a01m06-architecture-gate.js?v=1-20260811"></script>
+</body>
+</html>
