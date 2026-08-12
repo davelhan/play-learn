@@ -17,14 +17,14 @@ Q('07.04',{
  ],
  metrics:[
   {label:'PASSIVE THERMAL RESISTANCE',expr:'.48/(1+1.8*sinkMass)',unit:'K/W'},
-  {label:'EFFECTIVE ACTIVE COOLING',expr:'1+(fanPower/45)*(1-.7*blockage)',unit:'×'},
-  {label:'SURFACE TEMP',expr:'30+loss*(.48/(1+1.8*sinkMass))/(1+(fanPower/45)*(1-.7*blockage))',unit:'°C',good:'v<s.tempLimit'},
+  {label:'EFFECTIVE ACTIVE COOLING',expr:'1+(fanPower/45)*max(.05,1-blockage)',unit:'×'},
+  {label:'SURFACE TEMP',expr:'30+loss*(.48/(1+1.8*sinkMass))/(1+(fanPower/45)*max(.05,1-blockage))',unit:'°C',good:'v<s.tempLimit'},
   {label:'THERMAL SYSTEM COST',expr:'sinkMass+fanPower/60',unit:'units',good:'v<=s.thermalBudget'}
  ],
- goal:'30+loss*(.48/(1+1.8*sinkMass))/(1+(fanPower/45)*(1-.7*blockage))<tempLimit && sinkMass+fanPower/60<=thermalBudget',
+ goal:'30+loss*(.48/(1+1.8*sinkMass))/(1+(fanPower/45)*max(.05,1-blockage))<tempLimit && sinkMass+fanPower/60<=thermalBudget',
  goalText:'Keep temperature below the limit by allocating finite budget between passive mass and active cooling power.',
- disturbance:{label:'AIR INLET PARTIALLY BLOCKED',set:{blockage:.65}},
- transferGoal:'30+loss*(.48/(1+1.8*sinkMass))/(1+(fanPower/45)*(1-.7*blockage))<tempLimit && sinkMass+fanPower/60<=thermalBudget',
- transferText:'Airflow efficiency fell. Reallocate the same thermal budget between passive mass and active power.'
+ disturbance:{label:'AIR INLET 75% BLOCKED',set:{blockage:.75}},
+ transferGoal:'30+loss*(.48/(1+1.8*sinkMass))/(1+(fanPower/45)*max(.05,1-blockage))<tempLimit && sinkMass+fanPower/60<=thermalBudget',
+ transferText:'Airflow efficiency fell enough to invalidate the nominal allocation. Rebalance passive mass and active power inside the same budget.'
 });
 })();
