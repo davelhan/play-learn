@@ -1,0 +1,26 @@
+name: Apply QA3 Custom Hotfix Links
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'scripts/apply-qa3-custom-hotfix-links.mjs'
+      - '.github/workflows/apply-qa3-custom-hotfix.yml'
+permissions:
+  contents: write
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node scripts/apply-qa3-custom-hotfix-links.mjs
+      - name: Commit migration
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name 'play-learn-qa-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add campaign/act-01/*.html
+          git commit -m 'Attach QA3 hotfix to Act 01 custom missions'
+          git push
