@@ -28,9 +28,14 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  qa3:
+  shared:
+    name: shared-${{ matrix.shard }}
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2]
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -44,19 +49,46 @@ jobs:
         run: |
           python3 -m http.server 8000 --bind 127.0.0.1 > /tmp/playlearn-http.log 2>&1 &
           sleep 2
-      - name: Run 51 reworked batch missions end-to-end
+      - name: Run shared-engine shard
+        env:
+          QA_SHARD_TOTAL: 3
+          QA_SHARD_INDEX: ${{ matrix.shard }}
         run: node scripts/qa3-rework-browser.mjs
-      - name: Run 9 custom missions end-to-end
-        if: always()
-        run: node scripts/qa3-custom-browser.mjs
-      - name: Upload QA3 reports
+      - name: Upload shard report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: qa3-browser-results
+          name: qa5-browser-shared-${{ matrix.shard }}
           path: |
-            qa3-rework-results.json
-            qa3-rework-results.md
+            qa3-rework-results-shard-${{ matrix.shard }}.json
+            qa3-rework-results-shard-${{ matrix.shard }}.md
+          if-no-files-found: warn
+
+  custom:
+    name: custom-9
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Start local static server
+        run: |
+          python3 -m http.server 8000 --bind 127.0.0.1 > /tmp/playlearn-http.log 2>&1 &
+          sleep 2
+      - name: Run 9 custom missions end-to-end
+        run: node scripts/qa3-custom-browser.mjs
+      - name: Upload custom report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa5-browser-custom
+          path: |
             qa3-custom-results.json
             qa3-custom-results.md
           if-no-files-found: warn
