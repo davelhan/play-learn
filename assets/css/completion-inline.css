@@ -11,4 +11,6 @@
 .completion-inline .complete-actions{display:flex!important;gap:10px!important;flex-wrap:wrap!important;margin-top:16px!important}
 .completion-inline .complete-actions .linkbtn,.completion-inline .complete-actions button{min-width:180px}
 body.mission-complete-preserved #game{padding-bottom:24px}
+body.mission-complete-preserved #game .completion-frozen-control{pointer-events:none!important;cursor:default!important}
+body.mission-complete-preserved #inlineCompletion button,body.mission-complete-preserved #inlineCompletion a{pointer-events:auto!important}
 @media(max-width:760px){.completion-inline .modal-card{padding:16px!important}.completion-inline .complete-actions{flex-direction:column}.completion-inline .complete-actions .linkbtn,.completion-inline .complete-actions button{width:100%;min-width:0}}
