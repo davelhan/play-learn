@@ -5,6 +5,7 @@ on:
     paths:
       - 'data/**'
       - 'assets/js/qa3/**'
+      - 'assets/js/qa5/**'
       - 'scripts/qa5-remaining-pedagogy-scan.mjs'
       - '.github/workflows/qa5-remaining-pedagogy.yml'
   workflow_dispatch:
