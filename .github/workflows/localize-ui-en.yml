@@ -1,0 +1,27 @@
+name: Localize UI English
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'scripts/localize-ui-en.mjs'
+      - '.github/workflows/localize-ui-en.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  localize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node scripts/localize-ui-en.mjs
+      - name: Commit English localization
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name 'play-learn-localization-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add index.html campaign assets/js data
+          git commit -m 'Make visible UI English-only'
+          git push
