@@ -5,6 +5,7 @@ on:
     paths:
       - 'scripts/localize-ui-en.mjs'
       - 'scripts/localize-ui-en-pass2.mjs'
+      - 'scripts/localize-ui-en-pass3.mjs'
       - '.github/workflows/localize-ui-en.yml'
   workflow_dispatch:
 permissions:
@@ -19,11 +20,12 @@ jobs:
           node-version: '22'
       - run: node scripts/localize-ui-en.mjs
       - run: node scripts/localize-ui-en-pass2.mjs
+      - run: node scripts/localize-ui-en-pass3.mjs
       - name: Commit English localization
         run: |
           if git diff --quiet; then exit 0; fi
           git config user.name 'play-learn-localization-bot'
           git config user.email 'actions@users.noreply.github.com'
           git add index.html campaign assets/js data
-          git commit -m 'Finish English-only UI localization'
+          git commit -m 'Remove final French UI strings'
           git push
