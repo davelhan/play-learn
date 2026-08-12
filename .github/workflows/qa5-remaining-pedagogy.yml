@@ -1,0 +1,25 @@
+name: QA5 Remaining Pedagogy Scan
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'data/**'
+      - 'assets/js/qa3/**'
+      - 'scripts/qa5-remaining-pedagogy-scan.mjs'
+      - '.github/workflows/qa5-remaining-pedagogy.yml'
+  workflow_dispatch:
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node scripts/qa5-remaining-pedagogy-scan.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: qa5-remaining-pedagogy
+          path: |
+            qa5/qa5-shared-scan.json
+            qa5/QA5_SHARED_RAW_SCAN.md
