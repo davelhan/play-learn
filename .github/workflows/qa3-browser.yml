@@ -1,5 +1,6 @@
 name: QA3 Browser Interaction
 
+# Full regression also guards the English-only localization build.
 on:
   push:
     branches: [ main ]
