@@ -1,0 +1,20 @@
+name: QA5 Final Pedagogy Guard
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'data/**'
+      - 'assets/js/qa3/**'
+      - 'assets/js/qa5/**'
+      - 'scripts/qa5-final-guard.mjs'
+      - '.github/workflows/qa5-final-guard.yml'
+  workflow_dispatch:
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node scripts/qa5-final-guard.mjs
