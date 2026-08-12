@@ -1,7 +1,7 @@
 import { chromium } from 'playwright';
 const BASE=process.env.QA_BASE_URL||'http://127.0.0.1:8000';
 const browser=await chromium.launch({headless:true});
-const page=await browser.newPage({viewport:{width:1440,height:1000});
+const page=await browser.newPage({viewport:{width:1440,height:1000}});
 const errors=[];
 page.on('pageerror',e=>errors.push('PAGEERROR '+String(e)));
 page.on('console',m=>{if(m.type()==='error')errors.push('CONSOLE '+m.text())});
