@@ -9,20 +9,20 @@ const S={
 };
 
 const PH=[
- {name:'HOOK',goal:'Voir la panne sans supposer sa cause.',action:'Lance le test une fois.',watch:['Les moteurs restent ONLINE','BODY ORIENTATION reste UNKNOWN']},
+ {name:'HOOK',goal:'Observe the failure without assuming its cause.',action:'Run the test once.',watch:['The motors remain ONLINE','BODY ORIENTATION remains UNKNOWN']},
  {name:'DISCOVER',goal:'Separate physical reality from measurement.',action:'Lean the robot left and right by dragging it.',watch:['BODY ANGLE changes with the body','IMU RAW follows the same motion','ESTIMATE remains UNKNOWN']},
  {name:'ISOLATE',goal:'Understand what the IMU actually does.',action:'Keep the body tilted. Turn IMU power off, observe, then turn it back on.',watch:['The body keeps its angle when the IMU is OFF','IMU RAW disappears','The measurement returns when the IMU comes back ONLINE']},
  {name:'TRACE',goal:'See where the measurement must go next.',action:'Read the roles of the blocks on the right. RAW DATA is available, but STATE ESTIMATOR shows NO INPUT. The broken link is now highlighted: click it directly to repair it.',watch:['IMU = MEASURES BODY MOTION','STATE ESTIMATOR = BUILDS A USABLE BODY STATE','After the repair, ESTIMATED ANGLE appears']},
  {name:'TIMING',goal:'Understand why a good measurement can still be unusable.',action:'Keep the body tilted. Vary Sensor data age. Compare BODY ANGLE, ESTIMATED ANGLE and State confidence.',watch:['With old data, the estimate is poor','With fresher data, the estimate moves closer to the body state','State confidence moves from weak to healthy']},
  {name:'VERIFY',goal:'Verify the complete chain.',action:'Run STAND TEST.',watch:['Measure → Estimate → Control → Motors works as a chain']},
- {name:'TRANSFER',goal:'Distinguish a control failure from a sensing failure.',action:'New failure: State confidence is healthy but Control response is poor. Both timing controls are available. Change one variable at a time and see which diagnostic it influences.',watch:['Sensor data age agit surtout sur State confidence','Control latency agit sur Control response','Le bon diagnostic doit redevenir sain avant le test']},
+ {name:'TRANSFER',goal:'Distinguish a control failure from a sensing failure.',action:'New failure: State confidence is healthy but Control response is poor. Both timing controls are available. Change one variable at a time and see which diagnostic it influences.',watch:['Sensor data age mainly affects State confidence','Control latency affects Control response','The correct diagnostic must return to healthy before the test']},
  {name:'COMPLETE',goal:'Lock in the mental model.',action:'Mission complete.',watch:['Physical state ≠ measurement ≠ estimate ≠ control']}
 ];
 
 const HINTS=[
  ['The initial test only collects clues. A green component is also information.'],
  ['Watch the three cards below the robot as you move it. Two change together; the third remains unknown.'],
- ['Couper l’IMU ne peut pas supprimer l’orientation physique du robot. Cela supprime uniquement sa mesure.'],
+ ['Turning the IMU off cannot remove the robot’s physical orientation. It only removes its measurement.'],
  ['There is nothing to guess here: the broken link is deliberately visible. Read what each block does, then click BROKEN DATA LINK.'],
  ['There is no magic number to memorize. Look for the point where the estimate approaches reality and confidence becomes healthy.'],
  ['The test now verifies everything you just built.'],
@@ -194,12 +194,12 @@ function runTest(){
   if(S.phase===0){
     S.angle=14;$('failureStamp').classList.remove('hidden');
     $('resultBox').className='result fail';
-    $('resultBox').innerHTML='<strong>TEST FAILED · 2.84 s</strong><span>Les moteurs sont ONLINE, mais le robot n’a pas de BODY ORIENTATION utilisable.</span>';
+    $('resultBox').innerHTML='<strong>TEST FAILED · 2.84 s</strong><span>The motors are ONLINE, but the robot has no usable BODY ORIENTATION.</span>';
     renderSignals();
     setTimeout(()=>{
       S.angle=0;S.minAngle=0;S.maxAngle=0;
       showLesson(
-        'Le robot tombe alors que ses moteurs fonctionnent.',
+        'The robot falls even though its motors are working.',
         'A system failure does not mean everything is broken. Follow the information.',
         1
       );
@@ -234,8 +234,8 @@ function runTest(){
   }else{
     $('failureStamp').classList.remove('hidden');
     const parts=[];
-    if(confidence()<72)parts.push('State confidence est faible');
-    if(response()<72)parts.push('Control response est faible');
+    if(confidence()<72)parts.push('State confidence is low');
+    if(response()<72)parts.push('Control response is low');
     $('resultBox').className='result fail';
     $('resultBox').innerHTML=`<strong>TEST FAILED</strong><span>${parts.join(' · ')||'The chain remains inconsistent'}.</span>`;
     render();
@@ -257,7 +257,7 @@ robot.addEventListener('pointerup',()=>{
   if(!S.drag)return;S.drag=false;
   if(S.phase===1&&S.minAngle<-7&&S.maxAngle>7){
     showLesson(
-      'BODY ANGLE et IMU RAW bougent ensemble. ESTIMATE remains UNKNOWN.',
+      'BODY ANGLE and IMU RAW move together. ESTIMATE remains UNKNOWN.',
       'The body has a physical state. The IMU produces a measurement of that state. A measurement is not yet a state usable by control.',
       2
     );
@@ -342,7 +342,7 @@ $('controlDelay').addEventListener('change',()=>{
 
 $('coachBtn').onclick=()=>{
   const n=S.coachUse[S.phase]||0;
-  const arr=HINTS[S.phase]||['Observe les signaux qui changent ensemble.'];
+  const arr=HINTS[S.phase]||['Observe which signals change together.'];
   $('coachText').textContent=arr[Math.min(n,arr.length-1)];
   S.coachUse[S.phase]=n+1;$('coachPanel').classList.remove('hidden');
 };
