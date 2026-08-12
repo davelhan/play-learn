@@ -15,7 +15,8 @@ const shardTotal=Math.max(1,Number(process.env.QA_SHARD_TOTAL||1));
 const shardIndex=Math.max(0,Number(process.env.QA_SHARD_INDEX||0));
 const ids=allIds.filter((_,i)=>i%shardTotal===shardIndex);
 const suffix=shardTotal>1?`-shard-${shardIndex}`:'';
-function ev(expr,s){return Function('s',`with(s){const abs=Math.abs,min=Math.min,max=Math.max,sqrt=Math.sqrt,sin=Math.sin,cos=Math.cos,exp=Math.exp,pi=Math.PI;return (${expr});}`)(s)}
+const exprCache=new Map();
+function ev(expr,s){let fn=exprCache.get(expr);if(!fn){fn=Function('s',`with(s){const abs=Math.abs,min=Math.min,max=Math.max,sqrt=Math.sqrt,sin=Math.sin,cos=Math.cos,exp=Math.exp,pi=Math.PI;return (${expr});}`);exprCache.set(expr,fn)}return fn(s)}
 function keys(m,expr){return(m.controls||[]).filter(c=>new RegExp(`\\b${c.key}\\b`).test(expr||''))}
 function vals(c){if(c.kind==='select')return c.options.map(o=>o.value);const raw=[];for(let v=c.min;v<=c.max+1e-9;v+=c.step)raw.push(+v.toFixed(10));if(raw.length<=31)return raw;const out=[];for(let i=0;i<31;i++)out.push(raw[Math.round(i*(raw.length-1)/30)]);return[...new Set(out)]}
 function meaningful(c,a,b){if(c.kind==='select')return String(a)!==String(b);const span=Math.max(1e-9,Number(c.max)-Number(c.min));return Math.abs(Number(a)-Number(b))>=Math.max(Number(c.step)||0,span*.04)}
