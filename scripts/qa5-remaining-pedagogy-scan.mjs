@@ -8,6 +8,7 @@ for(const a of ['02','03','04','05','06','07','08','09','10']){
   vm.runInThisContext(fs.readFileSync(`assets/js/qa3/mission-qa3-act${a}.js`,'utf8'),{filename:`act${a}`});
 }
 vm.runInThisContext(fs.readFileSync('assets/js/qa5/mission-qa5-reworks.js','utf8'),{filename:'qa5-reworks'});
+vm.runInThisContext(fs.readFileSync('assets/js/qa5/mission-qa5-hotfix-1.js','utf8'),{filename:'qa5-hotfix-1'});
 const apply=m=>PLAYLEARN_QA3_PATCHES[m.id]?Object.assign({},m,PLAYLEARN_QA3_PATCHES[m.id]):m;
 const representative=new Set(['02.04','03.02','04.03','05.04','06.03','07.03','08.04','09.02','10.01']);
 const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
