@@ -10,11 +10,11 @@ const S={
 
 const PH=[
  {name:'HOOK',goal:'Voir la panne sans supposer sa cause.',action:'Lance le test une fois.',watch:['Les moteurs restent ONLINE','BODY ORIENTATION reste UNKNOWN']},
- {name:'DISCOVER',goal:'Separate physical reality from measurement.',action:'Lean the robot left and right by dragging it.',watch:['BODY ANGLE change avec le corps','IMU RAW suit le même mouvement','ESTIMATE reste UNKNOWN']},
- {name:'ISOLATE',goal:'Understand what the IMU actually does.',action:'Keep the body tilted. Turn IMU power off, observe, then turn it back on.',watch:['Le corps garde son angle quand l’IMU est OFF','IMU RAW disparaît','La mesure revient quand l’IMU repasse ONLINE']},
- {name:'TRACE',goal:'See where the measurement must go next.',action:'Lis les rôles des blocs à droite. RAW DATA est disponible, mais STATE ESTIMATOR indique NO INPUT. Le lien cassé est maintenant signalé : clique directement dessus pour le réparer.',watch:['IMU = MEASURES BODY MOTION','STATE ESTIMATOR = BUILDS A USABLE BODY STATE','Après réparation, ESTIMATED ANGLE apparaît']},
- {name:'TIMING',goal:'Understand why a good measurement can still be unusable.',action:'Le corps reste incliné. Fais varier Sensor data age. Compare BODY ANGLE, ESTIMATED ANGLE et State confidence.',watch:['Avec des données anciennes, l’estimation est pauvre','En rendant les données plus fraîches, l’estimation se rapproche du corps','State confidence passe d’un état faible à un état sain']},
- {name:'VERIFY',goal:'Verify the complete chain.',action:'Lance STAND TEST.',watch:['Measure → Estimate → Control → Motors fonctionne comme une chaîne']},
+ {name:'DISCOVER',goal:'Separate physical reality from measurement.',action:'Lean the robot left and right by dragging it.',watch:['BODY ANGLE changes with the body','IMU RAW follows the same motion','ESTIMATE remains UNKNOWN']},
+ {name:'ISOLATE',goal:'Understand what the IMU actually does.',action:'Keep the body tilted. Turn IMU power off, observe, then turn it back on.',watch:['The body keeps its angle when the IMU is OFF','IMU RAW disappears','The measurement returns when the IMU comes back ONLINE']},
+ {name:'TRACE',goal:'See where the measurement must go next.',action:'Read the roles of the blocks on the right. RAW DATA is available, but STATE ESTIMATOR shows NO INPUT. The broken link is now highlighted: click it directly to repair it.',watch:['IMU = MEASURES BODY MOTION','STATE ESTIMATOR = BUILDS A USABLE BODY STATE','After the repair, ESTIMATED ANGLE appears']},
+ {name:'TIMING',goal:'Understand why a good measurement can still be unusable.',action:'Keep the body tilted. Vary Sensor data age. Compare BODY ANGLE, ESTIMATED ANGLE and State confidence.',watch:['With old data, the estimate is poor','With fresher data, the estimate moves closer to the body state','State confidence moves from weak to healthy']},
+ {name:'VERIFY',goal:'Verify the complete chain.',action:'Run STAND TEST.',watch:['Measure → Estimate → Control → Motors works as a chain']},
  {name:'TRANSFER',goal:'Distinguish a control failure from a sensing failure.',action:'New failure: State confidence is healthy but Control response is poor. Both timing controls are available. Change one variable at a time and see which diagnostic it influences.',watch:['Sensor data age agit surtout sur State confidence','Control latency agit sur Control response','Le bon diagnostic doit redevenir sain avant le test']},
  {name:'COMPLETE',goal:'Lock in the mental model.',action:'Mission complete.',watch:['Physical state ≠ measurement ≠ estimate ≠ control']}
 ];
@@ -257,7 +257,7 @@ robot.addEventListener('pointerup',()=>{
   if(!S.drag)return;S.drag=false;
   if(S.phase===1&&S.minAngle<-7&&S.maxAngle>7){
     showLesson(
-      'BODY ANGLE et IMU RAW bougent ensemble. ESTIMATE reste UNKNOWN.',
+      'BODY ANGLE et IMU RAW bougent ensemble. ESTIMATE remains UNKNOWN.',
       'The body has a physical state. The IMU produces a measurement of that state. A measurement is not yet a state usable by control.',
       2
     );

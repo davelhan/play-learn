@@ -16,7 +16,7 @@
 
   const note=document.createElement('p');
   note.className='completion-hold-note';
-  note.textContent='Mission complete. Le résultat reste visible : inspecte la scène aussi longtemps que tu veux, puis rejoue ou retourne à la Campaign Map quand tu le décides.';
+  note.textContent='Mission complete. The result stays visible: inspect the scene for as long as you want, then replay or return to the Campaign Map when you decide.';
 
   const actions=card.querySelector('.complete-actions');
   if(actions)card.insertBefore(note,actions); else card.appendChild(note);
