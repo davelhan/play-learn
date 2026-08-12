@@ -26,10 +26,33 @@
   if(reflection&&reflection.parentElement===host)reflection.insertAdjacentElement('afterend',inline);
   else host.appendChild(inline);
 
+  const frozen=new Map();
+  const freezeScene=()=>{
+    const game=document.getElementById('game');
+    if(!game)return;
+    if(document.activeElement&&game.contains(document.activeElement)&&!inline.contains(document.activeElement))document.activeElement.blur();
+    game.querySelectorAll('input,button,select,textarea,[contenteditable="true"]').forEach(el=>{
+      if(inline.contains(el))return;
+      if(!frozen.has(el))frozen.set(el,{tabindex:el.getAttribute('tabindex'),aria:el.getAttribute('aria-disabled')});
+      el.classList.add('completion-frozen-control');
+      el.setAttribute('aria-disabled','true');
+      el.setAttribute('tabindex','-1');
+    });
+  };
+  const unfreezeScene=()=>{
+    frozen.forEach((state,el)=>{
+      el.classList.remove('completion-frozen-control');
+      if(state.aria===null)el.removeAttribute('aria-disabled');else el.setAttribute('aria-disabled',state.aria);
+      if(state.tabindex===null)el.removeAttribute('tabindex');else el.setAttribute('tabindex',state.tabindex);
+    });
+    frozen.clear();
+  };
+
   const sync=()=>{
     const complete=!modal.classList.contains('hidden');
     inline.classList.toggle('hidden',!complete);
     document.body.classList.toggle('mission-complete-preserved',complete);
+    if(complete)freezeScene();else unfreezeScene();
   };
   new MutationObserver(sync).observe(modal,{attributes:true,attributeFilter:['class']});
   sync();
