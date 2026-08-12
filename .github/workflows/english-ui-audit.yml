@@ -1,0 +1,21 @@
+name: English UI Audit
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'index.html'
+      - 'campaign/**'
+      - 'assets/js/**'
+      - 'data/**'
+      - 'scripts/audit-english-ui.mjs'
+      - '.github/workflows/english-ui-audit.yml'
+  workflow_dispatch:
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node scripts/audit-english-ui.mjs
