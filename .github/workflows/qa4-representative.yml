@@ -1,0 +1,30 @@
+name: QA4 Representative Pedagogy Guard
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'assets/js/qa3/**'
+      - 'assets/js/qa4/**'
+      - 'data/**'
+      - 'scripts/qa4-representative-audit.mjs'
+      - '.github/workflows/qa4-representative.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'assets/js/qa3/**'
+      - 'assets/js/qa4/**'
+      - 'data/**'
+      - 'scripts/qa4-representative-audit.mjs'
+      - '.github/workflows/qa4-representative.yml'
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node scripts/qa4-representative-audit.mjs
