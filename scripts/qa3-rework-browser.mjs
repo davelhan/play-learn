@@ -18,9 +18,27 @@ const suffix=shardTotal>1?`-shard-${shardIndex}`:'';
 const exprCache=new Map();
 function ev(expr,s){let fn=exprCache.get(expr);if(!fn){fn=Function('s',`with(s){const abs=Math.abs,min=Math.min,max=Math.max,sqrt=Math.sqrt,sin=Math.sin,cos=Math.cos,exp=Math.exp,pi=Math.PI;return (${expr});}`);exprCache.set(expr,fn)}return fn(s)}
 function keys(m,expr){return(m.controls||[]).filter(c=>new RegExp(`\\b${c.key}\\b`).test(expr||''))}
-function vals(c){if(c.kind==='select')return c.options.map(o=>o.value);const raw=[];for(let v=c.min;v<=c.max+1e-9;v+=c.step)raw.push(+v.toFixed(10));if(raw.length<=31)return raw;const out=[];for(let i=0;i<31;i++)out.push(raw[Math.round(i*(raw.length-1)/30)]);return[...new Set(out)]}
+function allVals(c){if(c.kind==='select')return c.options.map(o=>o.value);const out=[];for(let v=c.min;v<=c.max+1e-9;v+=c.step)out.push(+v.toFixed(10));return out}
+function sampleVals(c,count=15){if(c.kind==='select')return c.options.map(o=>o.value);const full=allVals(c);if(full.length<=count)return full;const out=[c.base,c.min,c.max];for(let i=0;i<count;i++)out.push(full[Math.round(i*(full.length-1)/(count-1))]);return[...new Set(out.map(Number))]}
 function meaningful(c,a,b){if(c.kind==='select')return String(a)!==String(b);const span=Math.max(1e-9,Number(c.max)-Number(c.min));return Math.abs(Number(a)-Number(b))>=Math.max(Number(c.step)||0,span*.04)}
-function find(m,expr,set={},want=true,differentFrom=null){const s={};for(const c of m.conditions||[])s[c.key]=c.value;Object.assign(s,set);for(const c of m.controls||[])s[c.key]=c.base;const cs=keys(m,expr),grids=cs.map(vals);let found=null,n=0;function rec(i){if(found||n>150000)return;if(i===cs.length){n++;if(!!ev(expr,s)!==want)return;if(differentFrom&&!cs.some(c=>meaningful(c,differentFrom[c.key],s[c.key])))return;found=Object.fromEntries(cs.map(c=>[c.key,s[c.key]]));return}for(const v of grids[i]){s[cs[i].key]=v;rec(i+1);if(found)return}}rec(0);return found}
+function seedFrom(text){let h=2166136261>>>0;for(const ch of text){h^=ch.charCodeAt(0);h=Math.imul(h,16777619)>>>0}return h||1}
+function rng(seed){let x=seed>>>0;return()=>{x=(Math.imul(1664525,x)+1013904223)>>>0;return x/4294967296}}
+function find(m,expr,set={},want=true,differentFrom=null){
+ const s={};for(const c of m.conditions||[])s[c.key]=c.value;Object.assign(s,set);for(const c of m.controls||[])s[c.key]=c.base;
+ const cs=keys(m,expr);let found=null;
+ const accept=()=>{if(!!ev(expr,s)!==want)return false;if(differentFrom&&!cs.some(c=>meaningful(c,differentFrom[c.key],s[c.key])))return false;found=Object.fromEntries(cs.map(c=>[c.key,s[c.key]]));return true};
+ if(accept())return found;
+ // Fast deterministic probes: all-min/all-max and one-control excursions.
+ for(const dir of ['min','max']){for(const c of cs)s[c.key]=c.kind==='select'?c.options[dir==='min'?0:c.options.length-1].value:c[dir];if(accept())return found}
+ for(const c of cs){for(const v of sampleVals(c,9)){for(const x of cs)s[x.key]=x.base;s[c.key]=v;if(accept())return found}}
+ // Exact enumeration for one/two-dimensional geometric windows.
+ if(cs.length<=2){const grids=cs.map(allVals);const rec=i=>{if(found)return;if(i===cs.length){accept();return}for(const v of grids[i]){s[cs[i].key]=v;rec(i+1);if(found)return}};rec(0);return found}
+ // Compact deterministic grid for three controls.
+ if(cs.length===3){const grids=cs.map(c=>sampleVals(c,19));const rec=i=>{if(found)return;if(i===3){accept();return}for(const v of grids[i]){s[cs[i].key]=v;rec(i+1);if(found)return}};rec(0);if(found)return found}
+ // Reproducible discrete Monte Carlo for higher-dimensional gates.
+ const random=rng(seedFrom(m.id+'|'+expr+'|'+want));const pools=cs.map(c=>sampleVals(c,31));for(let n=0;n<60000&&!found;n++){for(let i=0;i<cs.length;i++){const pool=pools[i];s[cs[i].key]=pool[Math.floor(random()*pool.length)]}accept()}
+ return found;
+}
 async function set(page,c,v){if(c.kind==='select')await page.locator(`.choice-buttons button[data-key="${c.key}"][data-value="${String(v)}"]`).click();else await page.locator(`#controls input[data-key="${c.key}"]`).evaluate((el,x)=>{el.value=String(x);el.dispatchEvent(new Event('input',{bubbles:true}))},v)}
 async function current(page,c){if(c.kind==='select'){const x=page.locator(`.choice-buttons button[data-key="${c.key}"].selected`);return await x.count()?await x.getAttribute('data-value'):c.base}return Number(await page.locator(`#controls input[data-key="${c.key}"]`).inputValue())}
 async function exercise(page,c,start){if(c.kind==='select'){const x=c.options.find(o=>String(o.value)!==String(start));if(x)await set(page,c,x.value)}else await set(page,c,Math.abs(Number(start)-c.min)>(c.max-c.min)*.08?c.min:c.max)}
