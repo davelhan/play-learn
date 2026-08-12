@@ -1,0 +1,24 @@
+name: QA5 Shared Load Diagnostic
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'scripts/qa5-load-diagnostic.mjs'
+      - '.github/workflows/qa5-load-diagnostic.yml'
+  workflow_dispatch:
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - run: |
+          python3 -m http.server 8000 --bind 127.0.0.1 >/tmp/playlearn-http.log 2>&1 &
+          sleep 2
+      - run: node scripts/qa5-load-diagnostic.mjs
