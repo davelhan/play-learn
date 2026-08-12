@@ -2,27 +2,27 @@ const $=id=>document.getElementById(id);
 
 const S={phase:0,traceIndex:0,faults:new Set(),transferRun:false,lessonNext:null};
 const PH=[
-  {name:'HOOK',goal:'Découvrir pourquoi une intention de mission ne peut pas piloter directement des moteurs.',action:'Essaie le raccourci : envoie directement la phrase de mission aux moteurs.',watch:['Les moteurs sont alimentés','La mission est compréhensible pour un humain','Les moteurs ne savent pas interpréter la phrase']},
-  {name:'TRACE',goal:'Suivre la transformation d’une même intention couche après couche.',action:'Traite la couche active, puis lis son INPUT et son OUTPUT avant de descendre.',watch:['Le sens général de la mission reste le même','La forme de l’information change à chaque couche','La dernière couche agit réellement sur le monde']},
-  {name:'COMPARE',goal:'Voir que retirer des fonctions différentes arrête la chaîne à des endroits différents.',action:'Exécute les deux expériences contrôlées et compare jusqu’où l’information descend.',watch:['Sans état utilisable, aucun mouvement fiable ne peut être planifié','Sans contrôle temps réel, un plan peut exister sans être exécuté','Une panne visible en bas peut avoir une cause plus haut']},
-  {name:'TRANSFER',goal:'Vérifier que la même architecture peut servir une nouvelle mission.',action:'Charge une nouvelle tâche et observe quelles représentations changent sans changer l’architecture.',watch:['Les six rôles restent identiques','Le contenu des messages change avec la mission','L’architecture est réutilisable']},
-  {name:'COMPLETE',goal:'Verrouiller le modèle mental des six couches.',action:'Mission terminée.',watch:['Mission → Behavior → State → Motion → Control → Physical action']}
+  {name:'HOOK',goal:'Discover why mission intent cannot directly drive motors.',action:'Try the shortcut: send the mission sentence directly to the motors.',watch:['The motors are powered','The mission is understandable to a human','The motors cannot interpret the sentence']},
+  {name:'TRACE',goal:'Follow how the same intent is transformed layer by layer.',action:'Process the active layer, then read its INPUT and OUTPUT before moving down.',watch:['The overall mission intent stays the same','The form of the information changes at every layer','The final layer acts on the physical world']},
+  {name:'COMPARE',goal:'See how removing different functions stops the chain at different points.',action:'Run both controlled experiments and compare how far the information travels.',watch:['Without a usable state, no reliable motion can be planned','Without real-time control, a plan can exist without being executed','A visible downstream failure can have an upstream cause']},
+  {name:'TRANSFER',goal:'Verify that the same architecture can serve a new mission.',action:'Load a new task and observe which representations change without changing the architecture.',watch:['The six roles stay the same','Message content changes with the mission','The architecture is reusable']},
+  {name:'COMPLETE',goal:'Lock in the six-layer mental model.',action:'Mission complete.',watch:['Mission → Behavior → State → Motion → Control → Physical action']}
 ];
 
 const LAYERS={
-  1:{name:'TASK AUTONOMY / BEHAVIOR',input:'GOAL + CONSTRAINTS: case must reach Station B',output:'SUBGOALS: approach → grasp → carry → place',readout:'APPROACH · GRASP · CARRY · PLACE',idea:'La couche comportement transforme un résultat attendu en séquence d’actions.'},
-  2:{name:'PERCEPTION / STATE ESTIMATION',input:'SUBGOALS + sensor measurements',output:'USABLE STATE: case pose · Station B pose · robot state · obstacles',readout:'WORLD + BODY STATE VALID',idea:'Le robot doit disposer d’un état exploitable avant de calculer comment bouger.'},
-  3:{name:'MOTION GENERATION / PLANNING',input:'SUBGOALS + usable state',output:'DESIRED MOTION: base path + arm / hand trajectory',readout:'PATH + TRAJECTORY READY',idea:'Le planning transforme un objectif en mouvement géométriquement réalisable.'},
-  4:{name:'REAL-TIME CONTROL',input:'DESIRED MOTION + current state',output:'FAST CORRECTIONS: joint targets · torque / motor commands',readout:'MOTOR COMMANDS STREAMING',idea:'Le contrôle compare en continu ce qui est désiré à ce qui se passe réellement.'},
-  5:{name:'PHYSICAL PLANT / ENERGY',input:'MOTOR COMMANDS + available energy',output:'PHYSICAL ACTION: force → contact → body and case move',readout:'CASE DELIVERED',idea:'La dernière couche est physique : énergie, actuateurs, mécanique et contacts produisent le mouvement réel.'}
+  1:{name:'TASK AUTONOMY / BEHAVIOR',input:'GOAL + CONSTRAINTS: case must reach Station B',output:'SUBGOALS: approach → grasp → carry → place',readout:'APPROACH · GRASP · CARRY · PLACE',idea:'The behavior layer transforms an expected outcome into a sequence of actions.'},
+  2:{name:'PERCEPTION / STATE ESTIMATION',input:'SUBGOALS + sensor measurements',output:'USABLE STATE: case pose · Station B pose · robot state · obstacles',readout:'WORLD + BODY STATE VALID',idea:'The robot needs a usable state before it can compute how to move.'},
+  3:{name:'MOTION GENERATION / PLANNING',input:'SUBGOALS + usable state',output:'DESIRED MOTION: base path + arm / hand trajectory',readout:'PATH + TRAJECTORY READY',idea:'Planning transforms a goal into geometrically feasible motion.'},
+  4:{name:'REAL-TIME CONTROL',input:'DESIRED MOTION + current state',output:'FAST CORRECTIONS: joint targets · torque / motor commands',readout:'MOTOR COMMANDS STREAMING',idea:'Control continuously compares desired motion with what is actually happening.'},
+  5:{name:'PHYSICAL PLANT / ENERGY',input:'MOTOR COMMANDS + available energy',output:'PHYSICAL ACTION: force → contact → body and case move',readout:'CASE DELIVERED',idea:'The final layer is physical: energy, actuators, mechanics and contacts produce real motion.'}
 };
 
 const HINTS=[
-  'Le raccourci est volontaire. Demande-toi si un moteur sait ce que signifie “Station B”.',
-  'Ne cherche pas à mémoriser les noms. Lis surtout comment l’OUTPUT d’une couche devient l’INPUT de la suivante.',
-  'Les deux expériences gardent beaucoup de choses saines. Compare seulement l’endroit où la chaîne s’arrête.',
-  'La nouvelle tâche change le contenu, pas les six fonctions fondamentales du système.',
-  'Relis la chaîne comme une phrase : définir → décider → savoir → planifier → corriger → agir.'
+  'The shortcut is deliberate. Ask yourself whether a motor knows what “Station B” means.',
+  'Do not try to memorize the names. Focus on how one layer’s OUTPUT becomes the next layer’s INPUT.',
+  'Both experiments keep many things healthy. Compare only where the chain stops.',
+  'The new task changes the content, not the six fundamental system functions.',
+  'Read the chain like a sentence: define → decide → know → plan → correct → act.'
 ];
 
 function renderWatch(){
@@ -77,7 +77,7 @@ function directFailure(){
   $('mainAction').disabled=true;
   setTimeout(()=>showLesson(
     'INTENT IS NOT ACTION.',
-    'Tu viens d’observer la première frontière du système : une mission décrit un résultat. Les actuateurs ont besoin de commandes physiques beaucoup plus spécifiques. Entre les deux, plusieurs fonctions doivent transformer l’information.',
+    'You just observed the first system boundary: a mission describes an outcome. Actuators need much more specific physical commands. Several functions must transform the information between the two.',
     'MISSION INTENT → ? → ? → ? → ? → PHYSICAL ACTION',
     'trace'
   ),500);
@@ -135,7 +135,7 @@ function processLayer(){
     $('mainAction').disabled=true;
     setTimeout(()=>showLesson(
       'ONE TASK BECAME SIX REPRESENTATIONS.',
-      'Le robot n’a jamais changé d’objectif. Ce qui a changé est la représentation : objectif → comportement → état utilisable → mouvement désiré → corrections temps réel → action physique.',
+      'The robot never changed its goal. What changed was the representation: goal → behavior → usable state → desired motion → real-time corrections → physical action.',
       'MISSION → BEHAVIOR → STATE → MOTION → CONTROL → PHYSICAL PLANT',
       'compare'
     ),650);
@@ -196,7 +196,7 @@ function reviewTransfer(){
   $('mainAction').disabled=true;
   showLesson(
     'ARCHITECTURE IS REUSABLE.',
-    'Une nouvelle tâche a produit de nouveaux comportements, états, mouvements et commandes, mais les six fonctions du système sont restées les mêmes. C’est précisément l’intérêt d’une architecture fonctionnelle.',
+    'A new task produced new behaviors, states, motions and commands, but the six system functions stayed the same. That is precisely the value of a functional architecture.',
     'DEFINE → DECIDE → KNOW → PLAN → CORRECT → ACT',
     'complete'
   );

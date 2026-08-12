@@ -10,24 +10,24 @@ const S={
 
 const PH=[
  {name:'HOOK',goal:'Voir la panne sans supposer sa cause.',action:'Lance le test une fois.',watch:['Les moteurs restent ONLINE','BODY ORIENTATION reste UNKNOWN']},
- {name:'DISCOVER',goal:'Séparer la réalité physique de la mesure.',action:'Fais pencher le robot à gauche puis à droite en le faisant glisser.',watch:['BODY ANGLE change avec le corps','IMU RAW suit le même mouvement','ESTIMATE reste UNKNOWN']},
- {name:'ISOLATE',goal:'Comprendre ce que fait réellement l’IMU.',action:'Garde le corps incliné. Coupe IMU power, observe, puis rallume-le.',watch:['Le corps garde son angle quand l’IMU est OFF','IMU RAW disparaît','La mesure revient quand l’IMU repasse ONLINE']},
- {name:'TRACE',goal:'Voir où la mesure doit aller ensuite.',action:'Lis les rôles des blocs à droite. RAW DATA est disponible, mais STATE ESTIMATOR indique NO INPUT. Le lien cassé est maintenant signalé : clique directement dessus pour le réparer.',watch:['IMU = MEASURES BODY MOTION','STATE ESTIMATOR = BUILDS A USABLE BODY STATE','Après réparation, ESTIMATED ANGLE apparaît']},
- {name:'TIMING',goal:'Comprendre pourquoi une bonne mesure peut être inutilisable.',action:'Le corps reste incliné. Fais varier Sensor data age. Compare BODY ANGLE, ESTIMATED ANGLE et State confidence.',watch:['Avec des données anciennes, l’estimation est pauvre','En rendant les données plus fraîches, l’estimation se rapproche du corps','State confidence passe d’un état faible à un état sain']},
- {name:'VERIFY',goal:'Vérifier la chaîne complète.',action:'Lance STAND TEST.',watch:['Measure → Estimate → Control → Motors fonctionne comme une chaîne']},
- {name:'TRANSFER',goal:'Distinguer une panne de contrôle d’une panne de sensing.',action:'Nouvelle panne : State confidence est sain mais Control response est mauvais. Les deux réglages de timing sont accessibles. Change une variable à la fois et regarde quel diagnostic elle influence.',watch:['Sensor data age agit surtout sur State confidence','Control latency agit sur Control response','Le bon diagnostic doit redevenir sain avant le test']},
- {name:'COMPLETE',goal:'Verrouiller le modèle mental.',action:'Mission terminée.',watch:['Physical state ≠ measurement ≠ estimate ≠ control']}
+ {name:'DISCOVER',goal:'Separate physical reality from measurement.',action:'Lean the robot left and right by dragging it.',watch:['BODY ANGLE change avec le corps','IMU RAW suit le même mouvement','ESTIMATE reste UNKNOWN']},
+ {name:'ISOLATE',goal:'Understand what the IMU actually does.',action:'Keep the body tilted. Turn IMU power off, observe, then turn it back on.',watch:['Le corps garde son angle quand l’IMU est OFF','IMU RAW disparaît','La mesure revient quand l’IMU repasse ONLINE']},
+ {name:'TRACE',goal:'See where the measurement must go next.',action:'Lis les rôles des blocs à droite. RAW DATA est disponible, mais STATE ESTIMATOR indique NO INPUT. Le lien cassé est maintenant signalé : clique directement dessus pour le réparer.',watch:['IMU = MEASURES BODY MOTION','STATE ESTIMATOR = BUILDS A USABLE BODY STATE','Après réparation, ESTIMATED ANGLE apparaît']},
+ {name:'TIMING',goal:'Understand why a good measurement can still be unusable.',action:'Le corps reste incliné. Fais varier Sensor data age. Compare BODY ANGLE, ESTIMATED ANGLE et State confidence.',watch:['Avec des données anciennes, l’estimation est pauvre','En rendant les données plus fraîches, l’estimation se rapproche du corps','State confidence passe d’un état faible à un état sain']},
+ {name:'VERIFY',goal:'Verify the complete chain.',action:'Lance STAND TEST.',watch:['Measure → Estimate → Control → Motors fonctionne comme une chaîne']},
+ {name:'TRANSFER',goal:'Distinguish a control failure from a sensing failure.',action:'New failure: State confidence is healthy but Control response is poor. Both timing controls are available. Change one variable at a time and see which diagnostic it influences.',watch:['Sensor data age agit surtout sur State confidence','Control latency agit sur Control response','Le bon diagnostic doit redevenir sain avant le test']},
+ {name:'COMPLETE',goal:'Lock in the mental model.',action:'Mission complete.',watch:['Physical state ≠ measurement ≠ estimate ≠ control']}
 ];
 
 const HINTS=[
- ['Le test initial sert seulement à collecter des indices. Un composant vert est aussi une information.'],
- ['Regarde les trois cartes sous le robot pendant que tu le déplaces. Deux changent ensemble ; la troisième reste inconnue.'],
+ ['The initial test only collects clues. A green component is also information.'],
+ ['Watch the three cards below the robot as you move it. Two change together; the third remains unknown.'],
  ['Couper l’IMU ne peut pas supprimer l’orientation physique du robot. Cela supprime uniquement sa mesure.'],
- ['Tu n’as rien à deviner ici : le lien cassé est volontairement visible. Lis simplement ce que fait chaque bloc, puis clique sur BROKEN DATA LINK.'],
- ['Il n’y a pas de nombre magique à mémoriser. Cherche le moment où l’estimation devient proche de la réalité et où la confiance devient saine.'],
- ['Le test vérifie maintenant tout ce que tu viens de construire.'],
- ['Si tu modifies Sensor data age et que Control response reste mauvais, cette variable n’agit pas sur le bon étage. Essaie l’autre timing.'],
- ['Tu peux maintenant relire la chaîne de droite comme une phrase : mesurer → estimer → décider → agir.']
+ ['There is nothing to guess here: the broken link is deliberately visible. Read what each block does, then click BROKEN DATA LINK.'],
+ ['There is no magic number to memorize. Look for the point where the estimate approaches reality and confidence becomes healthy.'],
+ ['The test now verifies everything you just built.'],
+ ['If you change Sensor data age and Control response stays poor, that variable is not acting on the failing layer. Try the other timing control.'],
+ ['You can now read the chain on the right like a sentence: measure → estimate → decide → act.']
 ];
 
 function confidence(){
@@ -183,7 +183,7 @@ $('lessonContinue').onclick=()=>{
     if(next===6){
       S.controlDelay=68;$('controlDelay').value=68;S.angle=10;
       $('resultBox').className='result neutral';
-      $('resultBox').innerHTML='<strong>NEW FAILURE</strong><span>State confidence reste sain. Control response est maintenant mauvais. Change une variable à la fois et observe ce qui bouge.</span>';
+      $('resultBox').innerHTML='<strong>NEW FAILURE</strong><span>State confidence remains healthy. Control response is now poor. Change one variable at a time and observe what moves.</span>';
     }
     render();
   }
@@ -200,7 +200,7 @@ function runTest(){
       S.angle=0;S.minAngle=0;S.maxAngle=0;
       showLesson(
         'Le robot tombe alors que ses moteurs fonctionnent.',
-        'Une panne système ne signifie pas que tout est cassé. Il faut suivre l’information.',
+        'A system failure does not mean everything is broken. Follow the information.',
         1
       );
     },650);
@@ -212,14 +212,14 @@ function runTest(){
   if(ready()){
     $('failureStamp').classList.add('hidden');S.angle=0;
     $('resultBox').className='result pass';
-    $('resultBox').innerHTML='<strong>TEST PASSED · 30.0 s</strong><span>La chaîne transmet maintenant un état utilisable vers un contrôle assez rapide.</span>';
+    $('resultBox').innerHTML='<strong>TEST PASSED · 30.0 s</strong><span>The chain now delivers a usable state to sufficiently fast control.</span>';
 
     if(S.phase===5){
       S.standPassed=true;renderWatch();
       setTimeout(()=>{
         showLesson(
-          'Le robot tient debout quand mesure, estimation et contrôle sont tous utilisables.',
-          'Le comportement final dépend de toute la chaîne, pas d’un seul composant.',
+          'The robot stands when measurement, estimation and control are all usable.',
+          'Final behavior depends on the entire chain, not a single component.',
           6
         );
       },600);
@@ -237,7 +237,7 @@ function runTest(){
     if(confidence()<72)parts.push('State confidence est faible');
     if(response()<72)parts.push('Control response est faible');
     $('resultBox').className='result fail';
-    $('resultBox').innerHTML=`<strong>TEST FAILED</strong><span>${parts.join(' · ')||'La chaîne reste incohérente'}.</span>`;
+    $('resultBox').innerHTML=`<strong>TEST FAILED</strong><span>${parts.join(' · ')||'The chain remains inconsistent'}.</span>`;
     render();
   }
 }
@@ -258,7 +258,7 @@ robot.addEventListener('pointerup',()=>{
   if(S.phase===1&&S.minAngle<-7&&S.maxAngle>7){
     showLesson(
       'BODY ANGLE et IMU RAW bougent ensemble. ESTIMATE reste UNKNOWN.',
-      'Le corps possède un état physique. L’IMU produit une mesure de cet état. Une mesure n’est pas encore un état utilisable par le contrôle.',
+      'The body has a physical state. The IMU produces a measurement of that state. A measurement is not yet a state usable by control.',
       2
     );
   }
@@ -272,8 +272,8 @@ $('imuPower').onclick=()=>{
   render();
   if(S.sawOff&&S.sawBack){
     setTimeout(()=>showLesson(
-      'Quand l’IMU est OFF, BODY ANGLE existe toujours mais IMU RAW disparaît.',
-      'L’IMU ne crée pas l’orientation du robot : c’est un capteur. Il mesure une réalité physique qui existe indépendamment de lui.',
+      'When the IMU is OFF, BODY ANGLE still exists but IMU RAW disappears.',
+      'The IMU does not create the robot’s orientation: it is a sensor. It measures a physical reality that exists independently of it.',
       3
     ),350);
   }
@@ -284,8 +284,8 @@ function repairLink(){
   S.connected=true;$('imuLink').classList.add('connected');
   render();
   setTimeout(()=>showLesson(
-    'Dès que le lien est réparé, ESTIMATED ANGLE apparaît.',
-    'Le State Estimator reçoit la mesure du capteur et construit un état du corps utilisable par le contrôle. Mais cet état peut encore être de mauvaise qualité.',
+    'As soon as the link is repaired, ESTIMATED ANGLE appears.',
+    'The State Estimator receives the sensor measurement and builds a body state usable by control. But that state can still be poor quality.',
     4
   ),450);
 }
@@ -304,12 +304,12 @@ $('sensorDelay').oninput=e=>{
   if(S.phase===4&&S.sawStale&&S.sawFresh){
     S.sawStale=false;
     setTimeout(()=>showLesson(
-      'Avec des données plus fraîches, ESTIMATED ANGLE se rapproche de BODY ANGLE et State confidence devient sain.',
-      'Une mesure correcte peut être trop ancienne pour être utile. Le contrôle a besoin d’un état suffisamment actuel.',
+      'With fresher data, ESTIMATED ANGLE approaches BODY ANGLE and State confidence becomes healthy.',
+      'A correct measurement can be too old to be useful. Control needs a sufficiently current state.',
       null
     ),350);
     setTimeout(()=>{
-      $('conceptText').textContent='Tu as maintenant construit le modèle complet : le corps possède un état physique ; l’IMU le mesure ; le State Estimator transforme les mesures en un état utilisable ; le Balance Controller décide ensuite comment corriger le corps.';
+      $('conceptText').textContent='You have now built the complete model: the body has a physical state; the IMU measures it; the State Estimator turns measurements into a usable state; the Balance Controller then decides how to correct the body.';
       $('conceptReveal').classList.remove('hidden');
     },1500);
   }
@@ -331,13 +331,13 @@ $('sensorDelay').addEventListener('change',()=>{
   if(S.phase!==6||S.lessonOpen)return;
   if(response()<72){
     $('resultBox').className='result neutral';
-    $('resultBox').innerHTML='<strong>OBSERVATION</strong><span>Tu as changé Sensor data age : State confidence change, mais Control response reste mauvais. Tu n’es pas sur le bon étage.</span>';
+    $('resultBox').innerHTML='<strong>OBSERVATION</strong><span>You changed Sensor data age: State confidence changes, but Control response remains poor. You are not on the failing layer.</span>';
   }
 });
 $('controlDelay').addEventListener('change',()=>{
   if(S.phase!==6||S.lessonOpen)return;
   $('resultBox').className='result neutral';
-  $('resultBox').innerHTML='<strong>OBSERVATION</strong><span>Control latency modifie directement Control response. C’est le diagnostic qui était mauvais dans cette nouvelle panne.</span>';
+  $('resultBox').innerHTML='<strong>OBSERVATION</strong><span>Control latency directly changes Control response. That was the faulty layer in this new failure.</span>';
 });
 
 $('coachBtn').onclick=()=>{

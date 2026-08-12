@@ -50,10 +50,10 @@
     S.lessonNext = null;
 
     lessonObservation.textContent =
-      'State confidence est resté sain. Modifier Sensor data age n’a pas réparé la panne. En réduisant Control latency, Control response est redevenu sain et le robot a tenu debout.';
+      'State confidence stayed healthy. Changing Sensor data age did not repair the failure. Reducing Control latency restored a healthy Control response and the robot stood up.';
 
     lessonMeaning.textContent =
-      'Deux chutes peuvent avoir des causes différentes. Tu n’as pas répété la solution précédente : tu as suivi les diagnostics jusqu’à la couche réellement en défaut — le contrôle.';
+      'Two falls can have different causes. You did not repeat the previous solution: you followed the diagnostics to the layer that was actually failing — control.';
 
     lessonCard.classList.remove('hidden');
     lessonCard.classList.add('final-reflection');
@@ -85,7 +85,7 @@
 
     resultBox.className = 'result pass';
     resultBox.innerHTML =
-      '<strong>TEST PASSED · 30.0 s</strong><span>La nouvelle panne est réparée. Avant de terminer, relis ce que ton dernier changement vient de démontrer.</span>';
+      '<strong>TEST PASSED · 30.0 s</strong><span>The new failure is repaired. Before finishing, review what your last change just demonstrated.</span>';
 
     renderSignals();
     renderWatch();

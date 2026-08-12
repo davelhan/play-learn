@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -20,7 +20,7 @@
   <div>
     <p class="kicker">ACT 02 · GIVE IT A BODY · DISCOVER</p>
     <h1>WHERE IS<br><em>THE HAND?</em></h1>
-    <p class="lead">Une réponse comme “x = 0.42 m, z = 0.18 m” est incomplète. Déplace et tourne UNIT H-01, puis observe comment le même point physique reçoit des coordonnées différentes selon le repère utilisé.</p>
+    <p class="lead">An answer such as “x = 0.42 m, z = 0.18 m” is incomplete. Move and rotate UNIT H-01, then observe how the same physical point gets different coordinates depending on the reference frame.</p>
     <div class="brief">
       <div><span>OBJECT</span><b>Right hand point</b></div>
       <div><span>MANIPULATE</span><b>Robot position + torso angle</b></div>
@@ -108,9 +108,9 @@ FRAME QUESTION .. OPEN</pre></div>
 </section>
 </main>
 
-<div id="conceptModal" class="modal hidden"><div class="modal-card"><p class="kicker">NAME WHAT YOU OBSERVED</p><h2>FRAME · POSE · TRANSFORM</h2><p>Un <strong>coordinate frame</strong> est un origine + des axes. Une <strong>pose</strong> décrit position + orientation par rapport à un frame. Un <strong>transform</strong> permet de convertir une description d'un frame vers un autre.</p><div class="final-stack"><b>WORLD FRAME</b><i>⇄ transform</i><b>TORSO FRAME</b><i>⇄ transform</i><b>SHOULDER FRAME</b></div><button id="conceptContinue" class="primary" type="button">USE THE MODEL</button></div></div>
+<div id="conceptModal" class="modal hidden"><div class="modal-card"><p class="kicker">NAME WHAT YOU OBSERVED</p><h2>FRAME · POSE · TRANSFORM</h2><p>A <strong>coordinate frame</strong> is an origin plus axes. A <strong>pose</strong> describes position and orientation relative to a frame. A <strong>transform</strong> converts a description from one frame to another.</p><div class="final-stack"><b>WORLD FRAME</b><i>⇄ transform</i><b>TORSO FRAME</b><i>⇄ transform</i><b>SHOULDER FRAME</b></div><button id="conceptContinue" class="primary" type="button">USE THE MODEL</button></div></div>
 
-<div id="completeModal" class="modal hidden"><div class="modal-card"><p class="kicker">02.01 COMPLETE</p><h2>REFERENCE FRAMES INSTALLED.</h2><p>Tu as observé qu'un même point physique peut avoir plusieurs coordonnées valides. Tu as ensuite utilisé le frame demandé pour atteindre deux cibles différentes.</p><div class="unlock"><span>PERSISTENT BUILD</span><b>WORLD · TORSO · SHOULDER FRAMES</b></div><div class="complete-actions"><a class="secondary linkbtn" href="../../#campaign">RETURN TO CAMPAIGN MAP</a><button id="replayBtn" class="primary" type="button">REPLAY 02.01</button></div></div></div>
+<div id="completeModal" class="modal hidden"><div class="modal-card"><p class="kicker">02.01 COMPLETE</p><h2>REFERENCE FRAMES INSTALLED.</h2><p>You observed that the same physical point can have several valid coordinate descriptions. You then used the requested frame to reach two different targets.</p><div class="unlock"><span>PERSISTENT BUILD</span><b>WORLD · TORSO · SHOULDER FRAMES</b></div><div class="complete-actions"><a class="secondary linkbtn" href="../../#campaign">RETURN TO CAMPAIGN MAP</a><button id="replayBtn" class="primary" type="button">REPLAY 02.01</button></div></div></div>
 <div id="coachPanel" class="coach hidden"><div><span>COACH</span><button id="closeCoach" type="button">×</button></div><p id="coachText"></p></div>
 <script src="../../assets/js/a02m01-frames-poses.js?v=1-20260811"></script>
 <script src="../../assets/js/completion-inline.js?v=completion1-20260812"></script>

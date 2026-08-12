@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -20,7 +20,7 @@
   <div>
     <p class="kicker">ACT 02 · GIVE IT A BODY · LAB</p>
     <h1>SAME ANGLE.<br><em>DIFFERENT MOTION.</em></h1>
-    <p class="lead">Le coude reçoit une commande de rotation correcte, mais la main part dans la mauvaise direction. L'angle n'est qu'une partie du mouvement : il faut aussi savoir autour de quel axe l'articulation tourne.</p>
+    <p class="lead">The elbow receives the correct rotation command, but the hand moves in the wrong direction. The angle is only part of the motion: you also need to know the axis around which the joint rotates.</p>
     <div class="brief">
       <div><span>COMMAND</span><b>Joint angle = 55°</b></div>
       <div><span>SYMPTOM</span><b>Hand follows wrong path</b></div>
@@ -42,7 +42,7 @@
     <div id="phaseCount" class="phase-count">01 / 06</div>
     <div class="instruction"><span>WHAT TO DO</span><b id="actionText"></b></div>
     <div class="watch"><span>WHAT TO WATCH</span><div id="watchList"></div></div>
-    <div class="source-note"><span>COURSE CONCEPT</span><b>Kinematic tree + joint coordinates</b><p>Un joint relie deux links et contraint leur mouvement relatif. Une coordonnée articulaire n'a de sens qu'avec le type de joint et l'axe auquel elle s'applique.</p></div>
+    <div class="source-note"><span>COURSE CONCEPT</span><b>Kinematic tree + joint coordinates</b><p>A joint connects two links and constrains their relative motion. A joint coordinate only has meaning together with the joint type and the axis it applies to.</p></div>
   </aside>
   <section class="panel center-panel">
     <div class="stage-head"><div><p class="kicker">JOINT BENCH</p><h2 id="stageTitle">Angle alone is ambiguous</h2></div><div class="stage-actions"><button id="coachBtn" class="secondary" type="button">ASK COACH</button><button id="resetBtn" class="secondary" type="button">RESET</button></div></div>
@@ -105,7 +105,7 @@ AXIS ............. LOCAL Z</pre></div>
 </section>
 </main>
 <div id="conceptModal" class="modal hidden"><div class="modal-card"><p class="kicker">NAME WHAT YOU OBSERVED</p><h2>AXIS + ANGLE = JOINT MOTION.</h2><p>A revolute joint constrains the child link to rotate around a defined axis. For a <strong>1-DoF</strong> joint, the independent joint coordinate <strong>q</strong> is the rotation angle around that axis.</p><div class="lesson-chain"><b>JOINT AXIS</b> = direction of allowed rotation in a named frame<br><b>q</b> = amount of rotation around that axis<br><b>1 DoF</b> = one independent coordinate</div><button id="conceptContinue" class="primary" type="button">USE THE MODEL</button></div></div>
-<div id="completeModal" class="modal hidden"><div class="modal-card"><p class="kicker">02.02 COMPLETE</p><h2>JOINT AXES INSTALLED.</h2><p>Tu as vérifié qu'un angle ne définit pas un mouvement à lui seul. Le type de joint, son axe, le repère dans lequel cet axe est défini et la coordonnée articulaire déterminent ensemble le mouvement relatif des links.</p><div class="final-stack"><b>PARENT FRAME</b><i>↓</i><b>JOINT AXIS</b><i>+</i><b>JOINT COORDINATE q</b><i>↓</i><b>CHILD LINK POSE</b><i>↓</i><b>END-EFFECTOR MOTION</b></div><div class="unlock"><span>PERSISTENT BUILD</span><b>JOINT AXIS MAP</b></div><div class="complete-actions"><a class="secondary linkbtn" href="../../#campaign">RETURN TO CAMPAIGN MAP</a><button id="replayBtn" class="primary" type="button">REPLAY 02.02</button></div></div></div>
+<div id="completeModal" class="modal hidden"><div class="modal-card"><p class="kicker">02.02 COMPLETE</p><h2>JOINT AXES INSTALLED.</h2><p>You verified that an angle does not define motion by itself. Joint type, joint axis, the frame in which that axis is defined, and the joint coordinate together determine the relative motion of the links.</p><div class="final-stack"><b>PARENT FRAME</b><i>↓</i><b>JOINT AXIS</b><i>+</i><b>JOINT COORDINATE q</b><i>↓</i><b>CHILD LINK POSE</b><i>↓</i><b>END-EFFECTOR MOTION</b></div><div class="unlock"><span>PERSISTENT BUILD</span><b>JOINT AXIS MAP</b></div><div class="complete-actions"><a class="secondary linkbtn" href="../../#campaign">RETURN TO CAMPAIGN MAP</a><button id="replayBtn" class="primary" type="button">REPLAY 02.02</button></div></div></div>
 <div id="coachPanel" class="coach hidden"><div><span>COACH</span><button id="closeCoach" type="button">×</button></div><p id="coachText"></p></div>
 <script src="../../assets/js/a02m02-joint-axes.js?v=1-20260811"></script>
 <script src="../../assets/js/completion-inline.js?v=completion1-20260812"></script>

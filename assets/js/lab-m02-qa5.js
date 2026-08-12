@@ -79,7 +79,7 @@ function render(){
  renderEvidence();signals();
 }
 function phaseTo(n,msg){if(S.busy)return;S.busy=true;if(msg){$('resultBox').className='result pass';$('resultBox').innerHTML=`<strong>${msg}</strong><span>You observed a relationship. A new variable is now available.</span>`;}setTimeout(()=>{S.phase=n;S.busy=false;render();if(n===4)showConcept();},650);}
-function showConcept(){$('conceptTitle').textContent='CENTER OF MASS + SUPPORT + FOOT PLACEMENT';$('conceptText').textContent="Le Center of Mass résume où agit la masse combinée du robot. Le support actuel limite où cette masse peut être tenue. En marche, le prochain pied crée un nouveau support. La vitesse et la distribution de masse changent donc l'endroit où ce nouveau support devient utile.";$('conceptReveal').classList.remove('hidden');}
+function showConcept(){$('conceptTitle').textContent='CENTER OF MASS + SUPPORT + FOOT PLACEMENT';$('conceptText').textContent="The Center of Mass summarizes where the robot’s combined mass acts. The current support limits where that mass can be held. While walking, the next foot creates a new support region. Speed and mass distribution therefore change where that new support becomes useful.";$('conceptReveal').classList.remove('hidden');}
 $('conceptContinue').onclick=()=>{$('conceptReveal').classList.add('hidden');S.phase=5;S.lean=0;S.speed=.6;S.foot=22;$('bodyLean').value=0;$('speed').value=60;$('footPosition').value=22;render();};
 
 function updateRanges(){

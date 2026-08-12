@@ -112,7 +112,7 @@ function phaseTo(n,message){
 
 function showConcept(){
  $('conceptTitle').textContent='STATE ESTIMATION';
- $('conceptText').textContent="Tu as distingué trois choses : l'orientation physique existe dans le monde réel ; l'IMU la mesure ; le State Estimator transforme cette mesure en un état utilisable par le contrôle. Une mesure peut exister sans atteindre l'estimateur, et une mesure correcte peut être trop ancienne pour être utile.";
+ $('conceptText').textContent="You distinguished three things: physical orientation exists in the real world; the IMU measures it; the State Estimator turns that measurement into a state usable by control. A measurement can exist without reaching the estimator, and a correct measurement can be too old to be useful.";
  $('conceptReveal').classList.remove('hidden');
 }
 $('conceptContinue').onclick=()=>{$('conceptReveal').classList.add('hidden');M.phase=5;M.angle=0;render();};

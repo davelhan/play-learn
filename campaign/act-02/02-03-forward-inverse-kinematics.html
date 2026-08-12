@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -20,7 +20,7 @@
   <div>
     <p class="kicker">ACT 02 · GIVE IT A BODY · GUIDED</p>
     <h1>ANGLES → HAND.<br><em>HAND → ANGLES.</em></h1>
-    <p class="lead">Avec les mêmes deux articulations, tu peux poser deux questions opposées : “si je donne ces angles, où arrive la main ?” ou “si je veux la main ici, quels angles faut-il ?”. Tu vas d'abord résoudre les deux problèmes sans vocabulaire.</p>
+    <p class="lead">With the same two joints, you can ask two opposite questions: “if I set these angles, where does the hand end up?” or “if I want the hand here, which angles do I need?”. You will first solve both problems without the vocabulary.</p>
     <div class="brief">
       <div><span>ARM</span><b>2 revolute joints</b></div>
       <div><span>LINKS</span><b>0.42 m + 0.34 m</b></div>
@@ -39,7 +39,7 @@
     <div class="progress"><i id="progressFill"></i></div><div id="phaseCount" class="phase-count">01 / 06</div>
     <div class="instruction"><span>WHAT TO DO</span><b id="actionText"></b></div>
     <div class="watch"><span>WHAT TO WATCH</span><div id="watchList"></div></div>
-    <div class="source-note"><span>COURSE CONCEPT</span><b>Kinematics maps geometry</b><p>Les calculs de cette mission décrivent la géométrie du mouvement. Ils ne simulent ni couple, ni inertie, ni force.</p></div>
+    <div class="source-note"><span>COURSE CONCEPT</span><b>Kinematics maps geometry</b><p>The calculations in this mission describe motion geometry. They do not simulate torque, inertia or force.</p></div>
   </aside>
   <section class="panel center-panel">
     <div class="stage-head"><div><p class="kicker">2-LINK ARM LAB</p><h2 id="stageTitle">Joint space → task space</h2></div><div class="stage-actions"><button id="coachBtn" class="secondary" type="button">ASK COACH</button><button id="resetBtn" class="secondary" type="button">RESET</button></div></div>
@@ -78,8 +78,8 @@ TARGET ........... NONE</pre></div>
   </aside>
 </section>
 </main>
-<div id="conceptModal" class="modal hidden"><div class="modal-card"><p class="kicker">NOW NAME THE TWO QUESTIONS</p><h2>FORWARD vs INVERSE KINEMATICS</h2><p><strong>Forward Kinematics (FK)</strong> : les coordonnées articulaires sont connues, et le modèle calcule la pose de l'end-effector. <strong>Inverse Kinematics (IK)</strong> : la pose cible de l'end-effector est connue, et on cherche les coordonnées articulaires qui peuvent l'atteindre.</p><div class="concept-pair"><div><b>FK</b><span>q → pose</span></div><div><b>IK</b><span>pose → q</span></div></div><button id="conceptContinue" class="primary" type="button">SOLVE THE INVERSE PROBLEM</button></div></div>
-<div id="completeModal" class="modal hidden"><div class="modal-card"><p class="kicker">02.03 COMPLETE</p><h2>FK / IK RELATION INSTALLED.</h2><p>Tu as utilisé les mêmes deux articulations dans les deux sens du problème : calculer la main depuis les joints, puis chercher des joints depuis une cible. Tu as aussi trouvé deux configurations pour la même cible et vérifié qu'une solution IK peut devenir inutilisable à cause des limites articulaires.</p><div class="unlock"><span>PERSISTENT BUILD</span><b>2-LINK KINEMATIC CHAIN</b></div><div class="complete-actions"><a class="secondary linkbtn" href="../../#campaign">RETURN TO CAMPAIGN MAP</a><button id="replayBtn" class="primary" type="button">REPLAY 02.03</button></div></div></div>
+<div id="conceptModal" class="modal hidden"><div class="modal-card"><p class="kicker">NOW NAME THE TWO QUESTIONS</p><h2>FORWARD vs INVERSE KINEMATICS</h2><p><strong>Forward Kinematics (FK)</strong>: the joint coordinates are known, and the model computes the end-effector pose. <strong>Inverse Kinematics (IK)</strong>: the target end-effector pose is known, and we search for joint coordinates that can reach it.</p><div class="concept-pair"><div><b>FK</b><span>q → pose</span></div><div><b>IK</b><span>pose → q</span></div></div><button id="conceptContinue" class="primary" type="button">SOLVE THE INVERSE PROBLEM</button></div></div>
+<div id="completeModal" class="modal hidden"><div class="modal-card"><p class="kicker">02.03 COMPLETE</p><h2>FK / IK RELATION INSTALLED.</h2><p>You used the same two joints in both directions of the problem: compute the hand from the joints, then find joint values from a target. You also found two configurations for the same target and verified that an IK solution can become unusable because of joint limits.</p><div class="unlock"><span>PERSISTENT BUILD</span><b>2-LINK KINEMATIC CHAIN</b></div><div class="complete-actions"><a class="secondary linkbtn" href="../../#campaign">RETURN TO CAMPAIGN MAP</a><button id="replayBtn" class="primary" type="button">REPLAY 02.03</button></div></div></div>
 <div id="coachPanel" class="coach hidden"><div><span>COACH</span><button id="closeCoach" type="button">×</button></div><p id="coachText"></p></div>
 <script src="../../assets/js/a02m03-forward-inverse.js?v=1-20260811"></script>
 <script src="../../assets/js/completion-inline.js?v=completion1-20260812"></script>
