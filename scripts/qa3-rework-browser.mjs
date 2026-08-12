@@ -6,6 +6,7 @@ const BASE=process.env.QA_BASE_URL||'http://127.0.0.1:8000';
 globalThis.PLAYLEARN_QA3_PATCHES={};globalThis.PLAYLEARN_QA3_PATCH=(id,p)=>PLAYLEARN_QA3_PATCHES[id]=p;
 for(const a of ['02','03','04','05','06','07','08','09','10'])vm.runInThisContext(fs.readFileSync(`assets/js/qa3/mission-qa3-act${a}.js`,'utf8'));
 vm.runInThisContext(fs.readFileSync('assets/js/qa5/mission-qa5-reworks.js','utf8'));
+vm.runInThisContext(fs.readFileSync('assets/js/qa5/mission-qa5-hotfix-1.js','utf8'));
 const apply=m=>PLAYLEARN_QA3_PATCHES[m.id]?Object.assign({},m,PLAYLEARN_QA3_PATCHES[m.id]):m;
 const ids=[];for(let a=2;a<=10;a++)for(let m=(a===2?4:1);m<=6;m++)ids.push(`${String(a).padStart(2,'0')}.${String(m).padStart(2,'0')}`);
 function ev(expr,s){return Function('s',`with(s){const abs=Math.abs,min=Math.min,max=Math.max,sqrt=Math.sqrt,sin=Math.sin,cos=Math.cos,exp=Math.exp,pi=Math.PI;return (${expr});}`)(s)}
