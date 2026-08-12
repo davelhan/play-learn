@@ -42,6 +42,7 @@ jobs:
       - name: Run 51 reworked batch missions end-to-end
         run: node scripts/qa3-rework-browser.mjs
       - name: Run 9 custom missions end-to-end
+        if: always()
         run: node scripts/qa3-custom-browser.mjs
       - name: Upload QA3 reports
         if: always()
