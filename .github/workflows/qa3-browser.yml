@@ -7,7 +7,7 @@ on:
       - 'campaign/**'
       - 'assets/**'
       - 'data/**'
-      - 'scripts/qa3-browser.mjs'
+      - 'scripts/qa3-rework-browser.mjs'
       - 'scripts/qa3-custom-browser.mjs'
       - '.github/workflows/qa3-browser.yml'
   pull_request:
@@ -16,7 +16,7 @@ on:
       - 'campaign/**'
       - 'assets/**'
       - 'data/**'
-      - 'scripts/qa3-browser.mjs'
+      - 'scripts/qa3-rework-browser.mjs'
       - 'scripts/qa3-custom-browser.mjs'
       - '.github/workflows/qa3-browser.yml'
       - 'qa3/**'
@@ -25,7 +25,7 @@ on:
 jobs:
   qa3:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -39,8 +39,8 @@ jobs:
         run: |
           python3 -m http.server 8000 --bind 127.0.0.1 > /tmp/playlearn-http.log 2>&1 &
           sleep 2
-      - name: Run 60-mission interaction sweep
-        run: node scripts/qa3-browser.mjs
+      - name: Run 51 reworked batch missions end-to-end
+        run: node scripts/qa3-rework-browser.mjs
       - name: Run 9 custom missions end-to-end
         run: node scripts/qa3-custom-browser.mjs
       - name: Upload QA3 reports
@@ -49,8 +49,8 @@ jobs:
         with:
           name: qa3-browser-results
           path: |
-            qa3-browser-results.json
-            qa3-browser-results.md
+            qa3-rework-results.json
+            qa3-rework-results.md
             qa3-custom-results.json
             qa3-custom-results.md
           if-no-files-found: warn
