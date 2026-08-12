@@ -36,17 +36,12 @@ const Q=(id,patch)=>PLAYLEARN_QA3_PATCH(id,Object.assign({},PLAYLEARN_QA3_PATCHE
  Q('05.03',{metrics});
 }
 
-// 06.05 — stale AI evidence is intentionally bad world state; authority decision is the target.
-{
- const p=PLAYLEARN_QA3_PATCHES['06.05'];
- const metrics=p.metrics.map(mm=>{
-   if(mm.label==='WATCHDOG MARGIN')return Object.assign({},mm,{goodTransfer:null,statusTransfer:'WORLD FAULT · COMMAND STALE'});
-   if(mm.label==='SAFE PROPOSAL')return Object.assign({},mm,{goodTransfer:null,statusTransfer:'WORLD FAULT · DO NOT EXECUTE'});
-   if(mm.label==='AUTHORITY CORRECT')return Object.assign({},mm,{goodTransfer:'v>.5'});
-   return mm;
- });
- Q('06.05',{metrics});
-}
+// 06.05 was previously unpatched; define only the metric override and let it merge onto raw mission data.
+Q('06.05',{metrics:[
+ {label:'WATCHDOG MARGIN',expr:'250-age',unit:'ms',good:'v>0',goodTransfer:null,statusTransfer:'WORLD FAULT · COMMAND STALE'},
+ {label:'SAFE PROPOSAL',expr:'(confidence>.65 && age<250 && safety>.35)?1:0',unit:'',good:'v>.5',goodTransfer:null,statusTransfer:'WORLD FAULT · DO NOT EXECUTE'},
+ {label:'AUTHORITY CORRECT',expr:'((confidence>.65 && age<250 && safety>.35 && authority=="EXECUTE") || (!(confidence>.65 && age<250 && safety>.35) && authority!="EXECUTE"))?1:0',unit:'',good:'v>.5',goodTransfer:'v>.5'}
+]});
 
 // 07.02 — transfer metric cards now represent the same low-SoC reserve definition as the goal.
 {
